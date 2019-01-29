@@ -1,5 +1,6 @@
 package application;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
@@ -17,6 +18,8 @@ public  static void saveBook(Document bookHtml) {
 	Document doc = null;
 	PrintWriter out=null;
 	try {
+		File directory=new File("epubs");
+		directory.mkdir();
 		out = new PrintWriter("epubs/test.html");
 	} catch (FileNotFoundException e) {
 		// TODO Auto-generated catch block

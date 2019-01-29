@@ -7,6 +7,11 @@ import java.util.List;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 /**
  * @author Kain
  *<h1>Class Book</h1>
@@ -20,6 +25,7 @@ public class Book {
 	private List<Element> highlightSnippets=InputHandler.getHighlightFileSnippets();
 	private ArrayList<Element> foundParagraphs=new ArrayList<>();
 	private Highlight highlight;
+	
 	public Book() {
 		createHighlights(highlightSnippets);
 		this.bookHtml = bookHtml;
@@ -45,9 +51,11 @@ public class Book {
 		for (int i = 0; i < highlightList.size(); i++) {
 			String searcheable=highlightList.get(i).getSearchable();
 			System.out.println(searcheable);
+			
 			if (this.bookHtml.select(searcheable).size()!=0) {
 				Element found = this.bookHtml.select(searcheable).get(0);
 				System.out.println(found.text());
+				
 				foundParagraphs.add(found);
 				textReplacer(found, i);
 			} else {
@@ -78,5 +86,8 @@ public class Book {
 	public void saveTheHtmlOfBook() {
 		OutputHandler.saveBook(this.bookHtml);
 	}
+	
+	
+	
 	
 }

@@ -17,18 +17,18 @@ import org.jsoup.nodes.Element;
  *
  */
 public class InputHandler {
-	private static File highlights;
-	private static File Ebook;
-	public static void setEbook(File Ebook) {
-		Ebook = Ebook;
+	public static File highlights;
+	public static File ebook;
+	public static void setEbook(File ebookFile) {
+		ebook = ebookFile;
 	}
 
-	public static void setHighlights(File highlights) {
-		highlights = highlights;
+	public static void setHighlights(File highlightsFile) {
+		highlights = highlightsFile;
 	}
 
 	public static Document getHtmlFile() {
-		File htmlFile = Ebook;
+		File htmlFile = ebook;
 		Document doc = null;
 		try {
 			doc = Jsoup.parse(htmlFile, "UTF-8");
