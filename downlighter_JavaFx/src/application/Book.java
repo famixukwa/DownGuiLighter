@@ -25,10 +25,11 @@ public class Book {
 	private List<Element> highlightSnippets=InputHandler.getHighlightFileSnippets();
 	private ArrayList<Element> foundParagraphs=new ArrayList<>();
 	private Highlight highlight;
-	
+	public StringProperty messages;
 	public Book() {
+		messages=new SimpleStringProperty(this,"Begin");
 		createHighlights(highlightSnippets);
-		this.bookHtml = bookHtml;
+		this.bookHtml = bookHtml;	
 	}
 	/**
 	 * creates a list of highlight objects from the texts extracted from the highlights file
@@ -54,8 +55,8 @@ public class Book {
 			
 			if (this.bookHtml.select(searcheable).size()!=0) {
 				Element found = this.bookHtml.select(searcheable).get(0);
-				System.out.println(found.text());
-				
+				System.out.println(found.text()+"         "+found.elementSiblingIndex());
+				messages.set(found.text());
 				foundParagraphs.add(found);
 				textReplacer(found, i);
 			} else {
@@ -73,7 +74,7 @@ public class Book {
 	 *@param i is the counter for the searchReplaceInBook for loop.
 	 */
 	
-	public void textReplacer(Element found,Integer i) {
+	public void textReplacer(Element found,int i) {
 		String textHighlighted=highlightList.get(i).getHighlightedText();
 		String textToModify=found.html();
 		String modifiedText=textToModify.replace(highlightList.get(i).getHighligghtText(), textHighlighted);
@@ -87,7 +88,12 @@ public class Book {
 		OutputHandler.saveBook(this.bookHtml);
 	}
 	
-	
+	public StringProperty getMessages() {
+		return messages;
+	}
+	public void setMessages(StringProperty messages) {
+		this.messages = messages;
+	}
 	
 	
 }
