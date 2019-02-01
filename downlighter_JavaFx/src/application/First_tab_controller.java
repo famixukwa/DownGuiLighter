@@ -6,6 +6,8 @@ import java.io.File;
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -66,7 +68,13 @@ public class First_tab_controller {
 	@FXML
 	void matchHighlights() {
 		Book testBook=new Book();
-		messagesWindow.textProperty().bind(testBook.getMessages());
+		
+		testBook.messagesProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldvalue, String newValue ) {
+				messagesWindow.appendText(newValue);
+			}
+		});
 		testBook.searchReplaceInBook();
 		testBook.saveTheHtmlOfBook();
 	}

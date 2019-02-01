@@ -87,13 +87,19 @@ public class Book {
 	public void saveTheHtmlOfBook() {
 		OutputHandler.saveBook(this.bookHtml);
 	}
+	public final StringProperty messagesProperty() {
+		return this.messages;
+	}
 	
-	public StringProperty getMessages() {
-		return messages;
+	public final String getMessages() {
+		return this.messagesProperty().get();
 	}
-	public void setMessages(StringProperty messages) {
-		this.messages = messages;
+	
+	public final void setMessages(final String messages) {
+		this.messagesProperty().set(messages);
 	}
+	
+	
 	
 	
 }
