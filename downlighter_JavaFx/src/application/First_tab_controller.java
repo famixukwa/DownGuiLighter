@@ -17,8 +17,9 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 public class First_tab_controller {
-	Book testBook;
-	Window controllerStage;
+	private Book testBook;
+	private Window controllerStage;
+	StringProperty messages=new SimpleStringProperty("Begin");
 	public void setStage(Stage primaryStage) {
 		Stage controllerStage=primaryStage;
 	}
@@ -66,11 +67,18 @@ public class First_tab_controller {
 	@FXML
 	void matchHighlights() {
 		Book testBook=new Book();
-		messagesWindow.textProperty().bind(testBook.getMessages());
 		testBook.searchReplaceInBook();
+		messagesWindow.textProperty().bind(messages);
+		
 		testBook.saveTheHtmlOfBook();
 	}
 	
+	public StringProperty getMessages() {
+		return messages;
+	}
+	public void setMessages(StringProperty messages) {
+		this.messages = messages;
+	}
 	@FXML
 	void updateMessages () {
 		

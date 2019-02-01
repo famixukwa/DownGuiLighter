@@ -26,6 +26,7 @@ public class Book {
 	private ArrayList<Element> foundParagraphs=new ArrayList<>();
 	private Highlight highlight;
 	public StringProperty messages;
+	private First_tab_controller controller;
 	public Book() {
 		messages=new SimpleStringProperty(this,"Begin");
 		createHighlights(highlightSnippets);
@@ -56,7 +57,7 @@ public class Book {
 			if (this.bookHtml.select(searcheable).size()!=0) {
 				Element found = this.bookHtml.select(searcheable).get(0);
 				System.out.println(found.text()+"         "+found.elementSiblingIndex());
-				messages.set(found.text());
+				controller.messages.setValue(found.text());
 				foundParagraphs.add(found);
 				textReplacer(found, i);
 			} else {
