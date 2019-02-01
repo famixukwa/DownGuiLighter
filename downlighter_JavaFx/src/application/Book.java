@@ -25,10 +25,10 @@ public class Book {
 	private List<Element> highlightSnippets=InputHandler.getHighlightFileSnippets();
 	private ArrayList<Element> foundParagraphs=new ArrayList<>();
 	private Highlight highlight;
-	public StringProperty messages;
+	public StringProperty bookMessages;
 	private First_tab_controller controller;
 	public Book() {
-		messages=new SimpleStringProperty(this,"Begin");
+		bookMessages=new SimpleStringProperty(this,"Begin");
 		createHighlights(highlightSnippets);
 		this.bookHtml = bookHtml;	
 	}
@@ -57,7 +57,8 @@ public class Book {
 			if (this.bookHtml.select(searcheable).size()!=0) {
 				Element found = this.bookHtml.select(searcheable).get(0);
 				System.out.println(found.text()+"         "+found.elementSiblingIndex());
-				controller.messages.setValue(found.text());
+				controller.setMessagesContent(found.text());
+		//		bookMessages.bind(controller.messages);
 				foundParagraphs.add(found);
 				textReplacer(found, i);
 			} else {
@@ -89,11 +90,11 @@ public class Book {
 		OutputHandler.saveBook(this.bookHtml);
 	}
 	
-	public StringProperty getMessages() {
-		return messages;
+	public StringProperty getbookMessages() {
+		return bookMessages;
 	}
-	public void setMessages(StringProperty messages) {
-		this.messages = messages;
+	public void setMessages(StringProperty bookMessages) {
+		this.bookMessages = bookMessages;
 	}
 	
 	

@@ -17,6 +17,9 @@ public class Main extends Application {
 			Parent root =  loader.load();
 			First_tab_controller controller = loader.getController();
 			controller.setStage(primaryStage);
+			controller.messages.addListener((Event s) -> {
+				controller.setMessagesContent(s);;      
+	        };
 			Scene scene = new Scene(root,600,400);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
