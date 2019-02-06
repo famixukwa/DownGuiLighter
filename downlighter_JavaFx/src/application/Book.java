@@ -21,85 +21,17 @@ import javafx.beans.property.StringProperty;
 
 public class Book {
 	private Document bookHtml=InputHandler.getHtmlFile();
-	private ArrayList<Highlight> highlightList=new ArrayList<>();
-	private List<Element> highlightSnippets=InputHandler.getHighlightFileSnippets();
-	private ArrayList<Element> foundParagraphs=new ArrayList<>();
-	private Highlight highlight;
-	public StringProperty messages;
+	public String author;
+	public String highlightsFound;
 	public Book() {
-		messages=new SimpleStringProperty(this,"Begin");
-		createHighlights(highlightSnippets);
+		
 		this.bookHtml = bookHtml;	
 	}
-	/**
-	 * creates a list of highlight objects from the texts extracted from the highlights file
-	 *
-	 */
 
-	public void createHighlights(List<Element> highlightSnippets) {
-		for (int i = 0; i < highlightSnippets.size(); i++) {
-			String highligghtText=highlightSnippets.get(i).text();
-			Highlight highlight=new Highlight(highligghtText);
-			highlightList.add(highlight);
-		}
-	}
-	/**
-	 * Method that Search the searcheable text in the book text and replaces it with the same text surrounded with 
-	 * an underlined tag.
-	 *
-	 */
-	public void searchReplaceInBook() {
-		for (int i = 0; i < highlightList.size(); i++) {
-			String searcheable=highlightList.get(i).getSearchable();
-			System.out.println(searcheable);
-			
-			if (this.bookHtml.select(searcheable).size()!=0) {
-				Element found = this.bookHtml.select(searcheable).get(0);
-				System.out.println(found.text()+"         "+found.elementSiblingIndex());
-				messages.set(found.text());
-				foundParagraphs.add(found);
-				textReplacer(found, i);
-			} else {
-				System.out.println("Hilighttext "+highlightList.get(i).getHighligghtText()+" not found");
-			}
-
-		}
-	}
 	
-	/**
-	 * Helper method for searchReplaceInBook that takes the found element and the i integer for the for loop
-	 *replaces the text with the text modified with highlight tags.
-	 *@param found are the paragraphs that in the book HTML file includes
-	 *the searched text 
-	 *@param i is the counter for the searchReplaceInBook for loop.
-	 */
-	
-	public void textReplacer(Element found,int i) {
-		String textHighlighted=highlightList.get(i).getHighlightedText();
-		String textToModify=found.html();
-		String modifiedText=textToModify.replace(highlightList.get(i).getHighligghtText(), textHighlighted);
-		found.html(modifiedText);
+	public Document getBookHtml() {
+		return bookHtml;
 	}
-	/**
-	 * Saves the book calling the OutputHandler
-	 *
-	 */
-	public void saveTheHtmlOfBook() {
-		OutputHandler.saveBook(this.bookHtml);
-	}
-	public final StringProperty messagesProperty() {
-		return this.messages;
-	}
-	
-	public final String getMessages() {
-		return this.messagesProperty().get();
-	}
-	
-	public final void setMessages(final String messages) {
-		this.messagesProperty().set(messages);
-	}
-	
-	
 	
 	
 }

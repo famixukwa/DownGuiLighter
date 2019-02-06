@@ -8,10 +8,8 @@ public static void main(String[] args) {
 	File htmlFile=new File("epubs/Die Kapuzinergruft (German Edition) - Notebook.html");
 	InputHandler.ebook=ebookFile;
 	InputHandler.highlights=htmlFile;
-//	InputHandler.setHighlights(ebook);
-//	InputHandler.setEbook(html);
-	Book testBook=new Book();
-	testBook.searchReplaceInBook();
-	testBook.saveTheHtmlOfBook();
+	BookProcess processedBook=new BookProcess();
+	processedBook.searchReplaceInBook();
+	processedBook.saveTheHtmlOfBook();
 }
 }
