@@ -27,17 +27,7 @@ public class InputHandler {
 		highlights = highlightsFile;
 	}
 
-	public static Document getHtmlFile() {
-		File htmlFile = ebook;
-		Document doc = null;
-		try {
-			doc = Jsoup.parse(htmlFile, "UTF-8");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return doc;
-	}
+	
 
 	/**
 	 *

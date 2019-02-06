@@ -3,6 +3,8 @@ package application;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.jsoup.nodes.Document;
 
@@ -14,18 +16,23 @@ import org.jsoup.nodes.Document;
  *Later on it compresses the folder and saves acopy of the modified book
  */
 public class OutputHandler {
-public  static void saveBook(Document bookHtml) {
-	Document doc = null;
-	PrintWriter out=null;
-	try {
-		File directory=new File("epubs");
-		directory.mkdir();
-		out = new PrintWriter("epubs/test.html");
-	} catch (FileNotFoundException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
+	private Path pathTorenderFolder;
+	private Book book;
+	public OutputHandler() {
+		this.pathTorenderFolder = Paths.get(book.getContainerFolder());
 	}
-	
-	out.print(bookHtml);
-}
+	public void saveHtml(Document bookHtml) {
+		Document doc = null;
+		PrintWriter out=null;
+		try {
+			File directory=new File("epubs");
+			directory.mkdir();
+			out = new PrintWriter("epubs/test.html");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		out.print(bookHtml);
+	}
 }

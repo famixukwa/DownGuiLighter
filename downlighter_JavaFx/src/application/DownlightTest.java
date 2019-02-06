@@ -10,6 +10,6 @@ public static void main(String[] args) {
 	InputHandler.highlights=htmlFile;
 	BookProcess processedBook=new BookProcess();
 	processedBook.searchReplaceInBook();
-	processedBook.saveTheHtmlOfBook();
+	
 }
 }
