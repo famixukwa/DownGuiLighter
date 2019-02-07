@@ -30,24 +30,24 @@ public class BookProcess {
 
 	//links
 	private Highlight highlight;
-	private EBook eBook;
-	
+	private EBook eBook= new EBook();
 	public StringProperty messages;
 
 	//Path variables:
-	Path source=Paths.get(eBook.getContainerFolder().toString()+"/");
+	Path source=Paths.get(InputHandler.getEbookFile().toString()+"/");
 	String baseDirectory="test/files archive/";
 	String fileName=source.getFileName().toString();
 	String filenameWithNoExtension=fileName.replaceAll("\\.epub", "")+"/";
 	String bookSubfolder="text";
-	
+
 	//flags
 	Boolean createdFolder;
 
 	public BookProcess() {
 		messages=new SimpleStringProperty(this,"Begin");
-		eBook= new EBook();
 		createHighlights(highlightSnippets);
+		fileRendering();
+		searchReplaceInBook(eBook);
 	}
 	/**
 	 * renders the file system extracts the book 
@@ -62,7 +62,7 @@ public class BookProcess {
 	 */
 	public void folderCreation () {
 		File theDir = new File(baseDirectory);
-		
+
 		//creates directory
 		// if the directory does not exist, create it
 		if (!theDir.exists()) {
@@ -73,7 +73,7 @@ public class BookProcess {
 			} 
 			catch(SecurityException se){
 				System.out.println("there was a problem creating the folder");
-				
+
 			}        
 			if(result) {    
 				System.out.println("DIR created"); 
@@ -82,7 +82,11 @@ public class BookProcess {
 				eBook.setContainerFolder(baseDirectory+filenameWithNoExtension+bookSubfolder);
 			}
 		}
-		
+		else {
+			createdFolder=true;
+			eBook.setContainerFolder(baseDirectory+filenameWithNoExtension+bookSubfolder);
+		}
+
 	}
 	/**
 	 * extracts the epub file
@@ -98,7 +102,7 @@ public class BookProcess {
 				e.printStackTrace();
 			}
 		}
-		
+
 	}
 	/**
 	 * makes a list of the extracted files
@@ -134,7 +138,7 @@ public class BookProcess {
 			eBook.setHtmlTextFiles(file);
 		}
 	}
-	
+
 	/**
 	 * creates a list of highlight objects from the texts extracted from the highlights file
 	 *
@@ -143,7 +147,7 @@ public class BookProcess {
 	public void createHighlights(List<Element> highlightSnippets) {
 		for (int i = 0; i < highlightSnippets.size(); i++) {
 			String highligghtText=highlightSnippets.get(i).text();
-			Highlight highlight=new Highlight(highligghtText);
+			highlight=new Highlight(highligghtText);
 			highlightList.add(highlight);
 		}
 	}
@@ -160,67 +164,60 @@ public class BookProcess {
 			e.printStackTrace();
 		}
 		return fileHtmlDocument;
-		
+
 	}
 	/**
 	 * uses searchReplaceInHtml in all the book files
 	 */
-	public void searchReplaceInBook() {
+	public void searchReplaceInBook(EBook eBook) {
 		listExtractedFiles();
 		ArrayList<File> htmlfiles=eBook.getHtmlTextfiles();
 		for (File htmlFile : htmlfiles) {
 			Document htmlDoc=extractDocumentFromFile(htmlFile);
-			searchReplaceInHtml(htmlDoc);
-			
-//			Document htmlDoc = null;
-//			try {
-//				htmlDoc = Jsoup.parse(htmlFile, "UTF-8");
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-			
+			searchReplaceInHtml(htmlDoc,htmlFile,eBook);
+
 		}
-		
+
 	}
 	/**
 	 * Method that Search the searcheable text in the html text and replaces it with the same text surrounded with 
 	 * an underlined tag.
 	 *
 	 */
-	public void searchReplaceInHtml(Document htmlDoc) {
+	public void searchReplaceInHtml(Document htmlDoc,File file,EBook eBook) {
 		for (int i = 0; i < highlightList.size(); i++) {
 			String searcheable=highlightList.get(i).getSearchable();
 			//search the highlights text in the book
 			if (htmlDoc.select(searcheable).size()!=0) {
 				Element found = htmlDoc.select(searcheable).get(0);
-				System.out.println(found.text()+"         "+found.elementSiblingIndex());
-			//saves the highlights in book
+				System.out.println(file.getName()+"\n");
+				System.out.println(highlightList.get(i).getHighligghtText()+" found!!!"+"\n");
+				//saves the highlights in book
 				saveHighlightInEBook(highlightList.get(i));
-			//add message to display
+				//add message to display
 				addMessagesToDisplay(highlightList.get(i).getHighligghtText()+"\n");
-			//add found paragraph
+				//add found paragraph
 				foundParagraphs.add(found);
-			//replaces the text in the book with the bookmarked and highlighted text
+				//replaces the text in the book with the bookmarked and highlighted text
 				textReplacer(found, i);
-			//saves the modified file
-				saveTheHtmlOfBook(htmlDoc);
+				//saves the modified file
+				saveTheHtmlOfBook(htmlDoc,file,eBook);
 			} else {
-				System.out.println("Hilighttext "+highlightList.get(i).getHighligghtText()+" not found");
+				//	System.out.println(highlightList.get(i).getHighligghtText()+"not found!!!"+"\n");
 			}
-
+			
 		}
 	}
 	/**
 	 * saves the highlights in the book
 	 *
-	*/
+	 */
 	public void saveHighlightInEBook (Highlight highlight) {
 		eBook.setHighlightsFound(highlight);
 	}
 	/**
 	 * add messages to display in the gui
-	*/
+	 */
 	public void addMessagesToDisplay(String s) {
 		messages.set(s);
 	}
@@ -242,11 +239,11 @@ public class BookProcess {
 	 * Saves the book calling the OutputHandler
 	 *
 	 */
-	public void saveTheHtmlOfBook(Document htmlDokument) {
-		OutputHandler outputHandler= new OutputHandler();
+	public void saveTheHtmlOfBook(Document htmlDokument, File file,EBook eBook) {
+		OutputHandler outputHandler= new OutputHandler(eBook,file);
 		outputHandler.saveHtml(htmlDokument);
 	}
-	
+
 	//getters and setters
 	public EBook getEBook() {
 		return eBook;

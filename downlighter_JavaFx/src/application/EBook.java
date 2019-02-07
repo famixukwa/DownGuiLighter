@@ -25,8 +25,8 @@ public class EBook {
 	private List<Author> author;
 	//results of process
 	private String numberHighlightsFound;
-	private ArrayList<Highlight> highlightsFound;
-	private ArrayList<File> htmlTextfiles;
+	private ArrayList<Highlight> highlightsFound=new ArrayList<Highlight>();
+	private ArrayList<File> htmlTextfiles=new ArrayList<File>();
 	private String containerFolder;
 	//paths
 	private Path ebookFilePath;

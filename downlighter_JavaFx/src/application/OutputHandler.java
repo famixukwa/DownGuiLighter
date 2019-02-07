@@ -18,21 +18,37 @@ import org.jsoup.nodes.Document;
 public class OutputHandler {
 	private Path pathTorenderFolder;
 	private EBook eBook;
-	public OutputHandler() {
+	private File file;
+	public OutputHandler(EBook eBook, File file) {
 		this.pathTorenderFolder = Paths.get(eBook.getContainerFolder());
+		this.file=file;
+		this.eBook=eBook;
 	}
-	public void saveHtml(Document bookHtml) {
+	public void saveHtml(Document htmlDokument) {
 		Document doc = null;
 		PrintWriter out=null;
-		try {
-			File directory=new File("epubs");
-			directory.mkdir();
-			out = new PrintWriter("epubs/test.html");
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		File directory=new File("epubs");
+		if (!directory.exists()) {
+			try {	
+				directory.mkdir();
+				out = new PrintWriter(eBook.getContainerFolder()+file.getName());
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			out.print(htmlDokument);
 		}
-
-		out.print(bookHtml);
+		else {
+			try {	
+				out = new PrintWriter(eBook.getContainerFolder()+"/"+file.getName());
+				out.print(htmlDokument);
+				out.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
 	}
 }

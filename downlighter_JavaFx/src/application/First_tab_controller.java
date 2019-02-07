@@ -49,8 +49,8 @@ public class First_tab_controller {
 	@FXML
 	void chooseFileEbook(ActionEvent event) {
 		FileChooser fileChooser = new FileChooser();
-		FileChooser.ExtensionFilter htmlExtFilter = new FileChooser.ExtensionFilter("HTML files (*.html)", "*.html");
-		fileChooser.getExtensionFilters().add(htmlExtFilter);
+		FileChooser.ExtensionFilter epubExtFilter = new FileChooser.ExtensionFilter("EPUB files (*.epub)", "*.epub");
+		fileChooser.getExtensionFilters().add(epubExtFilter);
 		File ebookFile = fileChooser.showOpenDialog(controllerStage);
 		InputHandler.setEbookFile(ebookFile);
 		String value=ebookFile.getAbsolutePath();
@@ -76,7 +76,7 @@ public class First_tab_controller {
 				messagesWindow.appendText(newValue);
 			}
 		});
-		processedBook.searchReplaceInBook();
+	//	processedBook.searchReplaceInBook(processedBook.getEBook());
 	}
 
 	@FXML

@@ -19,19 +19,24 @@ import org.jsoup.nodes.Element;
 public class InputHandler {
 	public static File highlights;
 	public static File ebookFile;
+	
+	
+
 	public static void setEbookFile(File ebookFile) {
-		ebookFile = ebookFile;
+		InputHandler.ebookFile = ebookFile;
 	}
 
 	public static File getEbookFile() {
 		return ebookFile;
 	}
 
-	public static void setHighlights(File highlightsFile) {
-		highlights = highlightsFile;
-	}
+	
 
 	
+
+	public static void setHighlights(File highlights) {
+		InputHandler.highlights = highlights;
+	}
 
 	/**
 	 *
@@ -41,6 +46,7 @@ public class InputHandler {
 	public static List<Element> getHighlightFileSnippets() {
 		Document  highlightsFileContent=null;
 		File highlightsFile = highlights;
+		System.out.println("THIS IS THE HIGHLIGHTSFILE!!"+highlightsFile.getName()+"\n");
 		try {
 			highlightsFileContent = Jsoup.parse(highlightsFile, "UTF-8");
 		} catch (IOException e) {

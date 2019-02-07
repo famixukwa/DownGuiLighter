@@ -9,7 +9,7 @@ public static void main(String[] args) {
 	InputHandler.ebookFile=ebookFile;
 	InputHandler.highlights=htmlFile;
 	BookProcess processedBook=new BookProcess();
-	processedBook.searchReplaceInBook();
+	processedBook.searchReplaceInBook(processedBook.getEBook());
 	
 }
 }
