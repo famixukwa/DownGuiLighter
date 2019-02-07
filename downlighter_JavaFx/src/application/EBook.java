@@ -2,17 +2,16 @@ package application;
 
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import nl.siegmann.epublib.domain.Author;
+import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.epub.EpubReader;
+
 
 /**
  * @author Kain
@@ -21,25 +20,43 @@ import nl.siegmann.epublib.epub.EpubReader;
  */
 
 
-public class Book {
-	private String author;
+public class EBook {
+	//metadata
+	private List<Author> author;
+	//results of process
 	private String numberHighlightsFound;
 	private ArrayList<Highlight> highlightsFound;
 	private ArrayList<File> htmlTextfiles;
 	private String containerFolder;
+	//paths
+	private Path ebookFilePath;
+	//links
+
 	private EpubReader epubReader = new EpubReader();
 
-	public Book() {
-			
+	public EBook() {
+		ebookFilePath= Paths.get(InputHandler.getEbookFile().getPath());
+		setAuthor();
 	}
-	
-	public String getAuthor() {
+
+
+	public List<Author> getAuthor() {
 		return author;
 	}
 
-
-	public void setAuthor(String author) {
-		this.author = author;
+	private Book openBook() {
+		Book book = null;
+		try {
+			book = epubReader.readEpub(new FileInputStream(ebookFilePath.toString()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return book;
+	}
+	private void setAuthor() {
+		Book book=openBook();
+		List<Author> author = book.getMetadata().getAuthors();
 	}
 
 

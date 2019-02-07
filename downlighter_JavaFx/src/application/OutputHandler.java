@@ -17,9 +17,9 @@ import org.jsoup.nodes.Document;
  */
 public class OutputHandler {
 	private Path pathTorenderFolder;
-	private Book book;
+	private EBook eBook;
 	public OutputHandler() {
-		this.pathTorenderFolder = Paths.get(book.getContainerFolder());
+		this.pathTorenderFolder = Paths.get(eBook.getContainerFolder());
 	}
 	public void saveHtml(Document bookHtml) {
 		Document doc = null;

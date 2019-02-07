@@ -52,7 +52,7 @@ public class First_tab_controller {
 		FileChooser.ExtensionFilter htmlExtFilter = new FileChooser.ExtensionFilter("HTML files (*.html)", "*.html");
 		fileChooser.getExtensionFilters().add(htmlExtFilter);
 		File ebookFile = fileChooser.showOpenDialog(controllerStage);
-		InputHandler.setEbook(ebookFile);
+		InputHandler.setEbookFile(ebookFile);
 		String value=ebookFile.getAbsolutePath();
 		ebookSelected.setText(value);
 	}

@@ -30,12 +30,12 @@ public class BookProcess {
 
 	//links
 	private Highlight highlight;
-	private Book book;
-	private  Document bookHtml;
+	private EBook eBook;
+	
 	public StringProperty messages;
 
 	//Path variables:
-	Path source=Paths.get(bookHtml.toString()+"/");
+	Path source=Paths.get(eBook.getContainerFolder().toString()+"/");
 	String baseDirectory="test/files archive/";
 	String fileName=source.getFileName().toString();
 	String filenameWithNoExtension=fileName.replaceAll("\\.epub", "")+"/";
@@ -46,8 +46,15 @@ public class BookProcess {
 
 	public BookProcess() {
 		messages=new SimpleStringProperty(this,"Begin");
-		book= new Book();
+		eBook= new EBook();
 		createHighlights(highlightSnippets);
+	}
+	/**
+	 * renders the file system extracts the book 
+	 */
+	public void fileRendering() {
+		folderCreation ();
+		extractEpub();
 	}
 	/**
 	 * creates archive folder if it doesn't exist and saves the folder where the files are in the book
@@ -72,7 +79,7 @@ public class BookProcess {
 				System.out.println("DIR created"); 
 				createdFolder=true;
 				//saves the files container folder in the book
-				book.setContainerFolder(baseDirectory+filenameWithNoExtension+bookSubfolder);
+				eBook.setContainerFolder(baseDirectory+filenameWithNoExtension+bookSubfolder);
 			}
 		}
 		
@@ -97,7 +104,7 @@ public class BookProcess {
 	 * makes a list of the extracted files
 	 */
 	public void listExtractedFiles() {
-		File folder = new File(book.getContainerFolder());
+		File folder = new File(eBook.getContainerFolder());
 
 		//Implementing FilenameFilter to retrieve only html files
 
@@ -124,7 +131,7 @@ public class BookProcess {
 		for (File file : files)
 		{
 			System.out.println(file.getName());
-			book.setHtmlTextFiles(file);
+			eBook.setHtmlTextFiles(file);
 		}
 	}
 	
@@ -159,6 +166,21 @@ public class BookProcess {
 	 * uses searchReplaceInHtml in all the book files
 	 */
 	public void searchReplaceInBook() {
+		listExtractedFiles();
+		ArrayList<File> htmlfiles=eBook.getHtmlTextfiles();
+		for (File htmlFile : htmlfiles) {
+			Document htmlDoc=extractDocumentFromFile(htmlFile);
+			searchReplaceInHtml(htmlDoc);
+			
+//			Document htmlDoc = null;
+//			try {
+//				htmlDoc = Jsoup.parse(htmlFile, "UTF-8");
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+			
+		}
 		
 	}
 	/**
@@ -166,22 +188,23 @@ public class BookProcess {
 	 * an underlined tag.
 	 *
 	 */
-	public void searchReplaceInHtml(File htmlFile) {
+	public void searchReplaceInHtml(Document htmlDoc) {
 		for (int i = 0; i < highlightList.size(); i++) {
 			String searcheable=highlightList.get(i).getSearchable();
-			System.out.println(searcheable);
 			//search the highlights text in the book
-			if (bookHtml.select(searcheable).size()!=0) {
-				Element found = bookHtml.select(searcheable).get(0);
+			if (htmlDoc.select(searcheable).size()!=0) {
+				Element found = htmlDoc.select(searcheable).get(0);
 				System.out.println(found.text()+"         "+found.elementSiblingIndex());
 			//saves the highlights in book
-				saveHighlightInBook(highlightList.get(i));
+				saveHighlightInEBook(highlightList.get(i));
 			//add message to display
 				addMessagesToDisplay(highlightList.get(i).getHighligghtText()+"\n");
 			//add found paragraph
 				foundParagraphs.add(found);
 			//replaces the text in the book with the bookmarked and highlighted text
 				textReplacer(found, i);
+			//saves the modified file
+				saveTheHtmlOfBook(htmlDoc);
 			} else {
 				System.out.println("Hilighttext "+highlightList.get(i).getHighligghtText()+" not found");
 			}
@@ -192,8 +215,8 @@ public class BookProcess {
 	 * saves the highlights in the book
 	 *
 	*/
-	public void saveHighlightInBook (Highlight highlight) {
-		book.setHighlightsFound(highlight);
+	public void saveHighlightInEBook (Highlight highlight) {
+		eBook.setHighlightsFound(highlight);
 	}
 	/**
 	 * add messages to display in the gui
@@ -225,8 +248,8 @@ public class BookProcess {
 	}
 	
 	//getters and setters
-	public Book getBook() {
-		return book;
+	public EBook getEBook() {
+		return eBook;
 	}
 
 	public final StringProperty messagesProperty() {
