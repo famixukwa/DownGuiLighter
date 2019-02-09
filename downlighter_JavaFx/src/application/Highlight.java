@@ -1,5 +1,7 @@
 package application;
 
+import java.io.File;
+
 import org.jsoup.nodes.Document;
 
 /**
@@ -14,13 +16,21 @@ private String highligghtText;
 private String cleanHilightText;
 private String highlightDomSelector1="p:matches(.*";
 private String highlightDomSelector2=".*)";
-private String beginTagHighlight="<span style=\"background-color: #FFFF00\">";
+private String beginTagHighlight1="<span id=\"";
+private String beginTagHighlight2= "\" style=\"background-color: #FFFF00\">";
 private String endTagHighlight="</span>";
+private String beginLinkTag="<a href=\"";
+private String beginLinkTag2="\">";
+private String endLinkTag="</a>";
 private String searchable;
 private String highlightedText;
+private String HighlightLink;
+int hashCode;
+File containerFile;
 
 public Highlight(String highligghtText) {
 	this.highligghtText = highligghtText;
+	hashCode= Math.abs(highligghtText.hashCode());
 	cleanHilightText=cleanEspecialCharacters(highligghtText);
 	searchable= createSearchable(cleanHilightText);
 	highlightedText=constructHIghlightedText(highligghtText);
@@ -44,10 +54,26 @@ private String createSearchable(String highligghtText) {
  * wraps the text with HTML tags to makes the replacement
  */
 private String constructHIghlightedText(String cleanHilightText) {
-	return beginTagHighlight+cleanHilightText+endTagHighlight;
+	return beginTagHighlight1+hashCode+beginTagHighlight2+cleanHilightText+endTagHighlight;
 }
+/**
+ * constructs a link using the text of the highlight and a hash number to identify it
+ * @return String that is the link
+ */
+public String constructHighlightLink() {
+	
+		String HighlightLinkBeginning=beginLinkTag+containerFile.getAbsolutePath()+"#"+hashCode+beginLinkTag2;
+		String HighlightLink=HighlightLinkBeginning+cleanHilightText+endLinkTag;
+		
+	
+	return HighlightLink;
+}
+//getters and setters
 public String getHighlightedText() {
 	return highlightedText;
+}
+public String getHighlightLink() {
+	return HighlightLink;
 }
 public String getCleanHilightText() {
 	return cleanHilightText;
@@ -57,5 +83,11 @@ public String getSearchable() {
 }
 public String getHighligghtText() {
 	return highligghtText;
+}
+public File getContainerFile() {
+	return containerFile;
+}
+public void setContainerFile(File containerFile) {
+	this.containerFile = containerFile;
 }
 }

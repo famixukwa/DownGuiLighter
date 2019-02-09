@@ -3,6 +3,7 @@ package application;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -11,6 +12,8 @@ import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+
+import com.googlecode.jatl.Html;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -48,6 +51,7 @@ public class BookProcess {
 		createHighlights(highlightSnippets);
 		fileRendering();
 		searchReplaceInBook(eBook);
+		System.out.println(htmlListCreator());
 	}
 	/**
 	 * renders the file system extracts the book 
@@ -60,7 +64,7 @@ public class BookProcess {
 	 * creates archive folder if it doesn't exist and saves the folder where the files are in the book
 	 *
 	 */
-	public void folderCreation () {
+	private void folderCreation () {
 		File theDir = new File(baseDirectory);
 
 		//creates directory
@@ -92,7 +96,7 @@ public class BookProcess {
 	 * extracts the epub file
 	 *
 	 */
-	public void extractEpub() {
+	private void extractEpub() {
 		if (createdFolder) {
 			try {
 				ZipFile zipFile = new ZipFile(source.toFile());
@@ -107,7 +111,7 @@ public class BookProcess {
 	/**
 	 * makes a list of the extracted files
 	 */
-	public void listExtractedFiles() {
+	private void listExtractedFiles() {
 		File folder = new File(eBook.getContainerFolder());
 
 		//Implementing FilenameFilter to retrieve only html files
@@ -134,7 +138,6 @@ public class BookProcess {
 
 		for (File file : files)
 		{
-			System.out.println(file.getName());
 			eBook.setHtmlTextFiles(file);
 		}
 	}
@@ -154,7 +157,7 @@ public class BookProcess {
 	/**
 	 * extracts the html document of the file
 	 */
-	public Document extractDocumentFromFile(File file) {
+	private Document extractDocumentFromFile(File file) {
 		File htmlFile = file;
 		Document fileHtmlDocument = null;
 		try {
@@ -184,7 +187,7 @@ public class BookProcess {
 	 * an underlined tag.
 	 *
 	 */
-	public void searchReplaceInHtml(Document htmlDoc,File file,EBook eBook) {
+	private void searchReplaceInHtml(Document htmlDoc,File file,EBook eBook) {
 		for (int i = 0; i < highlightList.size(); i++) {
 			String searcheable=highlightList.get(i).getSearchable();
 			//search the highlights text in the book
@@ -192,6 +195,8 @@ public class BookProcess {
 				Element found = htmlDoc.select(searcheable).get(0);
 				System.out.println(file.getName()+"\n");
 				System.out.println(highlightList.get(i).getHighligghtText()+" found!!!"+"\n");
+				//saves the file where the highlight was found
+				highlightList.get(i).setContainerFile(file);
 				//saves the highlights in book
 				saveHighlightInEBook(highlightList.get(i));
 				//add message to display
@@ -205,20 +210,20 @@ public class BookProcess {
 			} else {
 				//	System.out.println(highlightList.get(i).getHighligghtText()+"not found!!!"+"\n");
 			}
-			
+
 		}
 	}
 	/**
 	 * saves the highlights in the book
 	 *
 	 */
-	public void saveHighlightInEBook (Highlight highlight) {
+	private void saveHighlightInEBook (Highlight highlight) {
 		eBook.setHighlightsFound(highlight);
 	}
 	/**
 	 * add messages to display in the gui
 	 */
-	public void addMessagesToDisplay(String s) {
+	private void addMessagesToDisplay(String s) {
 		messages.set(s);
 	}
 	/**
@@ -229,11 +234,32 @@ public class BookProcess {
 	 *@param i is the counter for the searchReplaceInBook for loop.
 	 */
 
-	public void textReplacer(Element found,int i) {
+	private void textReplacer(Element found,int i) {
 		String textHighlighted=highlightList.get(i).getHighlightedText();
 		String textToModify=found.html();
 		String modifiedText=textToModify.replace(highlightList.get(i).getHighligghtText(), textHighlighted);
 		found.html(modifiedText);
+	}
+	/**
+	 * method that creates an html link list to be used in the book as a way to see where the highlight was 
+	 */
+	private String htmlListCreator() {
+		StringWriter sw = new StringWriter();
+		Html html = new Html(sw);
+		html
+		.html()
+		.head()
+		.meta().httpEquiv("content-type").content("application/xhtml+xml; charset=UTF-8")
+		.title().text("asd").end().end(1)
+		.body()
+		.ul().style("text-decoration:none;list-style:square;font-weight:bold");
+		for (int i = 0; i < eBook.getHighlightsFound().size(); i++) {
+			html.li().raw(eBook.getHighlightsFound().get(i).constructHighlightLink()).end();
+		}
+		html
+		.endAll();
+		String htmlList = sw.getBuffer().toString();
+		return htmlList;
 	}
 	/**
 	 * Saves the book calling the OutputHandler
