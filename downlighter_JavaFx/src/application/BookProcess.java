@@ -52,6 +52,7 @@ public class BookProcess {
 		fileRendering();
 		searchReplaceInBook(eBook);
 		System.out.println(htmlListCreator());
+		PopupWindowView popup= new   PopupWindowView(eBook);
 	}
 	/**
 	 * renders the file system extracts the book 
@@ -199,6 +200,8 @@ public class BookProcess {
 				highlightList.get(i).setContainerFile(file);
 				//saves the highlights in book
 				saveHighlightInEBook(highlightList.get(i));
+				//produces the links
+				highlightList.get(i).constructHighlightLink();
 				//add message to display
 				addMessagesToDisplay(highlightList.get(i).getHighligghtText()+"\n");
 				//add found paragraph
@@ -254,7 +257,7 @@ public class BookProcess {
 		.body()
 		.ul().style("text-decoration:none;list-style:square;font-weight:bold");
 		for (int i = 0; i < eBook.getHighlightsFound().size(); i++) {
-			html.li().raw(eBook.getHighlightsFound().get(i).constructHighlightLink()).end();
+			html.li().raw(eBook.getHighlightsFound().get(i).getHighlightLink()).end();
 		}
 		html
 		.endAll();

@@ -21,6 +21,10 @@ import javafx.stage.Window;
 
 public class First_tab_controller {
 	Window controllerStage;
+	boolean pressed=false;
+	private File highlightFile;
+	private File ebookFile;
+	
 	public void setStage(Stage primaryStage) {
 		Stage controllerStage=primaryStage;
 	}
@@ -51,7 +55,7 @@ public class First_tab_controller {
 		FileChooser fileChooser = new FileChooser();
 		FileChooser.ExtensionFilter epubExtFilter = new FileChooser.ExtensionFilter("EPUB files (*.epub)", "*.epub");
 		fileChooser.getExtensionFilters().add(epubExtFilter);
-		File ebookFile = fileChooser.showOpenDialog(controllerStage);
+		ebookFile = fileChooser.showOpenDialog(controllerStage);
 		InputHandler.setEbookFile(ebookFile);
 		String value=ebookFile.getAbsolutePath();
 		ebookSelected.setText(value);
@@ -62,21 +66,26 @@ public class First_tab_controller {
 		FileChooser fileChooser = new FileChooser();
 		FileChooser.ExtensionFilter htmlExtFilter = new FileChooser.ExtensionFilter("HTML files (*.html)", "*.html");
 		fileChooser.getExtensionFilters().add(htmlExtFilter);
-		File highlightFile = fileChooser.showOpenDialog(controllerStage);
+		highlightFile = fileChooser.showOpenDialog(controllerStage);
 		InputHandler.setHighlights(highlightFile);
 		String value=highlightFile.getAbsolutePath();
 		highlightsSelected.setText(value);
 	}
 	@FXML
 	void matchHighlights() {
-		BookProcess processedBook=new BookProcess();
-		processedBook.messagesProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldvalue, String newValue ) {
-				messagesWindow.appendText(newValue);
-			}
-		});
-	//	processedBook.searchReplaceInBook(processedBook.getEBook());
+		
+		if (highlightFile!=null&ebookFile!=null&pressed==false) {
+			pressed=true;
+			BookProcess processedBook=new BookProcess();
+			processedBook.messagesProperty().addListener(new ChangeListener<String>() {
+				@Override
+				public void changed(ObservableValue<? extends String> observable, String oldvalue, String newValue ) {
+					messagesWindow.appendText(newValue);
+				}
+			});
+		//	processedBook.searchReplaceInBook(processedBook.getEBook());
+		}
+		
 	}
 
 	@FXML

@@ -3,7 +3,7 @@
   associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
   <class id="1" language="java" name="application.Highlight" project="downlighter_JavaFx" 
     file="/downlighter_JavaFx/src/application/Highlight.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="246" y="285"/>    
+    <position height="-1" width="-1" x="149" y="295"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -21,7 +21,7 @@
   </class>  
   <class id="3" language="java" name="application.EBook" project="downlighter_JavaFx" 
     file="/downlighter_JavaFx/src/application/EBook.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="249" y="740"/>    
+    <position height="-1" width="-1" x="398" y="743"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -65,46 +65,66 @@
     </display>  
   </class>  
   <association id="8">    
+    <bendpoint x="558" y="329"/>    
     <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="9" name="eBook"/>      
-      <multiplicity id="10" minimum="0" maximum="1"/>    
+      <attribute id="9" name="highlightList">        
+        <position height="0" width="0" x="-97" y="10"/>      
+      </attribute>      
+      <multiplicity id="10" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="-97" y="10"/>      
+      </multiplicity>    
     </end>    
-    <end type="TARGET" refId="3" navigable="true"/>    
+    <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="11">    
-    <bendpoint x="558" y="329"/>    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="12" name="highlightList"/>      
-      <multiplicity id="13" minimum="0" maximum="2147483647"/>    
+    <end type="SOURCE" refId="3" navigable="false">      
+      <attribute id="12" name="highlightsFound">        
+        <position height="0" width="0" x="-97" y="10"/>      
+      </attribute>      
+      <multiplicity id="13" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="-97" y="10"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="14">    
-    <bendpoint x="825" y="809"/>    
-    <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="15" name="eBook"/>      
-      <multiplicity id="16" minimum="0" maximum="1"/>    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="15" name="eBook">        
+        <position height="0" width="0" x="149" y="3"/>      
+      </attribute>      
+      <multiplicity id="16" minimum="0" maximum="1">        
+        <position height="0" width="0" x="149" y="3"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="17">    
-    <end type="SOURCE" refId="3" navigable="false">      
-      <attribute id="18" name="highlightsFound"/>      
-      <multiplicity id="19" minimum="0" maximum="2147483647"/>    
+    <bendpoint x="525" y="381"/>    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="18" name="highlight">        
+        <position height="0" width="0" x="-97" y="10"/>      
+      </attribute>      
+      <multiplicity id="19" minimum="0" maximum="1">        
+        <position height="0" width="0" x="-97" y="10"/>      
+      </multiplicity>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <association id="20">    
-    <bendpoint x="525" y="381"/>    
-    <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="21" name="highlight"/>      
-      <multiplicity id="22" minimum="0" maximum="1"/>    
+    <bendpoint x="825" y="809"/>    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="21" name="eBook">        
+        <position height="0" width="0" x="149" y="3"/>      
+      </attribute>      
+      <multiplicity id="22" minimum="0" maximum="1">        
+        <position height="0" width="0" x="149" y="3"/>      
+      </multiplicity>    
     </end>    
-    <end type="TARGET" refId="1" navigable="true"/>    
+    <end type="TARGET" refId="3" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
   <classifier-display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 

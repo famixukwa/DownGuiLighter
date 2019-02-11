@@ -24,7 +24,9 @@ private String beginLinkTag2="\">";
 private String endLinkTag="</a>";
 private String searchable;
 private String highlightedText;
-private String HighlightLink;
+private String highlightLink;
+private String highlightUrl;
+
 int hashCode;
 File containerFile;
 
@@ -60,20 +62,27 @@ private String constructHIghlightedText(String cleanHilightText) {
  * constructs a link using the text of the highlight and a hash number to identify it
  * @return String that is the link
  */
-public String constructHighlightLink() {
-	
+public void constructHighlightLink() {
 		String HighlightLinkBeginning=beginLinkTag+containerFile.getAbsolutePath()+"#"+hashCode+beginLinkTag2;
 		String HighlightLink=HighlightLinkBeginning+cleanHilightText+endLinkTag;
-		
-	
-	return HighlightLink;
+		constructUrl();
+	this.highlightLink= HighlightLink;
+}
+/**
+ * constructs the url that will be used in the gui to find the file that contains the highlight
+ * 
+ */
+private void constructUrl() {
+	String highlightUrl="file://"+containerFile.getAbsolutePath()+"#"+hashCode;
+	highlightUrl=highlightUrl.replace(" ", "%20");
+	this.highlightUrl= highlightUrl;
 }
 //getters and setters
 public String getHighlightedText() {
 	return highlightedText;
 }
 public String getHighlightLink() {
-	return HighlightLink;
+	return highlightLink;
 }
 public String getCleanHilightText() {
 	return cleanHilightText;
@@ -89,5 +98,8 @@ public File getContainerFile() {
 }
 public void setContainerFile(File containerFile) {
 	this.containerFile = containerFile;
+}
+public String getHighlightUrl() {
+	return highlightUrl;
 }
 }

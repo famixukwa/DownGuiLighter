@@ -8,6 +8,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import nl.siegmann.epublib.domain.Author;
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.epub.EpubReader;
@@ -25,7 +28,7 @@ public class EBook {
 	private List<Author> author;
 	//results of process
 	private String numberHighlightsFound;
-	private ArrayList<Highlight> highlightsFound=new ArrayList<Highlight>();
+	private ObservableList<Highlight> highlightsFound=FXCollections.observableArrayList();
 	private ArrayList<File> htmlTextfiles=new ArrayList<File>();
 	private String containerFolder;
 	//paths
@@ -70,7 +73,7 @@ public class EBook {
 	}
 
 
-	public ArrayList<Highlight> getHighlightsFound() {
+	public ObservableList<Highlight> getHighlightsFound() {
 		return highlightsFound;
 	}
 
