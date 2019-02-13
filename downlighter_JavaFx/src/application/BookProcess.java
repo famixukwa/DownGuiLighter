@@ -1,6 +1,7 @@
 package application;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -17,8 +18,13 @@ import com.googlecode.jatl.Html;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
+import nl.siegmann.epublib.domain.Author;
+import nl.siegmann.epublib.domain.Book;
+import nl.siegmann.epublib.epub.EpubReader;
 
 /**
  * Creates a processing unit where the book is processed, find the highlights, change the book etc..
@@ -30,11 +36,15 @@ public class BookProcess {
 	private ArrayList<Highlight> highlightList=new ArrayList<>();
 	private List<Element> highlightSnippets=InputHandler.getHighlightFileSnippets();
 	private ArrayList<Element> foundParagraphs=new ArrayList<>();
+	private ObservableList<Highlight> highlightsFound=FXCollections.observableArrayList();
 
 	//links
 	private Highlight highlight;
-	private EBook eBook= new EBook();
 	public StringProperty messages;
+	
+	//instance creation
+	private EpubReader epubReader = new EpubReader();
+	private EBook eBook= new EBook();
 
 	//Path variables:
 	Path source=Paths.get(InputHandler.getEbookFile().toString()+"/");
@@ -47,13 +57,43 @@ public class BookProcess {
 	Boolean createdFolder;
 
 	public BookProcess() {
-		messages=new SimpleStringProperty(this,"Begin");
+		messages=new SimpleStringProperty(this,"Begin");	
+	}
+	/**
+	 * method that starts the book process signaling the process order
+	 */
+	public void start() {
 		createHighlights(highlightSnippets);
 		fileRendering();
+		extractAuthor();
 		searchReplaceInBook(eBook);
 		System.out.println(htmlListCreator());
-		PopupWindowView popup= new   PopupWindowView(eBook);
+		PopupWindowView popup= new   PopupWindowView(highlightsFound);
 	}
+	
+	/**
+	 * opens the book to take metadata out
+	 */
+	private Book openBook() {
+		Book book = null;
+		try {
+			book = epubReader.readEpub(new FileInputStream(InputHandler.getEbookFile().toString()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return book;
+	}
+	
+	/**
+	 * ectracts the author from the book and saves in the book
+	 */
+	private void extractAuthor() {
+		Book book=openBook();
+		List<Author> author = book.getMetadata().getAuthors();
+		eBook.setAuthor(author);
+	}
+	
 	/**
 	 * renders the file system extracts the book 
 	 */
@@ -200,6 +240,8 @@ public class BookProcess {
 				highlightList.get(i).setContainerFile(file);
 				//saves the highlights in book
 				saveHighlightInEBook(highlightList.get(i));
+				//adds highlight to observables for the gui:
+				highlightsFound.add(highlightList.get(i));
 				//produces the links
 				highlightList.get(i).constructHighlightLink();
 				//add message to display
@@ -256,8 +298,8 @@ public class BookProcess {
 		.title().text("asd").end().end(1)
 		.body()
 		.ul().style("text-decoration:none;list-style:square;font-weight:bold");
-		for (int i = 0; i < eBook.getHighlightsFound().size(); i++) {
-			html.li().raw(eBook.getHighlightsFound().get(i).getHighlightLink()).end();
+		for (int i = 0; i < getHighlightsFound().size(); i++) {
+			html.li().raw(getHighlightsFound().get(i).getHighlightLink()).end();
 		}
 		html
 		.endAll();
@@ -288,6 +330,10 @@ public class BookProcess {
 
 	public final void setMessages(final String messages) {
 		this.messagesProperty().set(messages);
+	}
+	
+	public ObservableList<Highlight> getHighlightsFound() {
+		return highlightsFound;
 	}
 
 }

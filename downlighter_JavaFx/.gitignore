@@ -3,3 +3,5 @@
 /.project
 /build.fxbuild
 /hs_err_pid13521.log
+/target/
+/derby.log

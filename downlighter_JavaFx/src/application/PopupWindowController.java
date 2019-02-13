@@ -37,8 +37,8 @@ public class PopupWindowController {
 	 * @param eBook takes the processed ebook as parameter
 	 */
 	@FXML
-	void addHighlightToList(EBook eBook) {
-		ObservableList<Highlight> data=eBook.getHighlightsFound();
+	void addHighlightToList(ObservableList<Highlight>highlightsFound) {
+		ObservableList<Highlight> data=highlightsFound;
 		listOfhighlights.setItems(data);
 		listOfhighlights.setCellFactory(listView ->{
 			ListCell <Highlight> cell= new ListCell<Highlight>() {

@@ -3,9 +3,7 @@ package application;
 
 import java.io.File;
 
-import javafx.application.Application;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -83,7 +81,7 @@ public class First_tab_controller {
 					messagesWindow.appendText(newValue);
 				}
 			});
-		//	processedBook.searchReplaceInBook(processedBook.getEBook());
+			processedBook.start();
 		}
 		
 	}

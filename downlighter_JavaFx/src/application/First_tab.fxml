@@ -21,7 +21,7 @@
                         <Button layoutX="34.0" layoutY="74.0" mnemonicParsing="false" text="Button" />
                         <TextField fx:id="highlightsSelected" layoutX="34.0" layoutY="74.0" />
                         <Button fx:id="Choose_highlight_HTML" layoutX="215.0" layoutY="74.0" mnemonicParsing="false" onAction="#chooseFileHighlights" text="Choose highlights HTML" />
-                        <TextArea fx:id="messagesWindow" layoutX="34.0" layoutY="151.0" prefHeight="200.0" prefWidth="278.0" />
+                        <TextArea fx:id="messagesWindow" layoutX="34.0" layoutY="151.0" prefHeight="200.0" prefWidth="278.0" wrapText="true" />
                         <Button layoutX="415.0" layoutY="325.0" mnemonicParsing="false" onAction="#matchHighlights" text="Match highlights" />
                      </children>
                   </AnchorPane>
