@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -17,6 +18,8 @@ import com.googlecode.jatl.Html;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableStringValue;
+import javafx.beans.value.ObservableValue;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
@@ -25,35 +28,46 @@ import net.lingala.zip4j.exception.ZipException;
  *
  */
 
-public class BookProcess {
+public class BookProcess extends Observable{
+	private String messages2="begin";
+	
 	//Collections
 	private ArrayList<Highlight> highlightList=new ArrayList<>();
-	private List<Element> highlightSnippets=InputHandler.getHighlightFileSnippets();
+	private List<Element> highlightSnippets;
 	private ArrayList<Element> foundParagraphs=new ArrayList<>();
-
+	 
 	//links
 	private Highlight highlight;
-	private EBook eBook= new EBook();
-	public StringProperty messages;
+	private EBook eBook;
+	public StringProperty messages=new SimpleStringProperty(this,"Begin");;
 
 	//Path variables:
-	Path source=Paths.get(InputHandler.getEbookFile().toString()+"/");
-	String baseDirectory="test/files archive/";
-	String fileName=source.getFileName().toString();
-	String filenameWithNoExtension=fileName.replaceAll("\\.epub", "")+"/";
+	Path source;
+	String baseDirectory;
+	String fileName;
+	String filenameWithNoExtension;
 	String bookSubfolder="text";
 
 	//flags
 	Boolean createdFolder;
 
 	public BookProcess() {
-		messages=new SimpleStringProperty(this,"Begin");
-		createHighlights(highlightSnippets);
+		this.messages2=messages2;
+	}
+	
+	public void start() {
+		this.source=Paths.get(InputHandler.getEbookFile().toString()+"/");
+		this.baseDirectory="test/files archive/";
+		this.fileName=source.getFileName().toString();
+		this.filenameWithNoExtension=fileName.replaceAll("\\.epub", "")+"/";
+		eBook= new EBook();
+		createHighlights();
 		fileRendering();
 		searchReplaceInBook(eBook);
 		System.out.println(htmlListCreator());
 		PopupWindowView popup= new   PopupWindowView(eBook);
 	}
+	
 	/**
 	 * renders the file system extracts the book 
 	 */
@@ -148,7 +162,8 @@ public class BookProcess {
 	 *
 	 */
 
-	public void createHighlights(List<Element> highlightSnippets) {
+	public void createHighlights() {
+		List<Element> highlightSnippets=InputHandler.getHighlightFileSnippets();
 		for (int i = 0; i < highlightSnippets.size(); i++) {
 			String highligghtText=highlightSnippets.get(i).text();
 			highlight=new Highlight(highligghtText);
@@ -204,6 +219,7 @@ public class BookProcess {
 				highlightList.get(i).constructHighlightLink();
 				//add message to display
 				addMessagesToDisplay(highlightList.get(i).getHighligghtText()+"\n");
+				
 				//add found paragraph
 				foundParagraphs.add(found);
 				//replaces the text in the book with the bookmarked and highlighted text
@@ -227,7 +243,7 @@ public class BookProcess {
 	 * add messages to display in the gui
 	 */
 	private void addMessagesToDisplay(String s) {
-		messages.set(s);
+		messages.setValue(s);
 	}
 	/**
 	 * Helper method for searchReplaceInBook that takes the found element and the i integer for the for loop
@@ -288,6 +304,14 @@ public class BookProcess {
 
 	public final void setMessages(final String messages) {
 		this.messagesProperty().set(messages);
+	}
+	public String getMessages2() {
+		return messages2;
+	}
+	public void setMessages2(String messages2) {
+		this.messages2 = messages2;
+		setChanged();
+		notifyObservers();
 	}
 
 }
