@@ -4,9 +4,9 @@
 		<class>application.EBook</class>
 		<class>application.Highlight</class>
 		<properties>
-			<property name="javax.persistence.jdbc.url" value="jdbc:derby:/home/fieltro/MyDatabase;create=true"/>
-			<property name="javax.persistence.jdbc.user" value="admin"/>
-			<property name="javax.persistence.jdbc.password" value="Ab4Hb99T7SSfpmn6Qffi"/>
+			<property name="javax.persistence.jdbc.url" value="jdbc:derby:/home/fieltro/MyDB;create=true;upgrade=true"/>
+			<property name="javax.persistence.jdbc.user" value="teseo"/>
+			<property name="javax.persistence.jdbc.password" value="asd"/>
 			<property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.EmbeddedDriver"/>
 		</properties>
 	</persistence-unit>

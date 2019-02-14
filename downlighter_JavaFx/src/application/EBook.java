@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -45,12 +46,12 @@ public class EBook {
 	private String containerFolder;
 	//paths
 
-	//links
+	
 	public EBook() {
-
+		 super();
 	}
 
-
+	
 	public List<Author> getAuthor() {
 		return author;
 	}
@@ -63,12 +64,6 @@ public class EBook {
 	public void setNumberHighlightsFound(String numberHighlightsFound) {
 		this.numberHighlightsFound = numberHighlightsFound;
 	}
-
-	
-
-
-	
-
 
 	public ArrayList<File> getHtmlTextfiles() {
 		return htmlTextfiles;
@@ -104,12 +99,12 @@ public class EBook {
 		this.author = author;
 	}
 
-
+	@Lob
 	public void setHighlightsFound(Highlight highlight) {
 		highlightsFound.add(highlight);
 	}
 
-
+	@Lob
 	public  List<Highlight> getHighlightsFound() {
 		return highlightsFound;
 	}

@@ -55,10 +55,11 @@ public class BookProcess {
 
 	//flags
 	Boolean createdFolder;
-
+	
 	public BookProcess() {
 		messages=new SimpleStringProperty(this,"Begin");	
 	}
+	
 	/**
 	 * method that starts the book process signaling the process order
 	 */
@@ -69,6 +70,13 @@ public class BookProcess {
 		searchReplaceInBook(eBook);
 		System.out.println(htmlListCreator());
 		PopupWindowView popup= new   PopupWindowView(highlightsFound);
+		DatabasePersistanceService databasePesistance = new DatabasePersistanceService();
+		try {
+			databasePesistance.saveEbookWithHighlightsFound(eBook);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**

@@ -13,7 +13,7 @@ public class DatabasePersistanceService {
 
 	}
 	public void  saveEbookWithHighlightsFound (EBook eBook) throws Exception{
-		emf=Persistence.createEntityManagerFactory("databaseFactory");  
+		emf=Persistence.createEntityManagerFactory("downlighter_JavaFx");  
 		em=emf.createEntityManager(); 
 		em.getTransaction().begin(); 
 		em.persist(eBook);
