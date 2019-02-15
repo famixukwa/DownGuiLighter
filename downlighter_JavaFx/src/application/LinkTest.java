@@ -1,5 +1,7 @@
 package application;
 
+import model.Highlight;
+
 public class LinkTest {
 
 	

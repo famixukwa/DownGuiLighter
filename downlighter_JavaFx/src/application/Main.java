@@ -1,5 +1,6 @@
 package application;
 	
+import controllers.TabPaneController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
@@ -13,11 +14,10 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(Main.class.getResource("First_tab.fxml"));
+			loader.setLocation(Main.class.getResource("/views/TabPane.fxml"));
 			Parent root =  loader.load();
-			First_tab_controller controller = loader.getController();
-			controller.setStage(primaryStage);
-			Scene scene = new Scene(root,600,400);
+			TabPaneController controller = loader.getController();
+			Scene scene = new Scene(root);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();

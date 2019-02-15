@@ -1,4 +1,4 @@
-package application;
+package model;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,6 +25,7 @@ import net.lingala.zip4j.exception.ZipException;
 import nl.siegmann.epublib.domain.Author;
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.epub.EpubReader;
+import views.PopupWindowView;
 
 /**
  * Creates a processing unit where the book is processed, find the highlights, change the book etc..

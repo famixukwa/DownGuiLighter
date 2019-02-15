@@ -1,13 +1,15 @@
-package application;
+package controllers;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.text.Text;
 import javafx.scene.web.WebView;
+import model.Highlight;
 
 public class PopupWindowController {
 
@@ -37,7 +39,7 @@ public class PopupWindowController {
 	 * @param eBook takes the processed ebook as parameter
 	 */
 	@FXML
-	void addHighlightToList(ObservableList<Highlight>highlightsFound) {
+	public void addHighlightToList(ObservableList<Highlight>highlightsFound) {
 		ObservableList<Highlight> data=highlightsFound;
 		listOfhighlights.setItems(data);
 		listOfhighlights.setCellFactory(listView ->{

@@ -1,8 +1,6 @@
-package application;
-
+package controllers;
 
 import java.io.File;
-
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -16,8 +14,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import model.BookProcess;
+import model.InputHandler;
 
-public class First_tab_controller {
+public class BookProcessingTabController {
 	Window controllerStage;
 	boolean pressed=false;
 	private File highlightFile;
