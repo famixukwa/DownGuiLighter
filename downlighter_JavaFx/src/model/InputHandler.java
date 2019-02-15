@@ -1,4 +1,4 @@
-package application;
+package model;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,25 +18,17 @@ import org.jsoup.nodes.Element;
  */
 public class InputHandler {
 	public static File highlights;
-	public static File ebook;
-	public static void setEbook(File ebookFile) {
-		ebook = ebookFile;
+	public static File ebookFile;
+	public static void setEbookFile(File ebookFile) {
+		InputHandler.ebookFile = ebookFile;
 	}
 
-	public static void setHighlights(File highlightsFile) {
-		highlights = highlightsFile;
+	public static File getEbookFile() {
+		return ebookFile;
 	}
 
-	public static Document getHtmlFile() {
-		File htmlFile = ebook;
-		Document doc = null;
-		try {
-			doc = Jsoup.parse(htmlFile, "UTF-8");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return doc;
+	public static void setHighlights(File highlights) {
+		InputHandler.highlights = highlights;
 	}
 
 	/**

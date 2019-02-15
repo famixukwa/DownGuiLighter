@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC
+"-//W3C//DTD XHTML 1.0 Strict//EN"
+"XHTML1-s.dtd" >
+<html xmlns="http://www.w3.org/TR/1999/REC-html-in-xml" xml:lang="en" lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <style>
+        .bodyContainer {
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+            padding-left: 32px;
+            padding-right: 32px;
+        }
+        
+        .notebookFor {
+            font-size: 18px;
+            font-weight: 700;
+            text-align: center;
+            color: rgb(119, 119, 119);
+            margin: 24px 0px 0px;
+            padding: 0px;
+        }
+        
+        .bookTitle {
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            color: #333333;
+            margin-top: 22px;
+            padding: 0px;
+        }
+        
+        .authors {
+            font-size: 18px;
+            font-weight: 700;
+            text-align: center;
+            color: rgb(119, 119, 119);
+            margin-top: 22px;
+            margin-bottom: 24px;
+            padding: 0px;
+        }
+    
+        .citation {
+            font-size: 18px;
+            font-weight: 500;
+            text-align: center;
+            color: #333333;
+            margin-top: 22px;
+            margin-bottom: 24px;
+            padding: 0px;
+        }
+    
+        .sectionHeading {
+            font-size: 24px;
+            font-weight: 700;
+            text-align: left;
+            color: #333333;
+            margin-top: 24px;
+            padding: 0px;
+        }
+        
+        .noteHeading {
+            font-size: 18px;
+            font-weight: 700;
+            text-align: left;
+            color: #333333;
+            margin-top: 20px;
+            padding: 0px;
+        }
+        
+        .noteText {
+            font-size: 18px;
+            font-weight: 500;
+            text-align: left;
+            color: #333333;
+            margin: 2px 0px 0px;
+            padding: 0px;
+        }
+        
+        .highlight_blue {
+            color: rgb(178, 205, 251);
+        }
+        
+        .highlight_orange {
+            color: #ffd7ae;
+        }
+        
+        .highlight_pink {
+            color: rgb(255, 191, 206);
+        }
+        
+        .highlight_yellow {
+            color: rgb(247, 206, 0);
+        }
+        
+        .notebookGraphic {
+            margin-top: 10px;
+            text-align: left;
+        }
+        
+        .notebookGraphic img {
+            -o-box-shadow:      0px 0px 5px #888;
+            -icab-box-shadow:   0px 0px 5px #888;
+            -khtml-box-shadow:  0px 0px 5px #888;
+            -moz-box-shadow:    0px 0px 5px #888;
+            -webkit-box-shadow: 0px 0px 5px #888;
+            box-shadow:         0px 0px 5px #888; 
+            max-width: 100%;
+            height: auto;
+        }
+        
+        hr {
+            border: 0px none;
+            height: 1px;
+            background: none repeat scroll 0% 0% rgb(221, 221, 221);
+        }
+        </style>
+        <script>
+            </script>
+    </head>
+    <body>
+        <div class="bodyContainer">
+            <div class="notebookFor">
+                Notebook Export
+            </div>
+            <div class="bookTitle">
+                Beichte eines Mörders, erzählt in einer Nacht (Vollständige Ausgabe): Geschichte eines Doppelmordes im Ersten Weltkrieg (Kriminalroman) (German Edition)
+            </div>
+            <div class="authors">
+                Roth, Joseph
+            </div>
+            <div class="citation">
+                
+            </div>
+            <hr />
+            <div class="sectionHeading">
+    Beichte eines Mörders, erzählt in einer Nacht (Vollständige Ausgabe)
+</div><div class="noteHeading">
+    Highlight(<span class="highlight_blue">blue</span>) - Text > Page 6 · Location 70
+</div>
+<div class="noteText">
+    Sitzt man an einem Tisch, so übersieht man in jeder Sekunde, wieviel man genossen hat, und merkt an der Anzahl der geleerten Gläser den Gang der Zeiger.
+</div><div class="noteHeading">
+    Highlight(<span class="highlight_blue">blue</span>) - Text > Page 8 · Location 111
+</div>
+<div class="noteText">
+    Das private Leben, die einfache Menschlichkeit ist wichtiger, größer, tragischer als alles Öffentliche.
+</div><div class="noteHeading">
+    Highlight(<span class="highlight_blue">blue</span>) - Text > Page 9 · Location 121
+</div>
+<div class="noteText">
+    Ich will damit sagen, daß man, wenn man genau achtgeben würde, unbedingt zu dem Resultat kommen müßte, daß alle sogenannten großen, historischen Ereignisse in Wahrheit zurückzuführen sind auf irgendein Moment im Privatleben ihrer Urheber oder auf mehrere Momente.
+</div><div class="noteHeading">
+    Highlight(<span class="highlight_blue">blue</span>) - Text > Page 9 · Location 123
+</div>
+<div class="noteText">
+    alle großen und edlen und schimpflichen Taten, die einigermaßen die Welt verändert haben, sind die Folgen irgendwelcher ganz unbedeutender Ereignisse, von denen wir keine Ahnung haben.
+
+<div class="noteHeading">
+    Highlight(<span class="highlight_yellow">yellow</span>) - Text > Page 38 · Location 667
+</div>
+<div class="noteText">
+    Ich wollte heute, wir wären noch die alten Staubkörnchen! Wir waren nicht von Gesetzen, sondern von Launen abhängig. Aber diese Launen waren fast eher berechenbar als die Gesetze
+</div><div class="noteHeading">
+    Highlight(<span class="highlight_yellow">yellow</span>) - Text > Page 38 · Location 669
+</div>
+<div class="noteText">
+    Man kann sie nämlich auslegen
+</div><div class="noteHeading">
+    Highlight(<span class="highlight_yellow">yellow</span>) - Text > Page 39 · Location 671
+</div>
+<div class="noteText">
+    Ein großer, ein echter Herr, der strafen kann und Gnade üben, ist durch ein einziges Wort böse zu machen, aber manchmal auch durch ein einziges Wort wieder gut.
+</div><div class="noteHeading">
+    Highlight(<span class="highlight_yellow">yellow</span>) - Text > Page 39 · Location 675
+</div>
+<div class="noteText">
+    Damals wollte ich noch die Hölle auf Erden, das heißt, ich dürstete nach Gerechtigkeit. Und wer die absolute Gerechtigkeit will, der ist der Rachsucht verfallen.
+</div><div class="noteHeading">
+    Highlight(<span class="highlight_yellow">yellow</span>) - Text > Page 40 · Location 706
+</div>
+<div class="noteText">
+    Erst viel später habe ich gelernt, daß Worte mächtiger sind als Handlungen –und ich lache oft, wenn ich die beliebte Phrase höre: ›Keine Worte, sondern Taten!‹
+</div><div class="noteHeading">
+    Highlight(<span class="highlight_yellow">yellow</span>) - Text > Page 41 · Location 707
+</div>
+<div class="noteText">
+    Wie schwach sind die Taten! Ein Wort besteht, eine Tat vergeht! Eine Tat vollbringt auch ein Hund, ein Wort aber spricht nur ein Mensch. Die Tat, die Handlung ist nur ein Phantom, verglichen mit der Wirklichkeit und gar mit der übersinnlichen Wirklichkeit des Wortes. Die Handlung verhält sich zum Wort ungefähr wie der zweidimensionale Schatten im Kino zum dreidimensionalen lebendigen Menschen oder, wenn ihr wollt, wie die Photographie zum Original. Deshalb auch bin ich ein Mörder geworden.
+</div><div class="noteHeading">
+    Highlight(<span class="highlight_yellow">yellow</span>) - Text > Page 47 · Location 829
+</div>
+<div class="noteText">
+    Und dennoch sehnte ich mich, wie es ja die Art der jungen Männer sein muß, nach der einzigen Frau, das heißt, eigentlich nach einer einzigen, die meine Sehnsucht und mein Heimweh nach allen zu stillen imstande gewesen wäre.
+</div><div class="noteHeading">
+    Highlight(<span class="highlight_yellow">yellow</span>) - Text > Page 48 · Location 842
+</div>
+<div class="noteText">
+    Mißlungene Attentate pflegten, wie ihr alle wissen werdet, in unserem alten Rußland eine viel schrecklichere Wirkung auszuüben als gelungene. Gelungene Attentate waren gewissermaßen unwiderrufliche Gottesurteile.
+</div><div class="noteHeading">
+    Highlight(<span class="highlight_yellow">yellow</span>) - Text > Page 48 · Location 843
+</div>
+<div class="noteText">
+    Denn, meine Freunde, man glaubte in jener Zeit noch an Gott, und man war sicher, daß nichts ohne seinen Willen geschehe. Aber, sozusagen, um dem Allmächtigen vorzugreifen, bevor er noch die Gelegenheit haben könnte, jemanden von den hohen Herrschaften umzubringen, traf man, wie man so zu sagen pflegt, sogenannte Vorsichtsmaßregeln. Es waren törichte, manchmal sogar unsinnige Vorsichtsmaßregeln.
+</div><div class="noteHeading">
+    Highlight(<span class="highlight_yellow">yellow</span>) - Text > Page 49 · Location 855
+</div>
+
+        </div>
+    </body>
+</html>
