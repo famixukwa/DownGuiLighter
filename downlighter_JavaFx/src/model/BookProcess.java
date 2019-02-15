@@ -25,7 +25,6 @@ import net.lingala.zip4j.exception.ZipException;
 import nl.siegmann.epublib.domain.Author;
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.epub.EpubReader;
-import views.PopupWindowView;
 
 /**
  * Creates a processing unit where the book is processed, find the highlights, change the book etc..
@@ -70,7 +69,6 @@ public class BookProcess {
 		extractAuthor();
 		searchReplaceInBook(eBook);
 		System.out.println(htmlListCreator());
-		PopupWindowView popup= new   PopupWindowView(highlightsFound);
 		DatabasePersistanceService databasePesistance = new DatabasePersistanceService();
 		try {
 			databasePesistance.saveEbookWithHighlightsFound(eBook);
