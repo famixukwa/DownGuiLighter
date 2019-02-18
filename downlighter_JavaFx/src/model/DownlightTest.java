@@ -9,7 +9,9 @@ public class DownlightTest {
 		InputHandler.setEbookFile(ebookFile);;
 		InputHandler.setHighlights(htmlFile);;
 		BookProcess processedBook=new BookProcess();
-		processedBook.start();
+		Thread th = new Thread(processedBook);
+        th.setDaemon(true);
+        th.start();
 
 	}
 }

@@ -13,6 +13,7 @@ import javax.persistence.Query;
 public class DatabasePersistanceService {
 	EntityManagerFactory emf;
 	EntityManager em;
+	BookProcess processedBook;
 	public DatabasePersistanceService() {
 
 	}

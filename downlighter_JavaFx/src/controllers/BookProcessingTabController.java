@@ -1,5 +1,6 @@
 package controllers;
 
+import java.beans.EventHandler;
 import java.io.File;
 import java.io.IOException;
 
@@ -8,6 +9,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -82,14 +84,15 @@ public class BookProcessingTabController {
 		if (highlightFile!=null&ebookFile!=null&pressed==false) {
 			pressed=true;
 			BookProcess processedBook=new BookProcess();
-			processedBook.messagesProperty().addListener(new ChangeListener<String>() {
-				@Override
-				public void changed(ObservableValue<? extends String> observable, String oldvalue, String newValue ) {
+			processedBook.messagesProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
 					messagesWindow.appendText(newValue);
-				}
 			});
-			processedBook.start();
-			PopupWindowView(processedBook.getHighlightsFound());
+			Thread th = new Thread(processedBook);
+	        th.setDaemon(true);
+	        th.start();
+	        processedBook.setOnSucceeded( e -> {
+	        	PopupWindowView(processedBook.getHighlightsFound());
+	        });
 		}
 		
 	}

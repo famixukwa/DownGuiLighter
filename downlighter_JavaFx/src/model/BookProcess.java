@@ -20,6 +20,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import nl.siegmann.epublib.domain.Author;
@@ -31,7 +32,7 @@ import nl.siegmann.epublib.epub.EpubReader;
  *
  */
 
-public class BookProcess {
+public class BookProcess extends Task{
 	//Collections
 	private ArrayList<Highlight> highlightList=new ArrayList<>();
 	private List<Element> highlightSnippets=InputHandler.getHighlightFileSnippets();
@@ -63,7 +64,9 @@ public class BookProcess {
 	/**
 	 * method that starts the book process signaling the process order
 	 */
-	public void start() {
+	
+	@Override
+	protected Void call() throws Exception {
 		createHighlights(highlightSnippets);
 		fileRendering();
 		extractAuthor();
@@ -76,6 +79,9 @@ public class BookProcess {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		return null;
+		
 	}
 	
 	/**
@@ -107,6 +113,8 @@ public class BookProcess {
 	public void fileRendering() {
 		folderCreation ();
 		extractEpub();
+		//add message to display
+		addMessagesToDisplay("Book extracted"+"\n");
 	}
 	/**
 	 * creates archive folder if it doesn't exist and saves the folder where the files are in the book
@@ -196,11 +204,13 @@ public class BookProcess {
 	 */
 
 	public void createHighlights(List<Element> highlightSnippets) {
+		addMessagesToDisplay("Begining process\n");
 		for (int i = 0; i < highlightSnippets.size(); i++) {
 			String highligghtText=highlightSnippets.get(i).text();
 			highlight=new Highlight(highligghtText);
 			highlightList.add(highlight);
 		}
+		addMessagesToDisplay("Highlights extracted! \n");
 	}
 	/**
 	 * extracts the html document of the file
@@ -241,18 +251,16 @@ public class BookProcess {
 			//search the highlights text in the book
 			if (htmlDoc.select(searcheable).size()!=0) {
 				Element found = htmlDoc.select(searcheable).get(0);
-				System.out.println(file.getName()+"\n");
-				System.out.println(highlightList.get(i).getHighligghtText()+" found!!!"+"\n");
 				//saves the file where the highlight was found
 				highlightList.get(i).setContainerFile(file);
 				//saves the highlights in book
 				saveHighlightInEBook(highlightList.get(i));
-				//adds highlight to observables for the gui:
+				//adds highlight to observable for the gui:
 				highlightsFound.add(highlightList.get(i));
 				//produces the links
 				highlightList.get(i).constructHighlightLink();
 				//add message to display
-				addMessagesToDisplay(highlightList.get(i).getHighligghtText()+"\n");
+				addMessagesToDisplay("highlight "+i+" found"+"\n");
 				//add found paragraph
 				foundParagraphs.add(found);
 				//replaces the text in the book with the bookmarked and highlighted text
@@ -260,7 +268,8 @@ public class BookProcess {
 				//saves the modified file
 				saveTheHtmlOfBook(htmlDoc,file,eBook);
 			} else {
-				//	System.out.println(highlightList.get(i).getHighligghtText()+"not found!!!"+"\n");
+				//add message to display
+				addMessagesToDisplay("highlight "+i+" not found"+"\n");
 			}
 
 		}
@@ -275,7 +284,7 @@ public class BookProcess {
 	/**
 	 * add messages to display in the gui
 	 */
-	private void addMessagesToDisplay(String s) {
+	void addMessagesToDisplay(String s) {
 		messages.set(s);
 	}
 	/**
@@ -342,5 +351,7 @@ public class BookProcess {
 	public ObservableList<Highlight> getHighlightsFound() {
 		return highlightsFound;
 	}
+
+	
 
 }
