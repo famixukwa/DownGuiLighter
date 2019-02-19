@@ -88,7 +88,7 @@ public class BookProcessingTabController {
 					messagesWindow.appendText(newValue);
 			});
 			Thread th = new Thread(processedBook);
-	        th.setDaemon(true);
+	        th.setDaemon(false);
 	        th.start();
 	        processedBook.setOnSucceeded( e -> {
 	        	PopupWindowView(processedBook.getHighlightsFound());

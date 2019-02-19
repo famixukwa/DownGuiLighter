@@ -42,10 +42,12 @@ public class BookProcess extends Task{
 	//links
 	private Highlight highlight;
 	public StringProperty messages;
-	
+
 	//instance creation
 	private EpubReader epubReader = new EpubReader();
 	private EBook eBook= new EBook();
+	
+	int numberHighlightsFound=0;
 
 	//Path variables:
 	Path source=Paths.get(InputHandler.getEbookFile().toString()+"/");
@@ -56,34 +58,33 @@ public class BookProcess extends Task{
 
 	//flags
 	Boolean createdFolder;
-	
+
 	public BookProcess() {
 		messages=new SimpleStringProperty(this,"Begin");	
 	}
-	
+
 	/**
 	 * method that starts the book process signaling the process order
 	 */
-	
+
 	@Override
 	protected Void call() throws Exception {
 		createHighlights(highlightSnippets);
+		extractBookTitle();
 		fileRendering();
 		extractAuthor();
 		searchReplaceInBook(eBook);
+		eBook.setNumberHighlightsFound(numberHighlightsFound);
+		addMessagesToDisplay("Number of highlights found: "+numberHighlightsFound+"\n");
 		System.out.println(htmlListCreator());
-		DatabasePersistanceService databasePesistance = new DatabasePersistanceService();
-		try {
-			databasePesistance.saveEbookWithHighlightsFound(eBook);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		SavePersistanceService task = new SavePersistanceService(eBook);
+		Thread th = new Thread(task);
+		th.setDaemon(true);
+		th.start();
 		return null;
-		
+
 	}
-	
+
 	/**
 	 * opens the book to take metadata out
 	 */
@@ -97,7 +98,7 @@ public class BookProcess extends Task{
 		}
 		return book;
 	}
-	
+
 	/**
 	 * ectracts the author from the book and saves in the book
 	 */
@@ -106,7 +107,15 @@ public class BookProcess extends Task{
 		List<Author> author = book.getMetadata().getAuthors();
 		eBook.setAuthor(author);
 	}
-	
+	/**
+	 * ectracts the author from the book and saves in the book
+	 */
+	private void extractBookTitle() {
+		Book book=openBook();
+		String bookTitle = book.getMetadata().getFirstTitle();
+		eBook.setBookTitle(bookTitle);
+	}
+
 	/**
 	 * renders the file system extracts the book 
 	 */
@@ -236,7 +245,7 @@ public class BookProcess extends Task{
 		for (File htmlFile : htmlfiles) {
 			Document htmlDoc=extractDocumentFromFile(htmlFile);
 			searchReplaceInHtml(htmlDoc,htmlFile,eBook);
-
+			
 		}
 
 	}
@@ -261,6 +270,8 @@ public class BookProcess extends Task{
 				highlightList.get(i).constructHighlightLink();
 				//add message to display
 				addMessagesToDisplay("highlight "+i+" found"+"\n");
+				//counts the highlights
+				numberHighlightsFound++;
 				//add found paragraph
 				foundParagraphs.add(found);
 				//replaces the text in the book with the bookmarked and highlighted text
@@ -269,10 +280,12 @@ public class BookProcess extends Task{
 				saveTheHtmlOfBook(htmlDoc,file,eBook);
 			} else {
 				//add message to display
-				addMessagesToDisplay("highlight "+i+" not found"+"\n");
+				//addMessagesToDisplay("highlight "+i+" not found"+"\n");
 			}
 
 		}
+		//add message to display and passes the number of highlights to eBook
+
 	}
 	/**
 	 * saves the highlights in the book
@@ -347,11 +360,11 @@ public class BookProcess extends Task{
 	public final void setMessages(final String messages) {
 		this.messagesProperty().set(messages);
 	}
-	
+
 	public ObservableList<Highlight> getHighlightsFound() {
 		return highlightsFound;
 	}
 
-	
+
 
 }

@@ -35,8 +35,9 @@ public class EBook {
 	private int ebookId;
 	//metadata
 	private List<Author> author;
+	private String bookTitle;
 	//results of process
-	private String numberHighlightsFound;
+	private int numberHighlightsFound;
 	
 
 	@OneToMany(mappedBy = "eBook")
@@ -56,12 +57,12 @@ public class EBook {
 		return author;
 	}
 
-	public String getNumberHighlightsFound() {
+	public int getNumberHighlightsFound() {
 		return numberHighlightsFound;
 	}
 
 
-	public void setNumberHighlightsFound(String numberHighlightsFound) {
+	public void setNumberHighlightsFound(int numberHighlightsFound) {
 		this.numberHighlightsFound = numberHighlightsFound;
 	}
 
@@ -107,6 +108,16 @@ public class EBook {
 	@Lob
 	public  List<Highlight> getHighlightsFound() {
 		return highlightsFound;
+	}
+
+
+	public String getBookTitle() {
+		return bookTitle;
+	}
+
+
+	public void setBookTitle(String bookTitle) {
+		this.bookTitle = bookTitle;
 	}
 
 
