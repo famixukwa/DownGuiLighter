@@ -293,6 +293,7 @@ public class BookProcess extends Task{
 	 */
 	private void saveHighlightInEBook (Highlight highlight) {
 		eBook.setHighlightsFound(highlight);
+		highlight.eBook=eBook;
 	}
 	/**
 	 * add messages to display in the gui

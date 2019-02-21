@@ -3,6 +3,7 @@ package controllers;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
@@ -32,7 +33,7 @@ public class PopupWindowController {
 		assert listOfhighlights != null : "fx:id=\"listOfhighlights\" was not injected: check your FXML file 'PopupWindow.fxml'.";
 
 	}
-	
+
 	/**
 	 * 
 	 * populates the highlight list and creates a listener to show the book on the left webviewer
@@ -60,14 +61,14 @@ public class PopupWindowController {
 
 				);
 		// selection listening
-				listOfhighlights.getSelectionModel()
-						.selectedItemProperty()
-						.addListener((observable, oldValue, newValue) -> {
-							if (observable != null && observable.getValue() != null) {
-								bookView.getEngine().load(observable.getValue().getHighlightUrl());
-							}
-						});
+		listOfhighlights.getSelectionModel()
+		.selectedItemProperty()
+		.addListener((observable, oldValue, newValue) -> {
+			if (observable != null && observable.getValue() != null) {
+				bookView.getEngine().load(observable.getValue().getHighlightUrl());
+			}
+		});
 	}
-	
-	
+
+
 }

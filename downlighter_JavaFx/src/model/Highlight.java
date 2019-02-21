@@ -26,8 +26,8 @@ public class Highlight {
 	@Id  
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private int highlightId;
-	
-	private EBook eBook;
+	@ManyToOne
+	public EBook eBook;
 	@Lob 
 	@Column(name="CONTENT", length=2000)
 	private  String highligghtText;
@@ -149,7 +149,7 @@ public class Highlight {
 	public String getHighlightUrl() {
 		return highlightUrl;
 	}
-	@ManyToOne
+	
 	public EBook geteBook() {
 		return eBook;
 	}
