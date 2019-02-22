@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -36,6 +37,10 @@ public class EBook {
 	//metadata
 	private List<Author> author;
 	private String bookTitle;
+	@Transient
+	private int highlightLocationInHtml;
+	@Transient
+	private int highlightFileIndex;
 	//results of process
 	private int numberHighlightsFound;
 	

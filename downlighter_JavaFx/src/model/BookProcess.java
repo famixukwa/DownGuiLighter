@@ -32,7 +32,7 @@ import nl.siegmann.epublib.epub.EpubReader;
  *
  */
 
-public class BookProcess extends Task{
+public class BookProcess extends Task<Void>{
 	//Collections
 	private ArrayList<Highlight> highlightList=new ArrayList<>();
 	private List<Element> highlightSnippets=InputHandler.getHighlightFileSnippets();
@@ -264,6 +264,8 @@ public class BookProcess extends Task{
 				highlightList.get(i).setContainerFile(file);
 				//saves the highlights in book
 				saveHighlightInEBook(highlightList.get(i));
+				//saves the place where the highlight was found
+				
 				//adds highlight to observable for the gui:
 				highlightsFound.add(highlightList.get(i));
 				//produces the links
@@ -343,6 +345,14 @@ public class BookProcess extends Task{
 	public void saveTheHtmlOfBook(Document htmlDokument, File file,EBook eBook) {
 		OutputHandler outputHandler= new OutputHandler(eBook,file);
 		outputHandler.saveHtml(htmlDokument);
+	}
+	
+	/**
+	 * 
+	 *informs ebook of the information found on the search
+	 */
+	public void ebookinformer () {
+		
 	}
 
 	//getters and setters

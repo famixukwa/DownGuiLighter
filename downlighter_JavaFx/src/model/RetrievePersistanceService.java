@@ -12,7 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 
-public class RetrievePersistanceService  extends Task{
+public class RetrievePersistanceService  extends Task<Void>{
 	public enum Mode {BEAN,EBOOK};
 	public Mode selectedMode;
 	EntityManagerFactory emf;
@@ -74,7 +74,6 @@ public class RetrievePersistanceService  extends Task{
 			getListOfBooks ();
 			break;
 		case EBOOK:
-			
 			getChosenBookHiglights(selectedBook);
 			break;
 		default:
