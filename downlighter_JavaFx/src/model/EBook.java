@@ -37,10 +37,7 @@ public class EBook {
 	//metadata
 	private List<Author> author;
 	private String bookTitle;
-	@Transient
-	private int highlightLocationInHtml;
-	@Transient
-	private int highlightFileIndex;
+	
 	//results of process
 	private int numberHighlightsFound;
 	

@@ -62,7 +62,11 @@ public class Highlight {
 	@Lob 
 	@Column(length=2000)
 	private String highlightUrl;
-
+	@Transient
+	private int highlightLocationInHtml;
+	@Transient
+	private int highlightFileIndex;
+	
 	int hashCode;
 	@Lob
 	File containerFile;
@@ -155,5 +159,20 @@ public class Highlight {
 	}
 	public void seteBook(EBook eBook) {
 		this.eBook = eBook;
+	}
+	public int getHighlightLocationInHtml() {
+		return highlightLocationInHtml;
+	}
+
+	public void setHighlightLocationInHtml(int highlightLocationInHtml) {
+		this.highlightLocationInHtml = highlightLocationInHtml;
+	}
+
+	public int getHighlightFileIndex() {
+		return highlightFileIndex;
+	}
+
+	public void setHighlightFileIndex(int highlightFileIndex) {
+		this.highlightFileIndex = highlightFileIndex;
 	}
 }

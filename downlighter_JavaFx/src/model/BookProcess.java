@@ -36,7 +36,6 @@ public class BookProcess extends Task<Void>{
 	//Collections
 	private ArrayList<Highlight> highlightList=new ArrayList<>();
 	private List<Element> highlightSnippets=InputHandler.getHighlightFileSnippets();
-	private ArrayList<Element> foundParagraphs=new ArrayList<>();
 	private ObservableList<Highlight> highlightsFound=FXCollections.observableArrayList();
 
 	//links
@@ -73,9 +72,10 @@ public class BookProcess extends Task<Void>{
 		extractBookTitle();
 		fileRendering();
 		extractAuthor();
-		searchReplaceInBook(eBook);
+		searchReplaceHighlights(eBook);
 		eBook.setNumberHighlightsFound(numberHighlightsFound);
 		addMessagesToDisplay("Number of highlights found: "+numberHighlightsFound+"\n");
+		addMessagesToDisplay("Number of highlights for popup: "+highlightsFound.size()+"\n");
 		System.out.println(htmlListCreator());
 		SavePersistanceService task = new SavePersistanceService(eBook);
 		Thread th = new Thread(task);
@@ -239,46 +239,73 @@ public class BookProcess extends Task<Void>{
 	/**
 	 * uses searchReplaceInHtml in all the book files
 	 */
-	public void searchReplaceInBook(EBook eBook) {
+	public void searchReplaceHighlights(EBook eBook) {
+		//sends a list of the extracted files to ebook
 		listExtractedFiles();
+		System.out.println(highlightList.size());
 		ArrayList<File> htmlfiles=eBook.getHtmlTextfiles();
-		for (File htmlFile : htmlfiles) {
-			Document htmlDoc=extractDocumentFromFile(htmlFile);
-			searchReplaceInHtml(htmlDoc,htmlFile,eBook);
+		ArrayList<Document> documentsCache=documentCache(htmlfiles);
+		
+		for (int i = 0; i < highlightList.size(); i++) {
+			//Document htmlDoc=extractDocumentFromFile(htmlFile);
+			Boolean highlightFoundBoolean=searchReplaceInHtml(eBook,highlightList.get(i),documentsCache,htmlfiles);
+			if (highlightFoundBoolean=true) {
+				addMessagesToDisplay("highlight "+i+" found"+"\n");
+			}
 			
 		}
-
+		
+	}
+	/**
+	 * Method that makes a cache of parsed html files
+	 *
+	 */
+	public ArrayList<Document> documentCache(ArrayList<File> htmlfiles){
+		ArrayList<Document> documentFiles = new ArrayList<Document>();
+		for (int i = 0; i < htmlfiles.size(); i++) {
+			File file=htmlfiles.get(i);
+			Document htmlDoc=extractDocumentFromFile(file);
+			documentFiles.add(htmlDoc);
+			System.out.println(file.getName()+"   cache");
+		}
+		
+		return documentFiles;
+		
 	}
 	/**
 	 * Method that Search the searcheable text in the html text and replaces it with the same text surrounded with 
 	 * an underlined tag.
 	 *
 	 */
-	private void searchReplaceInHtml(Document htmlDoc,File file,EBook eBook) {
-		for (int i = 0; i < highlightList.size(); i++) {
-			String searcheable=highlightList.get(i).getSearchable();
+	private boolean searchReplaceInHtml(EBook eBook,Highlight highlight, ArrayList<Document> documentsCache, ArrayList<File> htmlfiles) {
+		//gets the list of files
+		boolean highlightFoundBoolean=false;
+		for (int i = 0; i < documentsCache.size(); i++) {
+			highlightFoundBoolean=false;
+			System.out.println("test 0");
+			File file=htmlfiles.get(i);
+			System.out.println(file.getName());
+			Document htmlDoc=documentsCache.get(i);
+			String searcheable=highlight.getSearchable();
+			System.out.println("test 0.1");
 			//search the highlights text in the book
 			if (htmlDoc.select(searcheable).size()!=0) {
+				System.out.println("test 1");
+				highlightFoundBoolean=true;
 				Element found = htmlDoc.select(searcheable).get(0);
-				//saves the file where the highlight was found
-				highlightList.get(i).setContainerFile(file);
-				//saves the highlights in book
-				saveHighlightInEBook(highlightList.get(i));
-				//saves the place where the highlight was found
+				System.out.println("test 2");
 				
-				//adds highlight to observable for the gui:
-				highlightsFound.add(highlightList.get(i));
-				//produces the links
-				highlightList.get(i).constructHighlightLink();
-				//add message to display
-				addMessagesToDisplay("highlight "+i+" found"+"\n");
+				//informs what is found 
+				informer (found, i,file, highlight);
+				
+				
+				System.out.println("test 3");
 				//counts the highlights
 				numberHighlightsFound++;
-				//add found paragraph
-				foundParagraphs.add(found);
 				//replaces the text in the book with the bookmarked and highlighted text
-				textReplacer(found, i);
+				textReplacer(found, i, highlight);
 				//saves the modified file
+				System.out.println("test 4");
 				saveTheHtmlOfBook(htmlDoc,file,eBook);
 			} else {
 				//add message to display
@@ -286,7 +313,9 @@ public class BookProcess extends Task<Void>{
 			}
 
 		}
+		
 		//add message to display and passes the number of highlights to eBook
+		return highlightFoundBoolean;
 
 	}
 	/**
@@ -311,10 +340,10 @@ public class BookProcess extends Task<Void>{
 	 *@param i is the counter for the searchReplaceInBook for loop.
 	 */
 
-	private void textReplacer(Element found,int i) {
-		String textHighlighted=highlightList.get(i).getHighlightedText();
+	private void textReplacer(Element found,int i,Highlight highlight) {
+		String textHighlighted=highlight.getHighlightedText();
 		String textToModify=found.html();
-		String modifiedText=textToModify.replace(highlightList.get(i).getHighligghtText(), textHighlighted);
+		String modifiedText=textToModify.replace(highlight.getHighligghtText(), textHighlighted);
 		found.html(modifiedText);
 	}
 	/**
@@ -349,9 +378,20 @@ public class BookProcess extends Task<Void>{
 	
 	/**
 	 * 
-	 *informs ebook of the information found on the search
+	 *informs ebook and highlight of the information found on the search
 	 */
-	public void ebookinformer () {
+	public void informer (Element found,int i,File file, Highlight highlight) {
+		
+		//saves the highlights in book
+		saveHighlightInEBook(highlight);
+		//saves the file where the highlight was found
+		highlight.setContainerFile(file);
+		//produces the links
+		highlight.constructHighlightLink();
+		//adds highlight to observable for the gui:
+		highlightsFound.add(highlight);
+		//saves the paragraph where the highlight was found
+		highlight.setHighlightLocationInHtml(found.elementSiblingIndex());
 		
 	}
 

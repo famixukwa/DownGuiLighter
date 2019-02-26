@@ -66,6 +66,7 @@ public class PopupWindowController {
 		.addListener((observable, oldValue, newValue) -> {
 			if (observable != null && observable.getValue() != null) {
 				bookView.getEngine().load(observable.getValue().getHighlightUrl());
+				System.out.println(observable.getValue().getHighlightUrl());
 			}
 		});
 	}
