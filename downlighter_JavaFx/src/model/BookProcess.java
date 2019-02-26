@@ -13,6 +13,7 @@ import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import com.googlecode.jatl.Html;
 
@@ -289,10 +290,11 @@ public class BookProcess extends Task<Void>{
 			String searcheable=highlight.getSearchable();
 			System.out.println("test 0.1");
 			//search the highlights text in the book
-			if (htmlDoc.select(searcheable).size()!=0) {
+			Elements founds = htmlDoc.select(searcheable);
+			if (founds.size()!=0) {
 				System.out.println("test 1");
 				highlightFoundBoolean=true;
-				Element found = htmlDoc.select(searcheable).get(0);
+				Element found= founds.first();
 				System.out.println("test 2");
 				
 				//informs what is found 
