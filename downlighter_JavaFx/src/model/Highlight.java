@@ -62,9 +62,7 @@ public class Highlight {
 	@Lob 
 	@Column(length=2000)
 	private String highlightUrl;
-	@Transient
 	private int highlightLocationInHtml;
-	@Transient
 	private int highlightFileIndex;
 	
 	int hashCode;
@@ -87,7 +85,7 @@ public class Highlight {
 	 * Method that cleans text from special characters
 	 * @param highligghtText highlight text to be cleaned
 	 */
-	@Transient
+	
 	private String cleanEspecialCharacters(String highligghtText) {
 		return highligghtText.replace(".", ".");
 	}
@@ -95,7 +93,7 @@ public class Highlight {
 	 * Adds the select code from Jsoup and the regex to the highlight text
 	 * this makes possible to realize the search with jsoup.
 	 */
-	@Transient
+	
 	private String createSearchable(String highligghtText) {
 		String searchable=highlightDomSelector1+highligghtText+highlightDomSelector2;
 		return searchable;
@@ -103,7 +101,7 @@ public class Highlight {
 	/**
 	 * wraps the text with HTML tags to makes the replacement
 	 */
-	@Transient
+	
 	private String constructHIghlightedText(String cleanHilightText) {
 		return beginTagHighlight1+hashCode+beginTagHighlight2+cleanHilightText+endTagHighlight;
 	}
@@ -111,7 +109,7 @@ public class Highlight {
 	 * constructs a link using the text of the highlight and a hash number to identify it
 	 * @return String that is the link
 	 */
-	@Transient
+	
 	public void constructHighlightLink() {
 		String HighlightLinkBeginning=beginLinkTag+containerFile.getAbsolutePath()+"#"+hashCode+beginLinkTag2;
 		String HighlightLink=HighlightLinkBeginning+cleanHilightText+endLinkTag;
@@ -122,12 +120,13 @@ public class Highlight {
 	 * constructs the url that will be used in the gui to find the file that contains the highlight
 	 * 
 	 */
-	@Transient
+	
 	private void constructUrl() {
 		String highlightUrl="file://"+containerFile.getAbsolutePath()+"#"+hashCode;
 		highlightUrl=highlightUrl.replace(" ", "%20");
 		this.highlightUrl= highlightUrl;
 	}
+	
 	//getters and setters
 	public String getHighlightedText() {
 		return highlightedText;

@@ -72,9 +72,8 @@ public class EBook {
 		return htmlTextfiles;
 	}
 
-
-	public void setHtmlTextFiles(File htmlTextfile) {
-		htmlTextfiles.add(htmlTextfile);
+	public void setHtmlTextfiles(ArrayList<File> htmlTextfiles) {
+		this.htmlTextfiles = htmlTextfiles;
 	}
 
 
