@@ -81,7 +81,7 @@ public class BookProcessingTabController {
 	@FXML
 	void matchHighlights() {
 		
-		if (highlightFile!=null&ebookFile!=null&pressed==false) {
+		if (highlightFile!=null&ebookFile!=null) {
 			pressed=true;
 			BookProcess processedBook=new BookProcess();
 			processedBook.messagesProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {

@@ -79,14 +79,14 @@ public class BookArchiveTabController {
 		primaryStage.show();
 	}
 
-	@FXML
-	public void setBooksColumn(ObservableList<EBook> observableList) {
-		ObservableList<EBook> data=observableList;
-		bookTitleColumn.setCellValueFactory(new PropertyValueFactory<EBook,String>("bookTitle"));
-		highlightsColumn.setCellValueFactory(new PropertyValueFactory<EBook,String>("numberHighlightsFound"));
-		bookArchiveTable.setItems(data);
-		bookArchiveTable.getColumns().addAll(bookTitleColumn,highlightsColumn);
-	}
+//	@FXML
+//	public void setBooksColumn(ObservableList<EBook> observableList) {
+//		ObservableList<EBook> data=observableList;
+//		bookTitleColumn.setCellValueFactory(new PropertyValueFactory<EBook,String>("bookTitle"));
+//		highlightsColumn.setCellValueFactory(new PropertyValueFactory<EBook,String>("numberHighlightsFound"));
+//		bookArchiveTable.setItems(data);
+//		bookArchiveTable.getColumns().addAll(bookTitleColumn,highlightsColumn);
+//	}
 
 
 	@FXML

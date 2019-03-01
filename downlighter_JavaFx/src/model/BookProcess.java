@@ -39,6 +39,7 @@ public class BookProcess extends Task<Void>{
 	private ArrayList<Highlight> highlightList=new ArrayList<>();
 	private List<Element> highlightSnippets=InputHandler.getHighlightFileSnippets();
 	private ObservableList<Highlight> highlightsFound=FXCollections.observableArrayList();
+	ArrayList<InformedFile> htmlfiles;
 
 	//links
 	private Highlight highlight;
@@ -80,7 +81,6 @@ public class BookProcess extends Task<Void>{
 		searchReplaceHighlights(eBook);
 		eBook.setNumberHighlightsFound(numberHighlightsFound);
 		addMessagesToDisplay("Number of highlights found: "+numberHighlightsFound+"\n");
-		addMessagesToDisplay("Number of highlights for popup: "+highlightsFound.size()+"\n");
 		System.out.println(htmlListCreator());
 		SavePersistanceService task = new SavePersistanceService(eBook);
 		Thread th = new Thread(task);
@@ -98,7 +98,6 @@ public class BookProcess extends Task<Void>{
 		try {
 			book = epubReader.readEpub(new FileInputStream(InputHandler.getEbookFile().toString()));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return book;
@@ -173,7 +172,6 @@ public class BookProcess extends Task<Void>{
 				zipFile.extractAll(baseDirectory+filenameWithNoExtension);
 				pathHandler.setOpfPath();
 			} catch (ZipException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -183,12 +181,13 @@ public class BookProcess extends Task<Void>{
 	 * makes a list of the extracted files
 	 */
 	private void listExtractedFiles() {
-		ArrayList<File> htmlTextfiles= new ArrayList<File>();
+		ArrayList<InformedFile> htmlTextfiles= new ArrayList<InformedFile>();
 		XmlExtractor xmlExtractor= new XmlExtractor(pathHandler.getOpfPath().toString());
 		ArrayList<Path> filesPath=xmlExtractor.getHmlFilesPath();
-		for (Path pathString : filesPath) {
-			Path fullPath=Paths.get(pathHandler.getBookPath().toString(), pathString.toString());
-			File file= new File(fullPath.toString());
+		for (int i = 0; i < filesPath.size(); i++) {
+			Path fullPath=Paths.get(pathHandler.getBookPath().toString(), filesPath.get(i).toString());
+			InformedFile file= new InformedFile(fullPath.toString());
+			file.setOrderIndex(i);
 			htmlTextfiles.add(file);
 			System.out.println(fullPath.toString());
 		}
@@ -212,13 +211,12 @@ public class BookProcess extends Task<Void>{
 	/**
 	 * extracts the html document of the file
 	 */
-	private Document extractDocumentFromFile(File file) {
-		File htmlFile = file;
+	private Document extractDocumentFromFile(InformedFile file) {
+		InformedFile htmlFile = file;
 		Document fileHtmlDocument = null;
 		try {
 			fileHtmlDocument = Jsoup.parse(htmlFile, "UTF-8");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return fileHtmlDocument;
@@ -231,14 +229,18 @@ public class BookProcess extends Task<Void>{
 		//sends a list of the extracted files to ebook
 
 		listExtractedFiles();
-		ArrayList<File> htmlfiles=eBook.getHtmlTextfiles();
+		htmlfiles=eBook.getHtmlTextfiles();
 
 		for (int i = 0; i < highlightList.size(); i++) {
 			//Document htmlDoc=extractDocumentFromFile(htmlFile);
-			Boolean highlightFoundBoolean=searchReplaceInHtml(eBook,highlightList.get(i),htmlfiles);
-			if (highlightFoundBoolean=true) {
+			Boolean highlightFoundBoolean=searchReplaceInHtml(eBook,highlightList.get(i));
+			if (highlightFoundBoolean) {
 				addMessagesToDisplay("highlight "+i+" found"+"\n");
 			}
+			else {
+				addMessagesToDisplay("highlight "+i+" not found!! :("+"\n");
+			}
+			
 
 		}
 
@@ -249,12 +251,11 @@ public class BookProcess extends Task<Void>{
 	 * an underlined tag.
 	 *
 	 */
-	private boolean searchReplaceInHtml(EBook eBook,Highlight highlight, ArrayList<File> htmlfiles) {
+	private boolean searchReplaceInHtml(EBook eBook,Highlight highlight) {
 		//gets the list of files
 		boolean highlightFoundBoolean=false;
 		for (int i = 0; i < htmlfiles.size(); i++) {
-			highlightFoundBoolean=false;
-			File file=htmlfiles.get(i);
+			InformedFile file=htmlfiles.get(i);
 			System.out.println(file.getName());
 			Document htmlDoc=extractDocumentFromFile(file);
 			String searcheable=highlight.getSearchable();
@@ -263,10 +264,22 @@ public class BookProcess extends Task<Void>{
 			if (founds.size()!=0) {
 				highlightFoundBoolean=true;
 				Element found= founds.first();
+				//optimizer
+				if (ProcessingStatus.getPastHighlight()!=null) {
+					int value=highlight.getHighlightFileIndex()-ProcessingStatus.getPastHighlight().getHighlightFileIndex();
+					if (value>1) {
+						int readFiles=highlight.getHighlightFileIndex()-1;
+						for (int j = 0; j < readFiles; j++) {
+							htmlfiles.remove(j);
+						}
+					}
+				}
 				//informs what is found 
 				informer (found, i,file, highlight,htmlfiles);
 				//counts the highlights
 				numberHighlightsFound++;
+				//saved the highlight as past highlight for optimization purposes
+				ProcessingStatus.setPastHighlight(highlight);
 				//replaces the text in the book with the bookmarked and highlighted text
 				textReplacer(found, i, highlight);
 				//saves the modified file
@@ -279,6 +292,7 @@ public class BookProcess extends Task<Void>{
 		}
 
 		//add message to display and passes the number of highlights to eBook
+		System.out.println(highlightFoundBoolean);
 		return highlightFoundBoolean;
 
 	}
@@ -344,7 +358,7 @@ public class BookProcess extends Task<Void>{
 	 * 
 	 *informs ebook and highlight of the information found on the search
 	 */
-	public void informer (Element found,int i,File file, Highlight highlight,  ArrayList<File> htmlfiles) {
+	public void informer (Element found,int i,InformedFile file, Highlight highlight,  ArrayList<InformedFile> htmlfiles) {
 		//saves the file where the highlight was found
 		highlight.setContainerFile(file);
 		//produces the links
@@ -354,7 +368,7 @@ public class BookProcess extends Task<Void>{
 		//saves the paragraph where the highlight was found
 		highlight.setHighlightLocationInHtml(found.elementSiblingIndex());
 		//saves the index file where it was found
-		highlight.setHighlightFileIndex(htmlfiles.indexOf(htmlfiles.get(i)));
+		highlight.setHighlightFileIndex(htmlfiles.get(i).getOrderIndex());
 		//saves the highlights in book
 		saveHighlightInEBook(highlight);
 	}

@@ -45,7 +45,7 @@ public class EBook {
 	@OneToMany(mappedBy = "eBook")
 	private final List<Highlight>highlightsFound= new ArrayList<Highlight>();
 
-	private ArrayList<File> htmlTextfiles=new ArrayList<File>();
+	private ArrayList<InformedFile> htmlTextfiles=new ArrayList<InformedFile>();
 	private String containerFolder;
 	//paths
 
@@ -68,11 +68,11 @@ public class EBook {
 		this.numberHighlightsFound = numberHighlightsFound;
 	}
 
-	public ArrayList<File> getHtmlTextfiles() {
+	public ArrayList<InformedFile> getHtmlTextfiles() {
 		return htmlTextfiles;
 	}
 
-	public void setHtmlTextfiles(ArrayList<File> htmlTextfiles) {
+	public void setHtmlTextfiles(ArrayList<InformedFile> htmlTextfiles) {
 		this.htmlTextfiles = htmlTextfiles;
 	}
 
