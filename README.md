@@ -18,7 +18,7 @@ maven
 GIT
 
 # Author
-Santiago A. Caxorla
+Santiago A. Kaxorla
 
 # Acknowledgments
 This Project could not have been posible without the help of:
