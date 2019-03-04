@@ -18,6 +18,7 @@ import org.jsoup.select.Elements;
 
 import com.googlecode.jatl.Html;
 
+import controllers.PopupWindowController;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -89,6 +90,17 @@ public class BookProcess extends Task<Void>{
 		th.start();
 		return null;
 
+	}
+	/**
+	 * starts the processBook in a new thread
+	 */
+	public void start() {
+		Thread th = new Thread(this);
+        th.setDaemon(false);
+        th.start();
+        this.setOnSucceeded( e -> {
+        	ModelInterface.popupWindowView(this.getHighlightsFound());
+        });
 	}
 
 	/**
@@ -266,8 +278,8 @@ public class BookProcess extends Task<Void>{
 				highlightFoundBoolean=true;
 				Element found= founds.first();
 				//optimizer
-				if (ProcessingStatus.getPastHighlight()!=null) {
-					int value=highlight.getHighlightFileIndex()-ProcessingStatus.getPastHighlight().getHighlightFileIndex();
+				if (ModelInterface.getPastHighlight()!=null) {
+					int value=highlight.getHighlightFileIndex()-ModelInterface.getPastHighlight().getHighlightFileIndex();
 					if (value>1) {
 						int readFiles=highlight.getHighlightFileIndex()-1;
 						for (int j = 0; j < readFiles; j++) {
@@ -280,7 +292,7 @@ public class BookProcess extends Task<Void>{
 				//counts the highlights
 				numberHighlightsFound++;
 				//saved the highlight as past highlight for optimization purposes
-				ProcessingStatus.setPastHighlight(highlight);
+				ModelInterface.setPastHighlight(highlight);
 				//replaces the text in the book with the bookmarked and highlighted text
 				textReplacer(found, i, highlight);
 				//saves the modified file
@@ -375,7 +387,7 @@ public class BookProcess extends Task<Void>{
 	}
 	
 	public void saveBookInStatusObservable (EBook eBook) {
-		ProcessingStatus.addBookToObservable(eBook);
+		ModelInterface.addBookToObservable(eBook);
 	}
 	
 

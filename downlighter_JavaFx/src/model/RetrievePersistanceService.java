@@ -1,17 +1,21 @@
 package model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
+/**
+ * 
+ * acts as a handler between the model, the gui and the database
+ *
+ */
 public class RetrievePersistanceService  extends Task<Void>{
 	public enum Mode {BEAN,EBOOK};
 	public Mode selectedMode;
@@ -24,17 +28,42 @@ public class RetrievePersistanceService  extends Task<Void>{
 	public RetrievePersistanceService() {
 		super();
 	}
-	
+	/**
+	 * retrieves data fron the database
+	 * @param selectedMode there are two modes EBOOK retrieves the highlights of the selected book and bean retrieves the list of archived books
+	 */
 	public RetrievePersistanceService(Mode selectedMode) {
 		super();
 		this.selectedMode = selectedMode;
 	}
-	
+	/**
+	 * 
+	 * @param selectedMode there are two modes EBOOK retrieves the highlights of the selected book and bean retrieves the list of archived books
+	 * @param selectedBook is the bool selected on the table.
+	 */
 	public RetrievePersistanceService(Mode selectedMode, int selectedBook) {
 		super();
 		this.selectedMode = selectedMode;
 		this.selectedBook=selectedBook;
 	}
+	/**
+	 * this method starts the thread
+	 */
+	public void start () {
+		Thread th = new Thread(this);
+		th.setDaemon(true);
+		th.start();	
+		if (selectedMode==Mode.EBOOK) {
+			this.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+				@Override
+				public void handle(WorkerStateEvent t) {
+					ModelInterface.popupWindowView(highlightObservableList);	
+				}
+			});
+		}
+	}
+	
+	
 	
 	private void getListOfBooks () {
 		emf=Persistence.createEntityManagerFactory("downlighter_JavaFx");
@@ -48,7 +77,7 @@ public class RetrievePersistanceService  extends Task<Void>{
 				EBookPersistenceBean eBookBean= new EBookPersistenceBean(eBook.getEbookId(), eBook.getContainerFolder());
 				eBookBean.setBookTitle(eBook.getBookTitle());
 				eBookBean.setNumberHighlightsFound(eBook.getNumberHighlightsFound());
-				ProcessingStatus.addBookToObservable(eBookBean);
+				ModelInterface.addBookToObservable(eBookBean);
 			}
 		}
 		em.close();
@@ -69,6 +98,7 @@ public class RetrievePersistanceService  extends Task<Void>{
 	
 	@Override
 	protected  Void call() throws Exception {
+		
 		switch (selectedMode) {
 		case BEAN:
 			getListOfBooks ();

@@ -1,19 +1,9 @@
 package controllers;
 
-import java.beans.EventHandler;
 import java.io.File;
-import java.io.IOException;
-
-import application.Main;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -23,7 +13,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import model.BookProcess;
-import model.Highlight;
 import model.InputHandler;
 
 public class BookProcessingTabController {
@@ -80,19 +69,13 @@ public class BookProcessingTabController {
 	}
 	@FXML
 	void matchHighlights() {
-		
 		if (highlightFile!=null&ebookFile!=null) {
 			pressed=true;
 			BookProcess processedBook=new BookProcess();
 			processedBook.messagesProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
 					messagesWindow.appendText(newValue);
 			});
-			Thread th = new Thread(processedBook);
-	        th.setDaemon(false);
-	        th.start();
-	        processedBook.setOnSucceeded( e -> {
-	        	PopupWindowView(processedBook.getHighlightsFound());
-	        });
+			processedBook.start();
 		}
 		
 	}
@@ -102,25 +85,6 @@ public class BookProcessingTabController {
 
 	}
 	
-	@FXML
-	void PopupWindowView(ObservableList<Highlight>highlightsFound) {
-		Stage primaryStage = new Stage();
-		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(Main.class.getResource("/views/PopupWindow.fxml"));
-		Parent root = null;
-		try {
-			root = loader.load();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		PopupWindowController controller = loader.getController();
-		controller.addHighlightToList(highlightsFound);
-		Scene scene = new Scene(root);
-		scene.getStylesheets().add(getClass().getResource("/application/application.css").toExternalForm());
-		primaryStage.setScene(scene);
-		primaryStage.show();
-	}
 	@FXML
     void initialize() {
         assert borderpane != null : "fx:id=\"borderpane\" was not injected: check your FXML file 'First_tab.fxml'.";
