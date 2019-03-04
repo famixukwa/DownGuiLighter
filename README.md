@@ -9,7 +9,7 @@ This  achieves very important goals. First it makes the user independent of the 
 The app could be a very important tool for archival and research purposes.
 
 # License
-this project is licensed under the GNU GENERAL PUBLIC LICENSE Version 2
+This project is licensed under the GNU GENERAL PUBLIC LICENSE Version 2
 
 # Built with
 maven
