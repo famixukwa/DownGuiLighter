@@ -83,6 +83,7 @@ public class BookProcess extends Task<Void>{
 		addMessagesToDisplay("Number of highlights found: "+numberHighlightsFound+"\n");
 		System.out.println(htmlListCreator());
 		SavePersistanceService task = new SavePersistanceService(eBook);
+		saveBookInStatusObservable(eBook);
 		Thread th = new Thread(task);
 		th.setDaemon(true);
 		th.start();
@@ -372,6 +373,11 @@ public class BookProcess extends Task<Void>{
 		//saves the highlights in book
 		saveHighlightInEBook(highlight);
 	}
+	
+	public void saveBookInStatusObservable (EBook eBook) {
+		ProcessingStatus.addBookToObservable(eBook);
+	}
+	
 
 	//getters and setters
 	public EBook getEBook() {

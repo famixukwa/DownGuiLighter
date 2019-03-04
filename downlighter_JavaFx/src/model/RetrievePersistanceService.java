@@ -48,7 +48,7 @@ public class RetrievePersistanceService  extends Task<Void>{
 				EBookPersistenceBean eBookBean= new EBookPersistenceBean(eBook.getEbookId(), eBook.getContainerFolder());
 				eBookBean.setBookTitle(eBook.getBookTitle());
 				eBookBean.setNumberHighlightsFound(eBook.getNumberHighlightsFound());
-				ebookObservableList.add(eBookBean);
+				ProcessingStatus.addBookToObservable(eBookBean);
 			}
 		}
 		em.close();

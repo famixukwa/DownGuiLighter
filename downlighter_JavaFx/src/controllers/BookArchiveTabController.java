@@ -20,6 +20,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import model.EBook;
 import model.Highlight;
+import model.ProcessingStatus;
 import model.RetrievePersistanceService;
 import model.RetrievePersistanceService.Mode;
 import model.SavePersistanceService;
@@ -100,7 +101,7 @@ public class BookArchiveTabController {
 		task.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 			@Override
 			public void handle(WorkerStateEvent t) {
-				ObservableList<EBook> observableList=task.getEbookObservableList();
+				ObservableList<EBook> observableList=ProcessingStatus.getEbookObservableList();
 				ObservableList<EBook> data=observableList;
 				bookTitleColumn.setCellValueFactory(new PropertyValueFactory<EBook,String>("bookTitle"));
 				highlightsColumn.setCellValueFactory(new PropertyValueFactory<EBook,String>("numberHighlightsFound"));
