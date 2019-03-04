@@ -20,7 +20,7 @@ Santiago A. Caxorla
 
 # Acknowledgments
 This Project could not have been posible without the help of:
-+Jsoup
-+Epublib
-+Zip4j
-+Jatl
++ Jsoup
++ Epublib
++ Zip4j
++ Jatl
