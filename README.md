@@ -6,19 +6,19 @@ Downlighter is way of maintaining a permanent collection of the highlights of al
 This  achieves to very important goals. First it makes the user independent of the hazards of commercial software, bankruptcy, abandonment of the project or changes in the policies of companies, to name some. Secondly empowers the management of the personal data aquired by the user letting him jumping from one reading app to the other without having to be preoccupied with the loss of data.
 The app could be a very important tool used for archival and research purposes.
 
-#License
+# License
 his project is licensed under the
 
-#Built with
+# Built with
 maven
 
-#Versioning
+# Versioning
 GIT
 
-#Author
+# Author
 Santiago A. Caxorla
 
-#Acknowledgments
+# Acknowledgments
 This Project could not have been posible without the help of:
 +Jsoup
 +Epublib
