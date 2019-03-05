@@ -37,6 +37,7 @@ public class EBook {
 	//metadata
 	private List<Author> author;
 	private String bookTitle;
+	private String pathToCover;
 	
 	//results of process
 	private int numberHighlightsFound;
@@ -101,12 +102,12 @@ public class EBook {
 		this.author = author;
 	}
 
-	@Lob
+	 
 	public void setHighlightsFound(Highlight highlight) {
 		highlightsFound.add(highlight);
 	}
 
-	@Lob
+	 
 	public  List<Highlight> getHighlightsFound() {
 		return highlightsFound;
 	}
@@ -120,6 +121,18 @@ public class EBook {
 	public void setBookTitle(String bookTitle) {
 		this.bookTitle = bookTitle;
 	}
+
+
+	public String getPathToCover() {
+		return pathToCover;
+	}
+
+
+	public void setPathToCover(String pathToCover) {
+		this.pathToCover = pathToCover;
+	}
+
+	
 
 
 

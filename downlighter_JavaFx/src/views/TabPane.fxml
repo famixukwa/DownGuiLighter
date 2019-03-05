@@ -2,15 +2,19 @@
 
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="454.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TabPaneController">
-   <children>
-      <TabPane prefHeight="435.0" prefWidth="607.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-7.0" AnchorPane.topAnchor="0.0">
-        <tabs>
-          <Tab text="Book Processing"> <fx:include source="BookProcessingTab.fxml" /></Tab>
-          <Tab text="Book Archive"> <fx:include source="BookArchiveTab.fxml" /></Tab>
-        </tabs>
+
+<TabPane prefWidth="900.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.TabPaneController">
+	<tabs>
+	
+      		<Tab text="Book Processing">
+			<fx:include source="BookProcessingTab.fxml" />
+		</Tab>
+		
+      		<Tab text="Book Archive">
+			<fx:include source="BookArchiveTab.fxml" />
+		</Tab>
+		
+      	</tabs>
+	
       </TabPane>
-   </children>
-</AnchorPane>

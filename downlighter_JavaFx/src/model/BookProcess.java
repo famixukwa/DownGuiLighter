@@ -79,6 +79,7 @@ public class BookProcess extends Task<Void>{
 		extractBookTitle();
 		fileRendering();
 		extractAuthor();
+		extractCover();
 		searchReplaceHighlights(eBook);
 		eBook.setNumberHighlightsFound(numberHighlightsFound);
 		addMessagesToDisplay("Number of highlights found: "+numberHighlightsFound+"\n");
@@ -125,14 +126,22 @@ public class BookProcess extends Task<Void>{
 		eBook.setAuthor(author);
 	}
 	/**
-	 * ectracts the author from the book and saves in the book
+	 * ectracts the title from the book and saves in the book
 	 */
 	private void extractBookTitle() {
 		Book book=openBook();
 		String bookTitle = book.getMetadata().getFirstTitle();
 		eBook.setBookTitle(bookTitle);
 	}
-
+	/**
+	 * ectracts the cover from the book and saves in the book
+	 */
+	private void extractCover() {
+		XmlExtractor xmlExtractor=new XmlExtractor(pathHandler.getOpfPath().toString());
+		Path relativePathToCover=xmlExtractor.getAttributePath("manifest", "id","cover");
+		Path pathToCover=Paths.get(pathHandler.getBookPath().toString(),relativePathToCover.toString());
+		eBook.setPathToCover(pathToCover.toString());
+	}
 	/**
 	 * renders the file system extracts the book 
 	 */

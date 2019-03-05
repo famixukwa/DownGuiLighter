@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
 import model.EBook;
 import model.ModelInterface;
 import model.RetrievePersistanceService;
@@ -19,6 +20,9 @@ public class BookArchiveTabController {
 
 	@FXML
 	private URL location;
+
+	@FXML
+	private AnchorPane anchorPane;
 
 	@FXML
 	private TableView<EBook> bookArchiveTable;
@@ -52,7 +56,9 @@ public class BookArchiveTabController {
 				trigguerPopup(selectedBook);
 			}
 		});
-
+		bookTitleColumn.prefWidthProperty().bind(anchorPane.widthProperty().divide(1.3));
+		highlightsColumn.prefWidthProperty().bind(bookTitleColumn.prefWidthProperty().divide(3));
+		
 		assert bookTitleColumn != null : "fx:id=\"bookTitleColumn\" was not injected: check your FXML file 'BookArchiveTab.fxml'.";
 		assert highlightsColumn != null : "fx:id=\"highlightsColumn\" was not injected: check your FXML file 'BookArchiveTab.fxml'.";
 	}

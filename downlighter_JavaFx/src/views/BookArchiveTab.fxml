@@ -4,12 +4,12 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.BookArchiveTabController">
+<AnchorPane fx:id="anchorPane" prefWidth="900.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.BookArchiveTabController">
    <children>
-      <TableView fx:id="bookArchiveTable" layoutX="25.0" layoutY="14.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
+      <TableView fx:id="bookArchiveTable" layoutY="51.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columns>
-          <TableColumn fx:id="bookTitleColumn" prefWidth="421.0" text="Book title" />
-          <TableColumn fx:id="highlightsColumn" prefWidth="150.0" text="Highlights found" />
+          <TableColumn fx:id="bookTitleColumn" prefWidth="634.0" style="-fx-padding:8;" styleClass=".table-view .table-cell" text="Book Title" />
+          <TableColumn fx:id="highlightsColumn" maxWidth="286.0" minWidth="100.0" prefWidth="265.0" style="-fx-padding:8;" styleClass=".table-view .table-cell" text="Highlights Found" />
         </columns>
       </TableView>
    </children>

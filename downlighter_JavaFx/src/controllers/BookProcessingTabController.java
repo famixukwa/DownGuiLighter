@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
@@ -20,7 +21,7 @@ public class BookProcessingTabController {
 	boolean pressed=false;
 	private File highlightFile;
 	private File ebookFile;
-	
+
 	public void setStage(Stage primaryStage) {
 		Stage controllerStage=primaryStage;
 	}
@@ -28,6 +29,9 @@ public class BookProcessingTabController {
 		String value=ebookSelected.toString();
 		ebookSelected.setText(value);
 	}
+
+	@FXML
+	private ImageView cover;
 	@FXML
 	private BorderPane borderpane;
 	@FXML
@@ -73,28 +77,28 @@ public class BookProcessingTabController {
 			pressed=true;
 			BookProcess processedBook=new BookProcess();
 			processedBook.messagesProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
-					messagesWindow.appendText(newValue);
+				messagesWindow.appendText(newValue);
 			});
 			processedBook.start();
 		}
-		
+
 	}
 
 	@FXML
 	void updateMessages () {
 
 	}
-	
-	@FXML
-    void initialize() {
-        assert borderpane != null : "fx:id=\"borderpane\" was not injected: check your FXML file 'First_tab.fxml'.";
-        assert base_tab_1 != null : "fx:id=\"base_tab_1\" was not injected: check your FXML file 'First_tab.fxml'.";
-        assert choose_ebook != null : "fx:id=\"choose_ebook\" was not injected: check your FXML file 'First_tab.fxml'.";
-        assert ebookSelected != null : "fx:id=\"ebookSelected\" was not injected: check your FXML file 'First_tab.fxml'.";
-        assert highlightsSelected != null : "fx:id=\"highlightsSelected\" was not injected: check your FXML file 'First_tab.fxml'.";
-        assert Choose_highlight_HTML != null : "fx:id=\"Choose_highlight_HTML\" was not injected: check your FXML file 'First_tab.fxml'.";
-        assert messagesWindow != null : "fx:id=\"messagesWindow\" was not injected: check your FXML file 'First_tab.fxml'.";
 
-    }
+	@FXML
+	void initialize() {
+		assert borderpane != null : "fx:id=\"borderpane\" was not injected: check your FXML file 'First_tab.fxml'.";
+		assert base_tab_1 != null : "fx:id=\"base_tab_1\" was not injected: check your FXML file 'First_tab.fxml'.";
+		assert choose_ebook != null : "fx:id=\"choose_ebook\" was not injected: check your FXML file 'First_tab.fxml'.";
+		assert ebookSelected != null : "fx:id=\"ebookSelected\" was not injected: check your FXML file 'First_tab.fxml'.";
+		assert highlightsSelected != null : "fx:id=\"highlightsSelected\" was not injected: check your FXML file 'First_tab.fxml'.";
+		assert Choose_highlight_HTML != null : "fx:id=\"Choose_highlight_HTML\" was not injected: check your FXML file 'First_tab.fxml'.";
+		assert messagesWindow != null : "fx:id=\"messagesWindow\" was not injected: check your FXML file 'First_tab.fxml'.";
+
+	}
 
 }

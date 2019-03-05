@@ -105,5 +105,35 @@ public class XmlExtractor {
 		return resultPath;
 
 	}
+	
+	public  Path getAttributePath(String parentNode,String childAttribute, String idValue) {
+		DocumentBuilder dBuilder;
+		Document doc =null;
+		Path resultPath=null;
+		String spathToCover = null;
+		ArrayList<String> filesPath=new ArrayList<String>();
+		try {
+			dBuilder = dbFactory.newDocumentBuilder();
+			doc = dBuilder.parse(fXmlFile);
+		} catch (ParserConfigurationException | SAXException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		doc.getDocumentElement().normalize();
+		Node manifest = doc.getElementsByTagName(parentNode).item(0);
+		NodeList manifestList = manifest.getChildNodes();
+		for (int i = 0; i < manifestList.getLength(); i++) {
+			Node children = manifestList.item(i);
+			if (children.getNodeType() == Node.ELEMENT_NODE) {
+				Element element=(Element)children;
+				String s=element.getAttribute(childAttribute);
+				if (s.equals("cover")) {
+					resultPath= Paths.get(element.getAttribute("href"));
+					System.out.println(resultPath.toString());
+				}
+			}
+		}
+		return resultPath;
+	}
 
 }

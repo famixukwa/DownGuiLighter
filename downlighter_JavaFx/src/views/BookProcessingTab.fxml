@@ -1,18 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="base_tab_1" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.BookProcessingTabController">
+<AnchorPane fx:id="base_tab_1" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.BookProcessingTabController">
    <children>
-      <Button fx:id="choose_ebook" layoutX="215.0" layoutY="40.0" mnemonicParsing="false" onAction="#chooseFileEbook" text="Choose ebook File" />
-      <TextField fx:id="ebookSelected" layoutX="34.0" layoutY="40.0" />
-      <Button layoutX="34.0" layoutY="80.0" mnemonicParsing="false" text="Button" />
-      <TextField fx:id="highlightsSelected" layoutX="34.0" layoutY="80.0" />
-      <Button fx:id="Choose_highlight_HTML" layoutX="215.0" layoutY="80.0" mnemonicParsing="false" onAction="#chooseFileHighlights" text="Choose highlights HTML" />
-      <TextArea fx:id="messagesWindow" layoutX="34.0" layoutY="151.0" prefHeight="227.0" prefWidth="316.0" wrapText="true" />
-      <Button layoutX="415.0" layoutY="325.0" mnemonicParsing="false" onAction="#matchHighlights" text="Match highlights" />
+      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="598.0" layoutY="-25.0" pickOnBounds="true" preserveRatio="true" AnchorPane.topAnchor="20.0" />
+      <VBox layoutX="34.0" layoutY="80.0" AnchorPane.topAnchor="30.0">
+         <children>
+            <AnchorPane>
+               <children>
+                  <Button fx:id="choose_ebook" layoutX="180.0" mnemonicParsing="false" onAction="#chooseFileEbook" text="Choose ebook File" />
+                  <TextField fx:id="ebookSelected" />
+               </children>
+               <VBox.margin>
+                  <Insets bottom="15.0" />
+               </VBox.margin>
+            </AnchorPane>
+            <AnchorPane>
+               <children>
+                  <TextField fx:id="highlightsSelected" />
+                  <Button fx:id="Choose_highlight_HTML" layoutX="181.0" mnemonicParsing="false" onAction="#chooseFileHighlights" text="Choose highlights HTML" />
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+      <AnchorPane layoutY="125.0" prefHeight="173.0" prefWidth="822.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="34.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="200.0">
+         <children>
+            <TextArea fx:id="messagesWindow" layoutY="13.0" prefHeight="214.0" prefWidth="639.0" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="183.0" AnchorPane.topAnchor="0.0" />
+            <Button mnemonicParsing="false" onAction="#matchHighlights" text="Match highlights" AnchorPane.rightAnchor="14.0" />
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>
