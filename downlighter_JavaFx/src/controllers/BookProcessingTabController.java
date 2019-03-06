@@ -10,6 +10,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -36,6 +37,8 @@ public class BookProcessingTabController {
 		String value=ebookSelected.toString();
 		ebookSelected.setText(value);
 	}
+	@FXML
+    private ProgressBar progresBar;
 	@FXML
 	private Label titleLegend;
 	@FXML
@@ -159,7 +162,14 @@ public class BookProcessingTabController {
 		assert highlightsSelected != null : "fx:id=\"highlightsSelected\" was not injected: check your FXML file 'First_tab.fxml'.";
 		assert Choose_highlight_HTML != null : "fx:id=\"Choose_highlight_HTML\" was not injected: check your FXML file 'First_tab.fxml'.";
 		assert messagesWindow != null : "fx:id=\"messagesWindow\" was not injected: check your FXML file 'First_tab.fxml'.";
+		ModelInterface.progressProperty().addListener((ObservableValue<? extends Number> observable, Number oldvalue, Number newValue )-> {
+			Platform.runLater(
+					() -> {
+						progresBar.setProgress(ModelInterface.getProgress());
+					}
+					);
 
+		});
 	}
 
 }

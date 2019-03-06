@@ -45,10 +45,8 @@ public class BookProcess extends Task<Void>{
 	 * metadata properties
 	 */
 	private static StringProperty coverPath= new SimpleStringProperty();
-	private static StringProperty bookTitleP= new SimpleStringProperty();
-	private static StringProperty author= new SimpleStringProperty();
-	private static StringProperty description= new SimpleStringProperty();
-	private static StringProperty publisher= new SimpleStringProperty();
+	
+	
 	//links
 	private Highlight highlight;
 	public StringProperty messages;
@@ -83,8 +81,10 @@ public class BookProcess extends Task<Void>{
 	@Override
 	protected Void call() throws Exception {
 		createHighlights(highlightSnippets);
+		ModelInterface.setProgress(0.10F);
 		extractBookTitle();
 		fileRendering();
+		ModelInterface.setProgress(0.20F);
 		extractMetaData();
 		extractCover();
 		searchReplaceHighlights(eBook);
@@ -92,10 +92,12 @@ public class BookProcess extends Task<Void>{
 		addMessagesToDisplay("Number of highlights found: "+numberHighlightsFound+"\n");
 		System.out.println(htmlListCreator());
 		SavePersistanceService task = new SavePersistanceService(eBook);
+		ModelInterface.setProgress(0.95F);
 		saveBookInStatusObservable(eBook);
 		Thread th = new Thread(task);
 		th.setDaemon(true);
 		th.start();
+		ModelInterface.setProgress(1F);
 		return null;
 
 	}
@@ -180,7 +182,7 @@ public class BookProcess extends Task<Void>{
 		System.out.println(pathToCover.toString());
 		eBook.setCoverPath(pathToCover.toString());
 		coverPath.set(pathToCover.toString());
-		ModelInterface.setCoverPath(this.coverPathProperty());
+		ModelInterface.setCoverPath(pathToCover.toString());
 	}
 	/**
 	 * renders the file system extracts the book 
@@ -294,6 +296,9 @@ public class BookProcess extends Task<Void>{
 		htmlfiles=eBook.getHtmlTextfiles();
 
 		for (int i = 0; i < highlightList.size(); i++) {
+			//set progress
+			Double d =0.7/htmlfiles.size();
+			ModelInterface.setProgress(i*d+0.2);
 			//Document htmlDoc=extractDocumentFromFile(htmlFile);
 			Boolean highlightFoundBoolean=searchReplaceInHtml(eBook,highlightList.get(i));
 			if (highlightFoundBoolean) {
@@ -302,8 +307,6 @@ public class BookProcess extends Task<Void>{
 			else {
 				addMessagesToDisplay("highlight "+i+" not found!! :("+"\n");
 			}
-			
-
 		}
 
 	}
@@ -316,6 +319,7 @@ public class BookProcess extends Task<Void>{
 	private boolean searchReplaceInHtml(EBook eBook,Highlight highlight) {
 		//gets the list of files
 		boolean highlightFoundBoolean=false;
+		
 		for (int i = 0; i < htmlfiles.size(); i++) {
 			InformedFile file=htmlfiles.get(i);
 			System.out.println(file.getName());
@@ -346,31 +350,13 @@ public class BookProcess extends Task<Void>{
 				textReplacer(found, i, highlight);
 				//saves the modified file
 				saveTheHtmlOfBook(htmlDoc,file,eBook);
-			} else {
-				//add message to display
-				//addMessagesToDisplay("highlight "+i+" not found"+"\n");
+							
 			}
-
 		}
 
 		//add message to display and passes the number of highlights to eBook
 		System.out.println(highlightFoundBoolean);
 		return highlightFoundBoolean;
-
-	}
-	/**
-	 * saves the highlights in the book
-	 *
-	 */
-	private void saveHighlightInEBook (Highlight highlight) {
-		eBook.setHighlightsFound(highlight);
-		highlight.eBook=eBook;
-	}
-	/**
-	 * add messages to display in the gui
-	 */
-	void addMessagesToDisplay(String s) {
-		messages.set(s);
 	}
 	/**
 	 * Helper method for searchReplaceInBook that takes the found element and the i integer for the for loop
@@ -386,6 +372,21 @@ public class BookProcess extends Task<Void>{
 		String modifiedText=textToModify.replace(highlight.getHighligghtText(), textHighlighted);
 		found.html(modifiedText);
 	}
+	/**
+	 * saves the highlights in the book
+	 *
+	 */
+	private void saveHighlightInEBook (Highlight highlight) {
+		eBook.setHighlightsFound(highlight);
+		highlight.eBook=eBook;
+	}
+	/**
+	 * add messages to display in the gui
+	 */
+	void addMessagesToDisplay(String s) {
+		messages.set(s);
+	}
+	
 	/**
 	 * method that creates an html link list to be used in the book as a way to see where the highlight was 
 	 */
@@ -433,6 +434,7 @@ public class BookProcess extends Task<Void>{
 		highlight.setHighlightFileIndex(htmlfiles.get(i).getOrderIndex());
 		//saves the highlights in book
 		saveHighlightInEBook(highlight);
+		
 	}
 	
 	public void saveBookInStatusObservable (EBook eBook) {
@@ -475,20 +477,6 @@ public class BookProcess extends Task<Void>{
 		this.coverPathProperty().set(coverPath);
 	}
 
-	public StringProperty authorProperty() {
-		return this.author;
-	}
-	
-
-	public String getAuthor() {
-		return this.authorProperty().get();
-	}
-	
-
-	public void setAuthor(final String author) {
-		this.authorProperty().set(author);
-	}
-	
 	
 
 

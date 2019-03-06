@@ -6,8 +6,13 @@ package model;
 import java.io.IOException;
 import application.Main;
 import controllers.PopupWindowController;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.property.StringPropertyBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -27,6 +32,9 @@ public  class  ModelInterface {
 	private static StringProperty description= new SimpleStringProperty();
 	private static StringProperty publisher= new SimpleStringProperty();
 	
+	//progress Bar
+	private static DoubleProperty progress= new SimpleDoubleProperty();
+	
 	//stores a temporal book while making search and replace
 	public static Highlight getPastHighlight() {
 		return pastHighlight;
@@ -34,6 +42,8 @@ public  class  ModelInterface {
 	
 	// connection  between processBook, processingTab and popupWindow
 	
+	
+
 	/**
 	 * it creates a popupview on the gui
 	 * @param highlightsFound
@@ -75,13 +85,7 @@ public  class  ModelInterface {
 		ebookObservableList.add(eBook);
 	}
 
-	public static StringProperty getCoverPath() {
-		return coverPath;
-	}
-
-	public static void setCoverPath(StringProperty coverPath) {
-		ModelInterface.coverPath = coverPath;
-	}
+	
 
 	public static StringProperty bookTitlePProperty() {
 		return bookTitleP;
@@ -147,6 +151,36 @@ public  class  ModelInterface {
 	public static void setPublisher(final String publisher) {
 		ModelInterface.publisherProperty().set(publisher);
 	}
+
+	public static StringProperty coverPathProperty() {
+		return ModelInterface.coverPath;
+	}
+	
+
+	public static String getCoverPath() {
+		return ModelInterface.coverPathProperty().get();
+	}
+	
+
+	public static void setCoverPath(final String coverPath) {
+		ModelInterface.coverPathProperty().set(coverPath);
+	}
+
+	public static DoubleProperty progressProperty() {
+		return ModelInterface.progress;
+	}
+	
+
+	public static double getProgress() {
+		return ModelInterface.progressProperty().get();
+	}
+	
+
+	public static  void setProgress(final double progress) {
+		ModelInterface.progressProperty().set(progress);
+	}
+	
+	
 	
 	
 	

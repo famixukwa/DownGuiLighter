@@ -1,6 +1,8 @@
 package controllers;
 
-import java.awt.TextArea;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -12,6 +14,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -23,6 +28,8 @@ import model.ModelInterface;
 
 public class PopupWindowController {
 	@FXML
+	private ImageView cover;
+	@FXML
 	private Label title;
 
 	@FXML
@@ -31,7 +38,7 @@ public class PopupWindowController {
 	@FXML
 	private Label publisher;
 	@FXML
-    private TextArea description;
+	private TextArea description;
 
 	@FXML
 	private AnchorPane splitPaneAnchorPane;
@@ -51,11 +58,34 @@ public class PopupWindowController {
 
 	@FXML
 	public void addMetadata(EBook eBook) {
-		author.setText(eBook.getAuthor());
-		title.setText(eBook.getBookTitleP());
-		publisher.setText(eBook.getPublisher());
-//		description.setText(eBook.getDescription());
-		
+		if (eBook.getCoverPath()!=null) {
+			Image image = null;
+			try {
+				image = new Image(new FileInputStream(eBook.getCoverPath()));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			cover.setImage(image);
+			cover.setFitWidth(100);
+			cover.setPreserveRatio(true);
+			cover.setSmooth(true);
+		}
+		if (eBook.getAuthor()!=null) {
+			author.setText(eBook.getAuthor());
+		}
+		if (eBook.getAuthor()!=null) {
+			author.setText(eBook.getAuthor());
+		}
+		if (eBook.getBookTitleP()!=null) {
+			title.setText(eBook.getBookTitleP());
+		}
+		if (eBook.getPublisher()!=null) {
+			publisher.setText(eBook.getPublisher());
+		}
+		if (eBook.getDescription()!=null) {
+			description.setText(eBook.getDescription());
+		}
 	}
 	public void initialize() {
 		assert bookView != null : "fx:id=\"bookView\" was not injected: check your FXML file 'PopupWindow.fxml'.";
@@ -72,6 +102,7 @@ public class PopupWindowController {
 	@FXML
 	public void addHighlightToList(ObservableList<Highlight>highlightsFound) {
 		ObservableList<Highlight> data=highlightsFound;
+		System.out.println("numero de highlights en popup"+data.size());
 		listOfhighlights.setItems(data);
 		listOfhighlights.setCellFactory(listView ->{
 			ListCell <Highlight> cell= new ListCell<Highlight>() {

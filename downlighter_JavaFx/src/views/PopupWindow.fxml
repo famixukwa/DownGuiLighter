@@ -11,42 +11,42 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.web.WebView?>
 
-<AnchorPane minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.PopupWindowController">
+<AnchorPane minHeight="600.0" minWidth="800.0" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.PopupWindowController">
    <children>
-      <AnchorPane>
+      <AnchorPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <AnchorPane layoutX="25.0" layoutY="25.0" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="549.0" AnchorPane.topAnchor="25.0">
                <children>
-                  <ImageView fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <ImageView fx:id="cover" fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
-            <AnchorPane layoutX="125.0" layoutY="25.0" prefHeight="103.0" prefWidth="250.0">
+            <AnchorPane AnchorPane.leftAnchor="125.0" AnchorPane.rightAnchor="475.0" AnchorPane.topAnchor="35.0">
                <children>
-                  <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="0.0">
+                  <GridPane prefHeight="62.0" prefWidth="279.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.0" minWidth="10.0" prefWidth="79.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="121.0" minWidth="10.0" prefWidth="121.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.0" minWidth="10.0" prefWidth="82.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="237.0" minWidth="185.0" prefWidth="197.0" />
                     </columnConstraints>
                     <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Label text="Book Title:" />
                         <Label text="Author:" GridPane.rowIndex="1" />
-                        <Label text="ISBN :" GridPane.rowIndex="2" />
-                        <Label fx:id="title" text="Label" GridPane.columnIndex="1" />
-                        <Label fx:id="author" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label fx:id="publisher" text="Label" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label text="Publisher:" GridPane.rowIndex="2" />
+                        <Label fx:id="title" prefHeight="16.0" prefWidth="286.0" text="Label" wrapText="true" GridPane.columnIndex="1" />
+                        <Label fx:id="author" text="Label" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label fx:id="publisher" text="Label" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                      </children>
                   </GridPane>
                </children>
             </AnchorPane>
-            <Label layoutX="336.0" layoutY="34.0" text="Description:" AnchorPane.leftAnchor="336.0" AnchorPane.topAnchor="34.0" />
-            <AnchorPane layoutX="431.0" layoutY="34.0" prefHeight="100.0" AnchorPane.leftAnchor="431.0" AnchorPane.topAnchor="34.0">
+            <AnchorPane prefHeight="150.0" prefWidth="400.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="25.0">
                <children>
-                  <TextArea prefHeight="100.0" prefWidth="300.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <Label text="Description:" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="34.0" />
+                  <TextArea fx:id="description" editable="false" prefHeight="142.0" prefWidth="300.0" wrapText="true" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
          </children>

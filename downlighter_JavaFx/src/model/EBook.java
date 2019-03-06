@@ -40,11 +40,6 @@ public class EBook {
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private int ebookId;
 	//metadata
-//	private List<Author> author;
-//	private String bookTitle;
-//	private String pathToCover;
-//	private List<String> publisher;
-//	private List<String> description;
 	@Transient
 	private final StringProperty coverPath= new SimpleStringProperty();
 	@Transient

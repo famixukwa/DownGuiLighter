@@ -97,6 +97,8 @@ public class RetrievePersistanceService  extends Task<Void>{
 		q.setParameter("ebookId",ebookId );
 		qb.setParameter("ebookId",ebookId );
 		List<Highlight> highlightList=(List<Highlight>)q.getResultList();
+		System.out.println("numero de highlights encontrado "+highlightList.size());
+		System.out.println("texto  deun highlight "+highlightList.get(0).getHighligghtText());
 		highlightObservableList =FXCollections.observableList(highlightList);
 		eBook=(EBook)qb.getSingleResult();
 		System.out.println("autor de retrieve"+eBook.getAuthor());
