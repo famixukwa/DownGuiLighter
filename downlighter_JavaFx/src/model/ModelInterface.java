@@ -6,6 +6,8 @@ package model;
 import java.io.IOException;
 import application.Main;
 import controllers.PopupWindowController;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -16,6 +18,16 @@ import javafx.stage.Stage;
 public  class  ModelInterface {
 	private static Highlight pastHighlight;
 	private static ObservableList<EBook> ebookObservableList= FXCollections.observableArrayList();
+	/**
+	 * metadata properties
+	 */
+	private static StringProperty coverPath= new SimpleStringProperty();
+	private static StringProperty bookTitleP= new SimpleStringProperty();
+	private static StringProperty author= new SimpleStringProperty();
+	private static StringProperty description= new SimpleStringProperty();
+	private static StringProperty publisher= new SimpleStringProperty();
+	
+	//stores a temporal book while making search and replace
 	public static Highlight getPastHighlight() {
 		return pastHighlight;
 	}
@@ -26,7 +38,7 @@ public  class  ModelInterface {
 	 * it creates a popupview on the gui
 	 * @param highlightsFound
 	 */
-	public static void popupWindowView(ObservableList<Highlight>highlightsFound) {
+	public static void popupWindowView(ObservableList<Highlight>highlightsFound, EBook eBook) {
 		Stage primaryStage = new Stage();
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(Main.class.getResource("/views/PopupWindow.fxml"));
@@ -38,6 +50,7 @@ public  class  ModelInterface {
 		}
 		PopupWindowController controller = loader.getController();
 		controller.addHighlightToList(highlightsFound);
+		controller.addMetadata(eBook);
 		Scene scene = new Scene(root);
 //		scene.getStylesheets().add(getClass().getResource("/application/application.css").toExternalForm());
 		primaryStage.setScene(scene);
@@ -51,13 +64,90 @@ public  class  ModelInterface {
 	public static ObservableList<EBook> getEbookObservableList() {
 		return ebookObservableList;
 	}
+	
 
 	//temporal bookprocess variable for the search algorithm
 	public static void setPastHighlight(Highlight pastHighlight) {
 		ModelInterface.pastHighlight = pastHighlight;
 	}
+	
 	public static void addBookToObservable(EBook eBook) {
 		ebookObservableList.add(eBook);
 	}
+
+	public static StringProperty getCoverPath() {
+		return coverPath;
+	}
+
+	public static void setCoverPath(StringProperty coverPath) {
+		ModelInterface.coverPath = coverPath;
+	}
+
+	public static StringProperty bookTitlePProperty() {
+		return bookTitleP;
+	}
+	
+
+	public static String getBookTitleP() {
+		return bookTitleP.toString();
+	}
+	
+
+	public static void setBookTitleP(final String bookTitleP) {
+		ModelInterface.bookTitlePProperty().set(bookTitleP);
+	}
+	
+	
+	
+
+	public static StringProperty authorProperty() {
+		return ModelInterface.author;
+	}
+	
+
+	public static String getAuthor() {
+		return ModelInterface.authorProperty().get();
+	}
+	
+
+	public static void setAuthor(final String author) {
+		ModelInterface.authorProperty().set(author);
+		System.out.println("text : "+author);
+	}
+	
+	
+	
+	
+
+	public static StringProperty descriptionProperty() {
+		return ModelInterface.description;
+	}
+	
+
+	public static String getDescription() {
+		return ModelInterface.descriptionProperty().get();
+	}
+	
+
+	public static void setDescription(final String description) {
+		ModelInterface.descriptionProperty().set(description);
+	}
+	
+
+	public static StringProperty publisherProperty() {
+		return ModelInterface.publisher;
+	}
+	
+
+	public static String getPublisher() {
+		return ModelInterface.publisherProperty().get();
+	}
+	
+
+	public static void setPublisher(final String publisher) {
+		ModelInterface.publisherProperty().set(publisher);
+	}
+	
+	
 	
 }

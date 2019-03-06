@@ -46,7 +46,7 @@ public class BookArchiveTabController {
 		task.start();
 		ObservableList<EBook> observableList=ModelInterface.getEbookObservableList();
 		ObservableList<EBook> data=observableList;
-		bookTitleColumn.setCellValueFactory(new PropertyValueFactory<EBook,String>("bookTitle"));
+		bookTitleColumn.setCellValueFactory(new PropertyValueFactory<EBook,String>("bookTitleP"));
 		highlightsColumn.setCellValueFactory(new PropertyValueFactory<EBook,String>("numberHighlightsFound"));
 		bookArchiveTable.setItems(data);
 		bookArchiveTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {

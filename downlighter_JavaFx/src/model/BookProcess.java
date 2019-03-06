@@ -41,7 +41,14 @@ public class BookProcess extends Task<Void>{
 	private List<Element> highlightSnippets=InputHandler.getHighlightFileSnippets();
 	private ObservableList<Highlight> highlightsFound=FXCollections.observableArrayList();
 	ArrayList<InformedFile> htmlfiles;
-
+	/**
+	 * metadata properties
+	 */
+	private static StringProperty coverPath= new SimpleStringProperty();
+	private static StringProperty bookTitleP= new SimpleStringProperty();
+	private static StringProperty author= new SimpleStringProperty();
+	private static StringProperty description= new SimpleStringProperty();
+	private static StringProperty publisher= new SimpleStringProperty();
 	//links
 	private Highlight highlight;
 	public StringProperty messages;
@@ -78,7 +85,7 @@ public class BookProcess extends Task<Void>{
 		createHighlights(highlightSnippets);
 		extractBookTitle();
 		fileRendering();
-		extractAuthor();
+		extractMetaData();
 		extractCover();
 		searchReplaceHighlights(eBook);
 		eBook.setNumberHighlightsFound(numberHighlightsFound);
@@ -100,7 +107,7 @@ public class BookProcess extends Task<Void>{
         th.setDaemon(false);
         th.start();
         this.setOnSucceeded( e -> {
-        	ModelInterface.popupWindowView(this.getHighlightsFound());
+        	ModelInterface.popupWindowView(this.getHighlightsFound(),eBook);
         });
 	}
 
@@ -120,18 +127,48 @@ public class BookProcess extends Task<Void>{
 	/**
 	 * ectracts the author from the book and saves in the book
 	 */
-	private void extractAuthor() {
+	private void extractMetaData() {
 		Book book=openBook();
-		List<Author> author = book.getMetadata().getAuthors();
-		eBook.setAuthor(author);
+		List<Author> authorList = book.getMetadata().getAuthors();
+		String bookTitle = book.getMetadata().getFirstTitle();
+		List<String> publisherList = book.getMetadata().getPublishers();
+		List<String> descriptionList = book.getMetadata().getDescriptions();
+		
+		eBook.setAuthor(umwrapList(authorList));
+		ModelInterface.setAuthor(umwrapList(authorList));
+		
+		eBook.setBookTitleP(bookTitle);
+		ModelInterface.setBookTitleP(bookTitle);
+		
+		eBook.setPublisher(umwrapList(publisherList));
+		ModelInterface.setPublisher(umwrapList(publisherList));
+		
+		eBook.setDescription(umwrapList(descriptionList));
+		ModelInterface.setDescription(umwrapList(descriptionList));
 	}
+	private String umwrapList(List list) {
+		
+		StringBuilder s = new StringBuilder();
+		for (int i = 0; i < list.size(); i++) {
+			
+		}
+		for (int i = 0; i < list.size(); i++) {
+			s.append(list.get(i).toString());
+			System.out.println(s);
+			if (i<list.size() || i!=0) {
+				s.append(",");
+			}
+		}
+		return s.toString();	
+	}
+	
 	/**
 	 * ectracts the title from the book and saves in the book
 	 */
 	private void extractBookTitle() {
 		Book book=openBook();
 		String bookTitle = book.getMetadata().getFirstTitle();
-		eBook.setBookTitle(bookTitle);
+		eBook.setBookTitleP(bookTitle);
 	}
 	/**
 	 * ectracts the cover from the book and saves in the book
@@ -140,7 +177,10 @@ public class BookProcess extends Task<Void>{
 		XmlExtractor xmlExtractor=new XmlExtractor(pathHandler.getOpfPath().toString());
 		Path relativePathToCover=xmlExtractor.getAttributePath("manifest", "id","cover");
 		Path pathToCover=Paths.get(pathHandler.getBookPath().toString(),relativePathToCover.toString());
-		eBook.setPathToCover(pathToCover.toString());
+		System.out.println(pathToCover.toString());
+		eBook.setCoverPath(pathToCover.toString());
+		coverPath.set(pathToCover.toString());
+		ModelInterface.setCoverPath(this.coverPathProperty());
 	}
 	/**
 	 * renders the file system extracts the book 
@@ -420,6 +460,36 @@ public class BookProcess extends Task<Void>{
 	public ObservableList<Highlight> getHighlightsFound() {
 		return highlightsFound;
 	}
+
+	public StringProperty coverPathProperty() {
+		return this.coverPath;
+	}
+	
+
+	public String getCoverPath() {
+		return this.coverPathProperty().get();
+	}
+	
+
+	public void setCoverPath(final String coverPath) {
+		this.coverPathProperty().set(coverPath);
+	}
+
+	public StringProperty authorProperty() {
+		return this.author;
+	}
+	
+
+	public String getAuthor() {
+		return this.authorProperty().get();
+	}
+	
+
+	public void setAuthor(final String author) {
+		this.authorProperty().set(author);
+	}
+	
+	
 
 
 

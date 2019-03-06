@@ -23,6 +23,7 @@ public class RetrievePersistanceService  extends Task<Void>{
 	EntityManager em;
 	private ObservableList<EBook> ebookObservableList= FXCollections.observableArrayList();
 	private ObservableList<Highlight> highlightObservableList;
+	private EBook eBook;
 	int selectedBook;
 	
 	public RetrievePersistanceService() {
@@ -57,7 +58,7 @@ public class RetrievePersistanceService  extends Task<Void>{
 			this.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 				@Override
 				public void handle(WorkerStateEvent t) {
-					ModelInterface.popupWindowView(highlightObservableList);	
+					ModelInterface.popupWindowView(highlightObservableList,eBook);	
 				}
 			});
 		}
@@ -65,19 +66,22 @@ public class RetrievePersistanceService  extends Task<Void>{
 	
 	
 	
+	public EBook geteBook() {
+		return eBook;
+	}
+	public void seteBook(EBook eBook) {
+		this.eBook = eBook;
+	}
 	private void getListOfBooks () {
 		emf=Persistence.createEntityManagerFactory("downlighter_JavaFx");
 		em=emf.createEntityManager(); 
 		em.getTransaction().begin(); 
 		Query q = em.createQuery("select e from EBook e");
 		List<EBook> EBookList=(List<EBook>)q.getResultList();
-		System.out.println(EBookList.size());
+		System.out.println("ebook list de Retrieve "+EBookList.size());
 		if (EBookList.size()>0) {
 			for (EBook eBook : EBookList) {
-				EBookPersistenceBean eBookBean= new EBookPersistenceBean(eBook.getEbookId(), eBook.getContainerFolder());
-				eBookBean.setBookTitle(eBook.getBookTitle());
-				eBookBean.setNumberHighlightsFound(eBook.getNumberHighlightsFound());
-				ModelInterface.addBookToObservable(eBookBean);
+				ModelInterface.addBookToObservable(eBook);
 			}
 		}
 		em.close();
@@ -88,9 +92,14 @@ public class RetrievePersistanceService  extends Task<Void>{
 		em=emf.createEntityManager(); 
 		em.getTransaction().begin(); 
 		Query q = em.createQuery("SELECT h FROM Highlight h JOIN h.eBook e WHERE e.ebookId = :ebookId");
+		Query qb = em.createQuery("SELECT e FROM EBook e WHERE e.ebookId = :ebookId");
+		System.out.println("inicio");
 		q.setParameter("ebookId",ebookId );
+		qb.setParameter("ebookId",ebookId );
 		List<Highlight> highlightList=(List<Highlight>)q.getResultList();
 		highlightObservableList =FXCollections.observableList(highlightList);
+		eBook=(EBook)qb.getSingleResult();
+		System.out.println("autor de retrieve"+eBook.getAuthor());
 		em.close();
 		emf.close();
 	}

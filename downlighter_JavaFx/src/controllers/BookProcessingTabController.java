@@ -1,12 +1,18 @@
 package controllers;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
+import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -15,6 +21,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import model.BookProcess;
 import model.InputHandler;
+import model.ModelInterface;
 
 public class BookProcessingTabController {
 	Window controllerStage;
@@ -29,7 +36,18 @@ public class BookProcessingTabController {
 		String value=ebookSelected.toString();
 		ebookSelected.setText(value);
 	}
-
+	@FXML
+	private Label titleLegend;
+	@FXML
+	private Label authorLegend;
+	@FXML
+	private Label publisherLegend;
+	@FXML
+	private Label title;
+	@FXML
+	private Label author;
+	@FXML
+	private Label publisher;
 	@FXML
 	private ImageView cover;
 	@FXML
@@ -79,7 +97,50 @@ public class BookProcessingTabController {
 			processedBook.messagesProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
 				messagesWindow.appendText(newValue);
 			});
+			processedBook.coverPathProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
+				Image image = null;
+				try {
+					image = new Image(new FileInputStream(newValue));
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				cover.setImage(image);
+				cover.setFitWidth(100);
+				cover.setPreserveRatio(true);
+				cover.setSmooth(true);
+			});
+			ModelInterface.authorProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
+				Platform.runLater(
+						() -> {
+							authorLegend.setText("Author:");
+							author.setText(newValue);
+						}
+						);
+
+			});
+			ModelInterface.bookTitlePProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
+				Platform.runLater(
+						() -> {
+							titleLegend.setText("Book Title:");
+							title.setText(newValue);
+						}
+						);
+
+			});
+			ModelInterface.publisherProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
+				Platform.runLater(
+						() -> {
+							publisherLegend.setText("Publisher:");
+							publisher.setText(newValue);
+						}
+						);
+
+			});
 			processedBook.start();
+
+
+
 		}
 
 	}
