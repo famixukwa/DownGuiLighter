@@ -32,17 +32,17 @@ public class Highlight {
 	private  String highligghtText;
 	@Lob 
 	@Column(length=2000)
-	private String cleanHilightText;
+	public String cleanHilightText;
 	@Transient
 	private String highlightDomSelector1="p:matches(.*";
 	@Transient
 	private String highlightDomSelector2=".*)";
 	@Transient
-	private String beginTagHighlight1="<span id=\"";
+	public String beginTagHighlight1="<span id=\"";
 	@Transient
-	private String beginTagHighlight2= "\" style=\"background-color: #FFFF00\">";
+	public String beginTagHighlight2= "\" style=\"background-color: #FFFF00\">";
 	@Transient
-	private String endTagHighlight="</span>";
+	public String endTagHighlight="</span>";
 	@Transient
 	private String beginLinkTag="<a href=\"";
 	@Transient
@@ -64,7 +64,7 @@ public class Highlight {
 	private int highlightLocationInHtml;
 	private int highlightFileIndex;
 	//sentences of the highlights
-	private ArrayList<Sentence> sentences;
+	public ArrayList<Sentence> sentences;
 	int hashCode;
 	@Lob
 	File containerFile;
@@ -96,9 +96,11 @@ public class Highlight {
 	private void sentenceSplitter(String s)
 	{
 		String[] parts = s.split("(?<=\\.)");
-		for (String string : parts) {
-			Sentence sentence=new Sentence(string,this);
-			sentences.add(sentence);
+		if (parts.length>1) {
+			for (String string : parts) {
+				Sentence sentence=new Sentence(string,this);
+				sentences.add(sentence);
+			}
 		}
 	}
 	/**
@@ -113,7 +115,7 @@ public class Highlight {
 	 * wraps the text with HTML tags to makes the replacement
 	 */
 	
-	private String constructHIghlightedText(String cleanHilightText) {
+	protected String constructHIghlightedText(String cleanHilightText) {
 		return beginTagHighlight1+hashCode+beginTagHighlight2+cleanHilightText+endTagHighlight;
 	}
 	/**

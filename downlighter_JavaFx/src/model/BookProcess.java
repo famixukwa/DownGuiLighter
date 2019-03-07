@@ -270,7 +270,10 @@ public class BookProcess extends Task<Void>{
 		addMessagesToDisplay("Begining process\n");
 		for (int i = 0; i < highlightSnippets.size(); i++) {
 			String highligghtText=highlightSnippets.get(i).text();
+			System.out.println("number of highlights: "+highlightSnippets.size());
+			System.out.println("highligghtText: "+highlightSnippets.get(i).text());
 			highlight=new Highlight(highligghtText);
+			System.out.println("test");
 			highlightList.add(highlight);
 		}
 		addMessagesToDisplay("Highlights extracted! \n");
@@ -287,36 +290,22 @@ public class BookProcess extends Task<Void>{
 			e.printStackTrace();
 		}
 		return fileHtmlDocument;
-
 	}
 	/**
 	 * uses searchReplaceInHtml in all the book files
 	 */
 	public void searchReplaceHighlights(EBook eBook) {
-		boolean highlightFoundBoolean = false;
+		//sends a list of the extracted files to ebook
 		listExtractedFiles();
 		htmlfiles=eBook.getHtmlTextfiles();
 
 		for (int i = 0; i < highlightList.size(); i++) {
+			System.out.println("loop "+i);
 			//set progress
-			Double d =0.7/htmlfiles.size();
+			Double d =0.9/htmlfiles.size();
 			ModelInterface.setProgress(i*d+0.2);
-			//search by sentences
-			if (highlightList.get(i).getSentences().size()>1) {
-				for (int j = 0; j < highlightList.get(i).getSentences().size(); j++) {
-					if (j==0) {
-						highlightFoundBoolean=searchReplaceInHtml(eBook,highlightList.get(i),Mode.HIGHLIGHT,0);
-					}
-					else {
-						int indextOfPastFile=ModelInterface.getPastHighlight().getHighlightFileIndex();
-						highlightFoundBoolean=searchReplaceInHtml(eBook,highlightList.get(i).getSentences().get(j),Mode.SENTENCE,indextOfPastFile);
-					}
-				}
-			}
-			//search by highlight
-			else {
-				highlightFoundBoolean=searchReplaceInHtml(eBook,highlightList.get(i),Mode.HIGHLIGHT,0);
-			}
+			//Document htmlDoc=extractDocumentFromFile(htmlFile);
+			Boolean highlightFoundBoolean=searchReplaceInHtml(eBook,highlightList.get(i));
 			if (highlightFoundBoolean) {
 				addMessagesToDisplay("highlight "+i+" found"+"\n");
 			}
@@ -332,36 +321,22 @@ public class BookProcess extends Task<Void>{
 	 * an underlined tag.
 	 *
 	 */
-	private boolean searchReplaceInHtml(EBook eBook,Highlight highlight, Mode selectedMode, int presentFile) {
+	private boolean searchReplaceInHtml(EBook eBook,Highlight highlight) {
 		//gets the list of files
-
 		boolean highlightFoundBoolean=false;
-		int loopSize=0;
-		int init=0;
-		switch (selectedMode) {
-		case HIGHLIGHT:
-			loopSize=htmlfiles.size();
-			init=0;
-			break;
-		case SENTENCE:
-			loopSize=2;
-			init=presentFile;
-			break;
-		default:
-			break;
-		}
-		for (int i=init; i <loopSize ; i++) {
+
+		for (int i = 0; i < htmlfiles.size(); i++) {
 			InformedFile file=htmlfiles.get(i);
 			System.out.println(file.getName());
 			Document htmlDoc=extractDocumentFromFile(file);
 			String searcheable=highlight.getSearchable();
+			System.out.println("searcheable="+highlight.getSearchable());
 			//search the highlights text in the book
 			Elements founds = htmlDoc.select(searcheable);
 			if (founds.size()!=0) {
+				
 				highlightFoundBoolean=true;
 				Element found= founds.first();
-				//optimizer
-				optimizer(highlight,htmlfiles);
 				//informs what is found 
 				informer (found, i,file, highlight,htmlfiles);
 				//counts the highlights
@@ -369,26 +344,73 @@ public class BookProcess extends Task<Void>{
 				//saved the highlight as past highlight for optimization purposes
 				ModelInterface.setPastHighlight(highlight);
 				//replaces the text in the book with the bookmarked and highlighted text
-				switch (selectedMode) {
-				case HIGHLIGHT:
-					textReplacer(found, i, highlight, Mode.HIGHLIGHT);
-					break;
-				case SENTENCE:
-					textReplacer(found, i, highlight, Mode.SENTENCE);
-					break;
-				default:
-					break;
+				textReplacer(found, i, highlight);
+				//saves the modified file
+				saveTheHtmlOfBook(htmlDoc,file,eBook);
+				optimizer(highlight,htmlfiles);
+			}
+			else {
+				SentenceHighlight sentenceHighlight= new SentenceHighlight(highlight.getHighligghtText());
+				sentenceSearchReplacer(eBook,sentenceHighlight,highlightFoundBoolean);
+			}
+		}
+		
+		return highlightFoundBoolean;
+	}
+	/**
+	 * Helper method for searchReplaceInHtml that searches in sentence mode for the case the highlight contains sentences from two different paragraphs
+	 * 
+	 */
+	private void sentenceSearchReplacer(EBook eBook,SentenceHighlight sentenceHighlight, Boolean highlightFoundBoolean ) {
+		htmlfiles=eBook.getHtmlTextfiles();
+		System.out.println("entering sentence mode");
+		if (sentenceHighlight.getSentences().size()>1) {
+			for (int i = 0; i < sentenceHighlight.getSentences().size(); i++) {
+				//Document htmlDoc=extractDocumentFromFile(htmlFile);
+				highlightFoundBoolean=sentenceSearchReplaceInHtml(eBook,sentenceHighlight,sentenceHighlight.getSentences().get(i), i);
+			}
+		}
+		else {
+			highlightFoundBoolean=null;
+		}
+
+	}
+	/**
+	 * Helper method for sentenSearchReplacer that searches in sentence mode on the files for the case the highlight contains sentences from two different paragraphs
+	 * 
+	 */
+	private boolean sentenceSearchReplaceInHtml(EBook eBook,SentenceHighlight sentenceHighlight, Sentence sentence,int i) {
+		//gets the list of files
+		boolean highlightFoundBoolean=false;
+		ArrayList<InformedFile> copyOfHtmlFiles=new ArrayList<InformedFile>(htmlfiles);
+		for (int j = 0; j < copyOfHtmlFiles.size(); j++) {
+			InformedFile file=copyOfHtmlFiles.get(j);
+			Document htmlDoc=extractDocumentFromFile(file);
+			String searcheable=sentence.getSearchable();
+			//search the highlights text in the book
+			Elements founds = htmlDoc.select(searcheable);
+			if (founds.size()!=0) {
+				Element found= founds.first();
+				if (i<1) {
+					//informs what is found 
+					informer (found, j,file, sentenceHighlight,copyOfHtmlFiles);
+					//counts the highlights
+					numberHighlightsFound++;
+					highlightFoundBoolean=true;
+					sentenceOptimizer(sentenceHighlight, copyOfHtmlFiles);
+					//saved the highlight as past highlight for optimization purposes
+					ModelInterface.setPastHighlight(sentenceHighlight);
 				}
+				//replaces the text in the book with the bookmarked and highlighted text
+				textReplacer(found, j, sentence);
 				//saves the modified file
 				saveTheHtmlOfBook(htmlDoc,file,eBook);
 			}
 		}
 
 		//add message to display and passes the number of highlights to eBook
-		System.out.println(highlightFoundBoolean);
 		return highlightFoundBoolean;
 	}
-
 	/**
 	 * Helper method for searchReplaceInBook that takes the found element and the i integer for the for loop
 	 *replaces the text with the text modified with highlight tags.
@@ -397,23 +419,16 @@ public class BookProcess extends Task<Void>{
 	 *@param i is the counter for the searchReplaceInBook for loop.
 	 */
 
-	private void textReplacer(Element found,int i,Highlight highlight,Mode selectedMode) {
-		switch (selectedMode) {
-		case HIGHLIGHT:
-			String textHighlighted=highlight.getHighlightedText();
-			String textToModify=found.html();
-			String modifiedText=textToModify.replace(highlight.getHighligghtText(), textHighlighted);
-			found.html(modifiedText);
-			break;
-		case SENTENCE:
-			String sentenceHighlighted=sentence.getHighlightedText();
-			String sentenceToModify=found.html();
-			String modifiedsentence=sentenceToModify.replace(sentence.getHighligghtText(), sentenceHighlighted);
-			found.html(modifiedsentence);
-			break;
-		}
-		
+	private void textReplacer(Element found,int i,Highlight highlight) {
+		String textHighlighted=highlight.getHighlightedText();
+		String textToModify=found.html();
+		String modifiedText=textToModify.replace(highlight.getHighligghtText(), textHighlighted);
+		found.html(modifiedText);
 	}
+	/**
+	 * 
+	 *Optimizes the search algorithm deleting the files on the list that have been already explored
+	 */
 	private void optimizer(Highlight highlight,ArrayList<InformedFile> htmlfiles) {
 		if (ModelInterface.getPastHighlight()!=null) {
 			int value=highlight.getHighlightFileIndex()-ModelInterface.getPastHighlight().getHighlightFileIndex();
@@ -422,6 +437,19 @@ public class BookProcess extends Task<Void>{
 				for (int j = 0; j < readFiles; j++) {
 					htmlfiles.remove(j);
 				}
+			}
+		}
+	}
+	/**
+	 * 
+	 *Optimizes the search algorithm deleting the files on the list that have been already explored in the case of sentence search
+	 */
+	private void sentenceOptimizer(Highlight highlight,ArrayList<InformedFile> htmlfiles) {
+		int value=highlight.getHighlightFileIndex();
+		if (value>1) {
+			int readFiles=highlight.getHighlightFileIndex()-1;
+			for (int j = 0; j < readFiles; j++) {
+				htmlfiles.remove(j);
 			}
 		}
 	}
@@ -489,7 +517,7 @@ public class BookProcess extends Task<Void>{
 		outputHandler.saveHtml(htmlDokument);
 	}
 
-	
+
 
 	public void saveBookInStatusObservable (EBook eBook) {
 		ModelInterface.addBookToObservable(eBook);
