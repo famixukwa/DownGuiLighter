@@ -350,6 +350,7 @@ public class BookProcess extends Task<Void>{
 				optimizer(highlight,htmlfiles);
 			}
 			else {
+				System.out.println("test sentence begin");
 				SentenceHighlight sentenceHighlight= new SentenceHighlight(highlight.getHighligghtText());
 				sentenceSearchReplacer(eBook,sentenceHighlight,highlightFoundBoolean);
 			}
