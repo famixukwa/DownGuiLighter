@@ -24,6 +24,7 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import model.RetrievePersistanceService.Mode;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import nl.siegmann.epublib.domain.Author;
@@ -45,11 +46,12 @@ public class BookProcess extends Task<Void>{
 	 * metadata properties
 	 */
 	private static StringProperty coverPath= new SimpleStringProperty();
-	
-	
+
+
 	//links
 	private Highlight highlight;
-	public StringProperty messages;
+	private StringProperty messages;
+	private Sentence sentence;
 
 	//Path variables:
 	Path source=Paths.get(InputHandler.getEbookFile().toString()+"/");
@@ -65,11 +67,12 @@ public class BookProcess extends Task<Void>{
 
 	int numberHighlightsFound=0;
 
-
-
 	//flags
 	Boolean createdFolder;
 
+	//search replace modus
+	public enum Mode {HIGHLIGHT,SENTENCE};
+	public Mode selectedMode;
 	public BookProcess() {
 		messages=new SimpleStringProperty(this,"Begin");	
 	}
@@ -106,11 +109,11 @@ public class BookProcess extends Task<Void>{
 	 */
 	public void start() {
 		Thread th = new Thread(this);
-        th.setDaemon(false);
-        th.start();
-        this.setOnSucceeded( e -> {
-        	ModelInterface.popupWindowView(this.getHighlightsFound(),eBook);
-        });
+		th.setDaemon(false);
+		th.start();
+		this.setOnSucceeded( e -> {
+			ModelInterface.popupWindowView(this.getHighlightsFound(),eBook);
+		});
 	}
 
 	/**
@@ -135,24 +138,24 @@ public class BookProcess extends Task<Void>{
 		String bookTitle = book.getMetadata().getFirstTitle();
 		List<String> publisherList = book.getMetadata().getPublishers();
 		List<String> descriptionList = book.getMetadata().getDescriptions();
-		
+
 		eBook.setAuthor(umwrapList(authorList));
 		ModelInterface.setAuthor(umwrapList(authorList));
-		
+
 		eBook.setBookTitleP(bookTitle);
 		ModelInterface.setBookTitleP(bookTitle);
-		
+
 		eBook.setPublisher(umwrapList(publisherList));
 		ModelInterface.setPublisher(umwrapList(publisherList));
-		
+
 		eBook.setDescription(umwrapList(descriptionList));
 		ModelInterface.setDescription(umwrapList(descriptionList));
 	}
 	private String umwrapList(List list) {
-		
+
 		StringBuilder s = new StringBuilder();
 		for (int i = 0; i < list.size(); i++) {
-			
+
 		}
 		for (int i = 0; i < list.size(); i++) {
 			s.append(list.get(i).toString());
@@ -163,7 +166,7 @@ public class BookProcess extends Task<Void>{
 		}
 		return s.toString();	
 	}
-	
+
 	/**
 	 * ectracts the title from the book and saves in the book
 	 */
@@ -290,8 +293,7 @@ public class BookProcess extends Task<Void>{
 	 * uses searchReplaceInHtml in all the book files
 	 */
 	public void searchReplaceHighlights(EBook eBook) {
-		//sends a list of the extracted files to ebook
-
+		boolean highlightFoundBoolean = false;
 		listExtractedFiles();
 		htmlfiles=eBook.getHtmlTextfiles();
 
@@ -299,8 +301,22 @@ public class BookProcess extends Task<Void>{
 			//set progress
 			Double d =0.7/htmlfiles.size();
 			ModelInterface.setProgress(i*d+0.2);
-			//Document htmlDoc=extractDocumentFromFile(htmlFile);
-			Boolean highlightFoundBoolean=searchReplaceInHtml(eBook,highlightList.get(i));
+			//search by sentences
+			if (highlightList.get(i).getSentences().size()>1) {
+				for (int j = 0; j < highlightList.get(i).getSentences().size(); j++) {
+					if (j==0) {
+						highlightFoundBoolean=searchReplaceInHtml(eBook,highlightList.get(i),Mode.HIGHLIGHT,0);
+					}
+					else {
+						int indextOfPastFile=ModelInterface.getPastHighlight().getHighlightFileIndex();
+						highlightFoundBoolean=searchReplaceInHtml(eBook,highlightList.get(i).getSentences().get(j),Mode.SENTENCE,indextOfPastFile);
+					}
+				}
+			}
+			//search by highlight
+			else {
+				highlightFoundBoolean=searchReplaceInHtml(eBook,highlightList.get(i),Mode.HIGHLIGHT,0);
+			}
 			if (highlightFoundBoolean) {
 				addMessagesToDisplay("highlight "+i+" found"+"\n");
 			}
@@ -316,11 +332,25 @@ public class BookProcess extends Task<Void>{
 	 * an underlined tag.
 	 *
 	 */
-	private boolean searchReplaceInHtml(EBook eBook,Highlight highlight) {
+	private boolean searchReplaceInHtml(EBook eBook,Highlight highlight, Mode selectedMode, int presentFile) {
 		//gets the list of files
+
 		boolean highlightFoundBoolean=false;
-		
-		for (int i = 0; i < htmlfiles.size(); i++) {
+		int loopSize=0;
+		int init=0;
+		switch (selectedMode) {
+		case HIGHLIGHT:
+			loopSize=htmlfiles.size();
+			init=0;
+			break;
+		case SENTENCE:
+			loopSize=2;
+			init=presentFile;
+			break;
+		default:
+			break;
+		}
+		for (int i=init; i <loopSize ; i++) {
 			InformedFile file=htmlfiles.get(i);
 			System.out.println(file.getName());
 			Document htmlDoc=extractDocumentFromFile(file);
@@ -331,15 +361,7 @@ public class BookProcess extends Task<Void>{
 				highlightFoundBoolean=true;
 				Element found= founds.first();
 				//optimizer
-				if (ModelInterface.getPastHighlight()!=null) {
-					int value=highlight.getHighlightFileIndex()-ModelInterface.getPastHighlight().getHighlightFileIndex();
-					if (value>1) {
-						int readFiles=highlight.getHighlightFileIndex()-1;
-						for (int j = 0; j < readFiles; j++) {
-							htmlfiles.remove(j);
-						}
-					}
-				}
+				optimizer(highlight,htmlfiles);
 				//informs what is found 
 				informer (found, i,file, highlight,htmlfiles);
 				//counts the highlights
@@ -347,10 +369,18 @@ public class BookProcess extends Task<Void>{
 				//saved the highlight as past highlight for optimization purposes
 				ModelInterface.setPastHighlight(highlight);
 				//replaces the text in the book with the bookmarked and highlighted text
-				textReplacer(found, i, highlight);
+				switch (selectedMode) {
+				case HIGHLIGHT:
+					textReplacer(found, i, highlight, Mode.HIGHLIGHT);
+					break;
+				case SENTENCE:
+					textReplacer(found, i, highlight, Mode.SENTENCE);
+					break;
+				default:
+					break;
+				}
 				//saves the modified file
 				saveTheHtmlOfBook(htmlDoc,file,eBook);
-							
 			}
 		}
 
@@ -358,6 +388,7 @@ public class BookProcess extends Task<Void>{
 		System.out.println(highlightFoundBoolean);
 		return highlightFoundBoolean;
 	}
+
 	/**
 	 * Helper method for searchReplaceInBook that takes the found element and the i integer for the for loop
 	 *replaces the text with the text modified with highlight tags.
@@ -366,11 +397,52 @@ public class BookProcess extends Task<Void>{
 	 *@param i is the counter for the searchReplaceInBook for loop.
 	 */
 
-	private void textReplacer(Element found,int i,Highlight highlight) {
-		String textHighlighted=highlight.getHighlightedText();
-		String textToModify=found.html();
-		String modifiedText=textToModify.replace(highlight.getHighligghtText(), textHighlighted);
-		found.html(modifiedText);
+	private void textReplacer(Element found,int i,Highlight highlight,Mode selectedMode) {
+		switch (selectedMode) {
+		case HIGHLIGHT:
+			String textHighlighted=highlight.getHighlightedText();
+			String textToModify=found.html();
+			String modifiedText=textToModify.replace(highlight.getHighligghtText(), textHighlighted);
+			found.html(modifiedText);
+			break;
+		case SENTENCE:
+			String sentenceHighlighted=sentence.getHighlightedText();
+			String sentenceToModify=found.html();
+			String modifiedsentence=sentenceToModify.replace(sentence.getHighligghtText(), sentenceHighlighted);
+			found.html(modifiedsentence);
+			break;
+		}
+		
+	}
+	private void optimizer(Highlight highlight,ArrayList<InformedFile> htmlfiles) {
+		if (ModelInterface.getPastHighlight()!=null) {
+			int value=highlight.getHighlightFileIndex()-ModelInterface.getPastHighlight().getHighlightFileIndex();
+			if (value>1) {
+				int readFiles=highlight.getHighlightFileIndex()-1;
+				for (int j = 0; j < readFiles; j++) {
+					htmlfiles.remove(j);
+				}
+			}
+		}
+	}
+	/**
+	 * 
+	 *informs ebook and highlight of the information found on the search
+	 */
+	public void informer (Element found,int i,InformedFile file, Highlight highlight,  ArrayList<InformedFile> htmlfiles) {
+		//saves the file where the highlight was found
+		highlight.setContainerFile(file);
+		//produces the links
+		highlight.constructHighlightLink();
+		//adds highlight to observable for the gui:
+		highlightsFound.add(highlight);
+		//saves the paragraph where the highlight was found
+		highlight.setHighlightLocationInHtml(found.elementSiblingIndex());
+		//saves the index file where it was found
+		highlight.setHighlightFileIndex(htmlfiles.get(i).getOrderIndex());
+		//saves the highlights in book
+		saveHighlightInEBook(highlight);
+
 	}
 	/**
 	 * saves the highlights in the book
@@ -386,7 +458,7 @@ public class BookProcess extends Task<Void>{
 	void addMessagesToDisplay(String s) {
 		messages.set(s);
 	}
-	
+
 	/**
 	 * method that creates an html link list to be used in the book as a way to see where the highlight was 
 	 */
@@ -417,30 +489,12 @@ public class BookProcess extends Task<Void>{
 		outputHandler.saveHtml(htmlDokument);
 	}
 
-	/**
-	 * 
-	 *informs ebook and highlight of the information found on the search
-	 */
-	public void informer (Element found,int i,InformedFile file, Highlight highlight,  ArrayList<InformedFile> htmlfiles) {
-		//saves the file where the highlight was found
-		highlight.setContainerFile(file);
-		//produces the links
-		highlight.constructHighlightLink();
-		//adds highlight to observable for the gui:
-		highlightsFound.add(highlight);
-		//saves the paragraph where the highlight was found
-		highlight.setHighlightLocationInHtml(found.elementSiblingIndex());
-		//saves the index file where it was found
-		highlight.setHighlightFileIndex(htmlfiles.get(i).getOrderIndex());
-		//saves the highlights in book
-		saveHighlightInEBook(highlight);
-		
-	}
 	
+
 	public void saveBookInStatusObservable (EBook eBook) {
 		ModelInterface.addBookToObservable(eBook);
 	}
-	
+
 
 	//getters and setters
 	public EBook getEBook() {
@@ -466,18 +520,18 @@ public class BookProcess extends Task<Void>{
 	public StringProperty coverPathProperty() {
 		return this.coverPath;
 	}
-	
+
 
 	public String getCoverPath() {
 		return this.coverPathProperty().get();
 	}
-	
+
 
 	public void setCoverPath(final String coverPath) {
 		this.coverPathProperty().set(coverPath);
 	}
 
-	
+
 
 
 

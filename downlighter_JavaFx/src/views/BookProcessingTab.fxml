@@ -27,6 +27,8 @@
                <children>
                   <TextField fx:id="highlightsSelected" />
                   <Button fx:id="Choose_highlight_HTML" layoutX="181.0" mnemonicParsing="false" onAction="#chooseFileHighlights" text="Choose highlights HTML" />
+                  <Label text="Extraction Process:" AnchorPane.topAnchor="100.0" />
+                  <ProgressBar fx:id="progresBar" prefWidth="200.0" progress="0.0" AnchorPane.leftAnchor="150.0" AnchorPane.topAnchor="100.0" />
                </children>
             </AnchorPane>
          </children>
@@ -76,7 +78,5 @@
             <Button mnemonicParsing="false" onAction="#matchHighlights" text="Match highlights" AnchorPane.rightAnchor="14.0" />
          </children>
       </AnchorPane>
-      <ProgressBar fx:id="progresBar" layoutX="157.0" layoutY="126.0" prefWidth="200.0" progress="0.0" />
-      <Label layoutX="18.0" layoutY="128.0" text="Extraction Process:" />
    </children>
 </AnchorPane>

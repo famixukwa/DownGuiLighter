@@ -1,9 +1,8 @@
 package model;
 
 import java.io.File;
+import java.util.ArrayList;
 
-
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -64,7 +63,8 @@ public class Highlight {
 	private String highlightUrl;
 	private int highlightLocationInHtml;
 	private int highlightFileIndex;
-	
+	//sentences of the highlights
+	private ArrayList<Sentence> sentences;
 	int hashCode;
 	@Lob
 	File containerFile;
@@ -80,6 +80,7 @@ public class Highlight {
 		cleanHilightText=cleanEspecialCharacters(highligghtText);
 		searchable= createSearchable(cleanHilightText);
 		highlightedText=constructHIghlightedText(highligghtText);
+		sentenceSplitter(highligghtText);
 	}
 	/**
 	 * Method that cleans text from special characters
@@ -90,10 +91,20 @@ public class Highlight {
 		return highligghtText.replace(".", ".");
 	}
 	/**
+	 * splits the highlights in sentences
+	 */
+	private void sentenceSplitter(String s)
+	{
+		String[] parts = s.split("(?<=\\.)");
+		for (String string : parts) {
+			Sentence sentence=new Sentence(string,this);
+			sentences.add(sentence);
+		}
+	}
+	/**
 	 * Adds the select code from Jsoup and the regex to the highlight text
 	 * this makes possible to realize the search with jsoup.
 	 */
-	
 	private String createSearchable(String highligghtText) {
 		String searchable=highlightDomSelector1+highligghtText+highlightDomSelector2;
 		return searchable;
@@ -174,4 +185,10 @@ public class Highlight {
 	public void setHighlightFileIndex(int highlightFileIndex) {
 		this.highlightFileIndex = highlightFileIndex;
 	}
+
+	public ArrayList<Sentence> getSentences() {
+		return sentences;
+	}
+
+	
 }

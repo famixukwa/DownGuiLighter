@@ -62,7 +62,6 @@ public  class  ModelInterface {
 		controller.addHighlightToList(highlightsFound);
 		controller.addMetadata(eBook);
 		Scene scene = new Scene(root);
-//		scene.getStylesheets().add(getClass().getResource("/application/application.css").toExternalForm());
 		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
