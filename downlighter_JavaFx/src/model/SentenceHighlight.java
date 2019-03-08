@@ -4,16 +4,28 @@ public class SentenceHighlight extends Highlight {
 	private Sentence firstSentence;
 
 	public SentenceHighlight(String highligghtText) {
-		super(highligghtText);
+		super();
+		
+		this.highligghtText = highligghtText;
+		hashCode= Math.abs(highligghtText.hashCode());
+		cleanHilightText=cleanEspecialCharacters(highligghtText);
+		sentenceSplitter(highligghtText);
 		setFirstSentence();
-		constructHIghlightedText(cleanHilightText);
+		searchable= createSearchable(cleanHilightText);
+		highlightedText=constructHIghlightedText(highligghtText);
 	}
+	
 	@Override
-	protected String constructHIghlightedText(String cleanHilightText) {
-		return beginTagHighlight1+hashCode+beginTagHighlight2+firstSentence.getHighligghtText()+endTagHighlight;
+	public void constructHighlightLink() {
+		String HighlightLinkBeginning=beginLinkTag+containerFile.getAbsolutePath()+"#"+hashCode+beginLinkTag2;
+		String HighlightLink=HighlightLinkBeginning+firstSentence.getHighligghtText()+endLinkTag;
+		constructUrl();
+		this.highlightLink= HighlightLink;
 	}
+	
 	protected void setFirstSentence() {
-		Sentence firstSentence=sentences.get(1);
+		this.firstSentence=sentences.get(1);
+		
 	}
 
 	private Sentence getFirstSentence() {

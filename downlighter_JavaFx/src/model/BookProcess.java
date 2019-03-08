@@ -159,7 +159,6 @@ public class BookProcess extends Task<Void>{
 		}
 		for (int i = 0; i < list.size(); i++) {
 			s.append(list.get(i).toString());
-			System.out.println(s);
 			if (i<list.size() || i!=0) {
 				s.append(",");
 			}
@@ -182,7 +181,6 @@ public class BookProcess extends Task<Void>{
 		XmlExtractor xmlExtractor=new XmlExtractor(pathHandler.getOpfPath().toString());
 		Path relativePathToCover=xmlExtractor.getAttributePath("manifest", "id","cover");
 		Path pathToCover=Paths.get(pathHandler.getBookPath().toString(),relativePathToCover.toString());
-		System.out.println(pathToCover.toString());
 		eBook.setCoverPath(pathToCover.toString());
 		coverPath.set(pathToCover.toString());
 		ModelInterface.setCoverPath(pathToCover.toString());
@@ -256,7 +254,6 @@ public class BookProcess extends Task<Void>{
 			InformedFile file= new InformedFile(fullPath.toString());
 			file.setOrderIndex(i);
 			htmlTextfiles.add(file);
-			System.out.println(fullPath.toString());
 		}
 		eBook.setHtmlTextfiles(htmlTextfiles);
 	}
@@ -271,9 +268,7 @@ public class BookProcess extends Task<Void>{
 		for (int i = 0; i < highlightSnippets.size(); i++) {
 			String highligghtText=highlightSnippets.get(i).text();
 			System.out.println("number of highlights: "+highlightSnippets.size());
-			System.out.println("highligghtText: "+highlightSnippets.get(i).text());
 			highlight=new Highlight(highligghtText);
-			System.out.println("test");
 			highlightList.add(highlight);
 		}
 		addMessagesToDisplay("Highlights extracted! \n");
@@ -300,9 +295,8 @@ public class BookProcess extends Task<Void>{
 		htmlfiles=eBook.getHtmlTextfiles();
 
 		for (int i = 0; i < highlightList.size(); i++) {
-			System.out.println("loop "+i);
 			//set progress
-			Double d =0.9/htmlfiles.size();
+			Double d =0.7/highlightList.size();
 			ModelInterface.setProgress(i*d+0.2);
 			//Document htmlDoc=extractDocumentFromFile(htmlFile);
 			Boolean highlightFoundBoolean=searchReplaceInHtml(eBook,highlightList.get(i));
@@ -311,6 +305,7 @@ public class BookProcess extends Task<Void>{
 			}
 			else {
 				addMessagesToDisplay("highlight "+i+" not found!! :("+"\n");
+
 			}
 		}
 
@@ -327,14 +322,13 @@ public class BookProcess extends Task<Void>{
 
 		for (int i = 0; i < htmlfiles.size(); i++) {
 			InformedFile file=htmlfiles.get(i);
-			System.out.println(file.getName());
 			Document htmlDoc=extractDocumentFromFile(file);
 			String searcheable=highlight.getSearchable();
-			System.out.println("searcheable="+highlight.getSearchable());
+
 			//search the highlights text in the book
 			Elements founds = htmlDoc.select(searcheable);
 			if (founds.size()!=0) {
-				
+
 				highlightFoundBoolean=true;
 				Element found= founds.first();
 				//informs what is found 
@@ -347,15 +341,17 @@ public class BookProcess extends Task<Void>{
 				textReplacer(found, i, highlight);
 				//saves the modified file
 				saveTheHtmlOfBook(htmlDoc,file,eBook);
-				optimizer(highlight,htmlfiles);
-			}
-			else {
-				System.out.println("test sentence begin");
-				SentenceHighlight sentenceHighlight= new SentenceHighlight(highlight.getHighligghtText());
-				sentenceSearchReplacer(eBook,sentenceHighlight,highlightFoundBoolean);
+				//	optimizer(highlight,htmlfiles);
 			}
 		}
-		
+		if (!highlightFoundBoolean&highlight.getSentences().size()>0) {
+			System.out.println("test sentence begin");
+			SentenceHighlight sentenceHighlight= new SentenceHighlight(highlight.getHighligghtText());
+			sentenceSearchReplacer(eBook,sentenceHighlight,highlightFoundBoolean);
+		}
+		if (!highlightFoundBoolean) {
+			System.out.println("Highlight: "+highlight.getCleanHilightText()+"not found"+"\n");
+		}
 		return highlightFoundBoolean;
 	}
 	/**
@@ -363,11 +359,12 @@ public class BookProcess extends Task<Void>{
 	 * 
 	 */
 	private void sentenceSearchReplacer(EBook eBook,SentenceHighlight sentenceHighlight, Boolean highlightFoundBoolean ) {
+
 		htmlfiles=eBook.getHtmlTextfiles();
 		System.out.println("entering sentence mode");
 		if (sentenceHighlight.getSentences().size()>1) {
 			for (int i = 0; i < sentenceHighlight.getSentences().size(); i++) {
-				//Document htmlDoc=extractDocumentFromFile(htmlFile);
+				System.out.println("sentenceLoop "+i+"   ---"+sentenceHighlight.getSentences().get(i).getCleanHilightText());
 				highlightFoundBoolean=sentenceSearchReplaceInHtml(eBook,sentenceHighlight,sentenceHighlight.getSentences().get(i), i);
 			}
 		}
@@ -391,16 +388,17 @@ public class BookProcess extends Task<Void>{
 			//search the highlights text in the book
 			Elements founds = htmlDoc.select(searcheable);
 			if (founds.size()!=0) {
+				System.out.println("sentence: "+sentence.getCleanHilightText()+"   Found!"+"\n");
+				highlightFoundBoolean=true;
 				Element found= founds.first();
 				if (i<1) {
+
 					//informs what is found 
 					informer (found, j,file, sentenceHighlight,copyOfHtmlFiles);
 					//counts the highlights
 					numberHighlightsFound++;
 					highlightFoundBoolean=true;
 					sentenceOptimizer(sentenceHighlight, copyOfHtmlFiles);
-					//saved the highlight as past highlight for optimization purposes
-					ModelInterface.setPastHighlight(sentenceHighlight);
 				}
 				//replaces the text in the book with the bookmarked and highlighted text
 				textReplacer(found, j, sentence);
@@ -408,8 +406,11 @@ public class BookProcess extends Task<Void>{
 				saveTheHtmlOfBook(htmlDoc,file,eBook);
 			}
 		}
-
+		if (!highlightFoundBoolean) {
+			System.out.println("sentence: "+highlight.getCleanHilightText()+"not found"+"\n");
+		}
 		//add message to display and passes the number of highlights to eBook
+
 		return highlightFoundBoolean;
 	}
 	/**

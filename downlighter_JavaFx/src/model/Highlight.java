@@ -12,6 +12,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
+import org.jsoup.nodes.TextNode;
+
 
 /**
  * @author Kain
@@ -29,12 +31,12 @@ public class Highlight {
 	public EBook eBook;
 	@Lob 
 	@Column(name="CONTENT", length=2000)
-	private  String highligghtText;
+	protected  String highligghtText;
 	@Lob 
 	@Column(length=2000)
 	public String cleanHilightText;
 	@Transient
-	private String highlightDomSelector1="p:matches(.*";
+	private String highlightDomSelector1="p:matchesOwn(.*";
 	@Transient
 	private String highlightDomSelector2=".*)";
 	@Transient
@@ -44,27 +46,27 @@ public class Highlight {
 	@Transient
 	public String endTagHighlight="</span>";
 	@Transient
-	private String beginLinkTag="<a href=\"";
+	protected String beginLinkTag="<a href=\"";
 	@Transient
-	private String beginLinkTag2="\">";
+	protected String beginLinkTag2="\">";
 	@Transient
-	private String endLinkTag="</a>";
+	protected String endLinkTag="</a>";
 	@Lob 
 	@Column(length=2000)
-	private String searchable;
+	protected String searchable;
 	@Lob 
 	@Column(length=2000)
-	private String highlightedText;
+	protected String highlightedText;
 	@Lob 
 	@Column( length=2000)
-	private String highlightLink;
+	protected String highlightLink;
 	@Lob 
 	@Column(length=2000)
 	private String highlightUrl;
 	private int highlightLocationInHtml;
 	private int highlightFileIndex;
 	//sentences of the highlights
-	public ArrayList<Sentence> sentences;
+	public ArrayList<Sentence> sentences=new ArrayList<>();
 	int hashCode;
 	@Lob
 	File containerFile;
@@ -87,18 +89,20 @@ public class Highlight {
 	 * @param highligghtText highlight text to be cleaned
 	 */
 	
-	private String cleanEspecialCharacters(String highligghtText) {
-		return highligghtText.replace(".", ".");
+	protected String cleanEspecialCharacters(String highligghtText) {
+		return (new TextNode(highligghtText).toString());
+		
+		
 	}
 	/**
 	 * splits the highlights in sentences
 	 */
-	private void sentenceSplitter(String s)
+	protected void sentenceSplitter(String s)
 	{
 		String[] parts = s.split("(?<=\\.)");
 		if (parts.length>1) {
 			for (String string : parts) {
-				Sentence sentence=new Sentence(string,this);
+				Sentence sentence=new Sentence(string);
 				sentences.add(sentence);
 			}
 		}
@@ -107,7 +111,7 @@ public class Highlight {
 	 * Adds the select code from Jsoup and the regex to the highlight text
 	 * this makes possible to realize the search with jsoup.
 	 */
-	private String createSearchable(String highligghtText) {
+	protected String createSearchable(String highligghtText) {
 		String searchable=highlightDomSelector1+highligghtText+highlightDomSelector2;
 		return searchable;
 	}
@@ -134,7 +138,7 @@ public class Highlight {
 	 * 
 	 */
 	
-	private void constructUrl() {
+	protected void constructUrl() {
 		String highlightUrl="file://"+containerFile.getAbsolutePath()+"#"+hashCode;
 		highlightUrl=highlightUrl.replace(" ", "%20");
 		this.highlightUrl= highlightUrl;
