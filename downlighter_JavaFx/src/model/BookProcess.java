@@ -138,7 +138,9 @@ public class BookProcess extends Task<Void>{
 		String bookTitle = book.getMetadata().getFirstTitle();
 		List<String> publisherList = book.getMetadata().getPublishers();
 		List<String> descriptionList = book.getMetadata().getDescriptions();
-
+		for (String string : descriptionList) {
+			 System.out.println(string);
+		}
 		eBook.setAuthor(umwrapList(authorList));
 		ModelInterface.setAuthor(umwrapList(authorList));
 
@@ -350,6 +352,7 @@ public class BookProcess extends Task<Void>{
 			sentenceSearchReplacer(eBook,sentenceHighlight,highlightFoundBoolean);
 		}
 		if (!highlightFoundBoolean) {
+			System.out.println(highlight.getSearchable());
 			System.out.println("Highlight: "+highlight.getCleanHilightText()+"not found"+"\n");
 		}
 		return highlightFoundBoolean;
@@ -392,7 +395,6 @@ public class BookProcess extends Task<Void>{
 				highlightFoundBoolean=true;
 				Element found= founds.first();
 				if (i<1) {
-
 					//informs what is found 
 					informer (found, j,file, sentenceHighlight,copyOfHtmlFiles);
 					//counts the highlights

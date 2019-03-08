@@ -2,6 +2,7 @@ package model;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -70,7 +71,7 @@ public class Highlight {
 	int hashCode;
 	@Lob
 	File containerFile;
-	
+	Pattern REGEX_CHARS = Pattern.compile("[{}()\\[\\].+*?^$\\\\|]");
 	
 	public Highlight() {
 		 super();
@@ -90,7 +91,7 @@ public class Highlight {
 	 */
 	
 	protected String cleanEspecialCharacters(String highligghtText) {
-		return (new TextNode(highligghtText).toString());
+		return REGEX_CHARS.matcher(highligghtText).replaceAll("\\\\$0");
 		
 		
 	}
@@ -112,7 +113,7 @@ public class Highlight {
 	 * this makes possible to realize the search with jsoup.
 	 */
 	protected String createSearchable(String highligghtText) {
-		String searchable=highlightDomSelector1+highligghtText+highlightDomSelector2;
+		String searchable=highlightDomSelector1+cleanEspecialCharacters(highligghtText)+highlightDomSelector2;
 		return searchable;
 	}
 	/**
@@ -142,6 +143,10 @@ public class Highlight {
 		String highlightUrl="file://"+containerFile.getAbsolutePath()+"#"+hashCode;
 		highlightUrl=highlightUrl.replace(" ", "%20");
 		this.highlightUrl= highlightUrl;
+	}
+	
+	String escapeSpecialRegexChars(String str) {
+	    return REGEX_CHARS.matcher(str).replaceAll("\\\\$0");
 	}
 	
 	//getters and setters
