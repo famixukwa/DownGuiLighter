@@ -157,7 +157,8 @@ public class EBook {
 		return this.description;
 	}
 	
-
+	@Lob 
+	@Column(length=2000)
 	@Access(AccessType.PROPERTY)
 	public String getDescription() {
 		return this.descriptionProperty().get();

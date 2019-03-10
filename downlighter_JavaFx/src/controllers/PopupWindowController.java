@@ -90,7 +90,7 @@ public class PopupWindowController {
 	public void initialize() {
 		assert bookView != null : "fx:id=\"bookView\" was not injected: check your FXML file 'PopupWindow.fxml'.";
 		assert listOfhighlights != null : "fx:id=\"listOfhighlights\" was not injected: check your FXML file 'PopupWindow.fxml'.";
-		splitPaneAnchorPane.prefHeightProperty().bind(splitPaneAnchorPane.heightProperty());
+		//splitPaneAnchorPane.prefHeightProperty().bind(splitPaneAnchorPane.heightProperty());
 
 	}
 
@@ -113,7 +113,7 @@ public class PopupWindowController {
 					if (item!=null) {
 						Label listContent = new Label();
 						setGraphic(listContent);
-						listContent.setText(item.getCleanHilightText());
+						listContent.setText(item.getHighligghtText());
 						listContent.setWrapText(true);
 						listContent.prefWidthProperty().bind(listOfhighlights.widthProperty().divide(1.1));
 					}

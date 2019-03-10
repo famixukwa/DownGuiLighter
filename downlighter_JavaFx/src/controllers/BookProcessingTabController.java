@@ -38,7 +38,7 @@ public class BookProcessingTabController {
 		ebookSelected.setText(value);
 	}
 	@FXML
-    private ProgressBar progresBar;
+	private ProgressBar progresBar;
 	@FXML
 	private Label titleLegend;
 	@FXML
@@ -78,8 +78,11 @@ public class BookProcessingTabController {
 		fileChooser.getExtensionFilters().add(epubExtFilter);
 		ebookFile = fileChooser.showOpenDialog(controllerStage);
 		InputHandler.setEbookFile(ebookFile);
-		String value=ebookFile.getAbsolutePath();
-		ebookSelected.setText(value);
+		if (ebookFile!=null) {
+			String value=ebookFile.getAbsolutePath();
+			ebookSelected.setText(value);
+		}
+
 	}
 
 	@FXML
@@ -89,8 +92,11 @@ public class BookProcessingTabController {
 		fileChooser.getExtensionFilters().add(htmlExtFilter);
 		highlightFile = fileChooser.showOpenDialog(controllerStage);
 		InputHandler.setHighlights(highlightFile);
-		String value=highlightFile.getAbsolutePath();
-		highlightsSelected.setText(value);
+		if (ebookFile!=null) {
+			String value=highlightFile.getAbsolutePath();
+			highlightsSelected.setText(value);
+		}
+
 	}
 	@FXML
 	void matchHighlights() {

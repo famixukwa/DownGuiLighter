@@ -67,34 +67,47 @@ public class Highlight {
 	private int highlightLocationInHtml;
 	private int highlightFileIndex;
 	//sentences of the highlights
+	@Transient
 	public ArrayList<Sentence> sentences=new ArrayList<>();
 	int hashCode;
 	@Lob
 	File containerFile;
-	Pattern REGEX_CHARS = Pattern.compile("[{}()\\[\\].+*?^$\\\\|]");
-	
+	Pattern SPECIAL_REGEX_CHARS;
+
 	public Highlight() {
-		 super();
+		super();
 	}
-	
+
 	public Highlight(String highligghtText) {
-		this.highligghtText = highligghtText;
+		this.highligghtText = cleanHiphenGlitch(highligghtText);
 		hashCode= Math.abs(highligghtText.hashCode());
-		cleanHilightText=cleanEspecialCharacters(highligghtText);
-		searchable= createSearchable(cleanHilightText);
-		highlightedText=constructHIghlightedText(highligghtText);
-		sentenceSplitter(highligghtText);
+		//		cleanHilightText=cleanEspecialCharacters(highligghtText);
+		SPECIAL_REGEX_CHARS = Pattern.compile("[\\{\\}\\(\\)\\[\\]\\?\\+\\*\\^$\\|\\\\\\-]");
+		searchable= createSearchable(this.highligghtText);
+		highlightedText=constructHIghlightedText(this.highligghtText);
+		sentenceSplitter(this.highligghtText);
+	}
+	/**
+	 * Method that cleans text from an amazon glitch with the hyphen character
+	 */
+	private String cleanHiphenGlitch(String highligghtText) {
+		String s=highligghtText.replaceAll("(–)([a-zA-Z]{1,1})", "$1 $2");
+		s=s.replaceAll("([a-zA-Z]{1,1})(–)", "$1 $2");
+		return s;
 	}
 	/**
 	 * Method that cleans text from special characters
 	 * @param highligghtText highlight text to be cleaned
+	 * characters to be cleaned:[]{}()*+-=!?^$|\
+	 * slashback \ should be scaped like this \\\\
 	 */
-	
-	protected String cleanEspecialCharacters(String highligghtText) {
-		return REGEX_CHARS.matcher(highligghtText).replaceAll("\\\\$0");
-		
-		
-	}
+
+	//	protected String cleanEspecialCharacters(String str) {
+	//	String s=highligghtText.replaceAll("(–)([a-zA-Z]{1,1})", "$1 $2");
+	//	s=s.replaceAll("([a-zA-Z]{1,1})(–)", "$1 $2");
+	//	
+	//return s
+	//	}
 	/**
 	 * splits the highlights in sentences
 	 */
@@ -113,24 +126,25 @@ public class Highlight {
 	 * this makes possible to realize the search with jsoup.
 	 */
 	protected String createSearchable(String highligghtText) {
-		String searchable=highlightDomSelector1+cleanEspecialCharacters(highligghtText)+highlightDomSelector2;
+		String s=SPECIAL_REGEX_CHARS.matcher(highligghtText).replaceAll("\\\\$0");
+		String searchable=highlightDomSelector1+s+highlightDomSelector2;
 		return searchable;
 	}
 	/**
 	 * wraps the text with HTML tags to makes the replacement
 	 */
-	
-	protected String constructHIghlightedText(String cleanHilightText) {
-		return beginTagHighlight1+hashCode+beginTagHighlight2+cleanHilightText+endTagHighlight;
+
+	protected String constructHIghlightedText(String highligghtText) {
+		return beginTagHighlight1+hashCode+beginTagHighlight2+highligghtText+endTagHighlight;
 	}
 	/**
 	 * constructs a link using the text of the highlight and a hash number to identify it
 	 * @return String that is the link
 	 */
-	
+
 	public void constructHighlightLink() {
 		String HighlightLinkBeginning=beginLinkTag+containerFile.getAbsolutePath()+"#"+hashCode+beginLinkTag2;
-		String HighlightLink=HighlightLinkBeginning+cleanHilightText+endLinkTag;
+		String HighlightLink=HighlightLinkBeginning+highligghtText+endLinkTag;
 		constructUrl();
 		this.highlightLink= HighlightLink;
 	}
@@ -138,17 +152,13 @@ public class Highlight {
 	 * constructs the url that will be used in the gui to find the file that contains the highlight
 	 * 
 	 */
-	
+
 	protected void constructUrl() {
 		String highlightUrl="file://"+containerFile.getAbsolutePath()+"#"+hashCode;
 		highlightUrl=highlightUrl.replace(" ", "%20");
 		this.highlightUrl= highlightUrl;
 	}
-	
-	String escapeSpecialRegexChars(String str) {
-	    return REGEX_CHARS.matcher(str).replaceAll("\\\\$0");
-	}
-	
+
 	//getters and setters
 	public String getHighlightedText() {
 		return highlightedText;
@@ -174,7 +184,7 @@ public class Highlight {
 	public String getHighlightUrl() {
 		return highlightUrl;
 	}
-	
+
 	public EBook geteBook() {
 		return eBook;
 	}
@@ -201,5 +211,5 @@ public class Highlight {
 		return sentences;
 	}
 
-	
+
 }

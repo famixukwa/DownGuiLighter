@@ -1,5 +1,7 @@
 package model;
 
+import java.util.regex.Pattern;
+
 public class SentenceHighlight extends Highlight {
 	private Sentence firstSentence;
 
@@ -8,10 +10,11 @@ public class SentenceHighlight extends Highlight {
 		
 		this.highligghtText = highligghtText;
 		hashCode= Math.abs(highligghtText.hashCode());
-		cleanHilightText=cleanEspecialCharacters(highligghtText);
+//		cleanHilightText=cleanEspecialCharacters(highligghtText);
 		sentenceSplitter(highligghtText);
 		setFirstSentence();
-		searchable= createSearchable(cleanHilightText);
+		SPECIAL_REGEX_CHARS = Pattern.compile("[\\{\\}\\(\\)\\[\\]\\?\\+\\*\\^$\\|\\\\\\-]");
+		searchable= createSearchable(highligghtText);
 		highlightedText=constructHIghlightedText(highligghtText);
 	}
 	

@@ -139,7 +139,7 @@ public class BookProcess extends Task<Void>{
 		List<String> publisherList = book.getMetadata().getPublishers();
 		List<String> descriptionList = book.getMetadata().getDescriptions();
 		for (String string : descriptionList) {
-			 System.out.println(string);
+			System.out.println(string);
 		}
 		eBook.setAuthor(umwrapList(authorList));
 		ModelInterface.setAuthor(umwrapList(authorList));
@@ -154,14 +154,12 @@ public class BookProcess extends Task<Void>{
 		ModelInterface.setDescription(umwrapList(descriptionList));
 	}
 	private String umwrapList(List list) {
-
 		StringBuilder s = new StringBuilder();
 		for (int i = 0; i < list.size(); i++) {
-
 		}
 		for (int i = 0; i < list.size(); i++) {
 			s.append(list.get(i).toString());
-			if (i<list.size() || i!=0) {
+			if (i<list.size()-1 || i!=0) {
 				s.append(",");
 			}
 		}
@@ -326,7 +324,7 @@ public class BookProcess extends Task<Void>{
 			InformedFile file=htmlfiles.get(i);
 			Document htmlDoc=extractDocumentFromFile(file);
 			String searcheable=highlight.getSearchable();
-
+			
 			//search the highlights text in the book
 			Elements founds = htmlDoc.select(searcheable);
 			if (founds.size()!=0) {
@@ -352,8 +350,7 @@ public class BookProcess extends Task<Void>{
 			sentenceSearchReplacer(eBook,sentenceHighlight,highlightFoundBoolean);
 		}
 		if (!highlightFoundBoolean) {
-			System.out.println(highlight.getSearchable());
-			System.out.println("Highlight: "+highlight.getCleanHilightText()+"not found"+"\n");
+			System.out.println("Highlight: "+highlight.getSearchable()+"not found"+"\n");
 		}
 		return highlightFoundBoolean;
 	}
@@ -367,7 +364,6 @@ public class BookProcess extends Task<Void>{
 		System.out.println("entering sentence mode");
 		if (sentenceHighlight.getSentences().size()>1) {
 			for (int i = 0; i < sentenceHighlight.getSentences().size(); i++) {
-				System.out.println("sentenceLoop "+i+"   ---"+sentenceHighlight.getSentences().get(i).getCleanHilightText());
 				highlightFoundBoolean=sentenceSearchReplaceInHtml(eBook,sentenceHighlight,sentenceHighlight.getSentences().get(i), i);
 			}
 		}
@@ -400,7 +396,7 @@ public class BookProcess extends Task<Void>{
 					//counts the highlights
 					numberHighlightsFound++;
 					highlightFoundBoolean=true;
-					sentenceOptimizer(sentenceHighlight, copyOfHtmlFiles);
+				//	sentenceOptimizer(sentenceHighlight, copyOfHtmlFiles);
 				}
 				//replaces the text in the book with the bookmarked and highlighted text
 				textReplacer(found, j, sentence);
@@ -409,7 +405,7 @@ public class BookProcess extends Task<Void>{
 			}
 		}
 		if (!highlightFoundBoolean) {
-			System.out.println("sentence: "+highlight.getCleanHilightText()+"not found"+"\n");
+			System.out.println("sentence: "+highlight.getSearchable()+"not found"+"\n");
 		}
 		//add message to display and passes the number of highlights to eBook
 
