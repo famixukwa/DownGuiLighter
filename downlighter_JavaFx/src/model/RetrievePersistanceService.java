@@ -58,7 +58,7 @@ public class RetrievePersistanceService  extends Task<Void>{
 			this.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 				@Override
 				public void handle(WorkerStateEvent t) {
-					ModelInterface.popupWindowView(highlightObservableList,eBook);	
+					ModelInterface.popupWindowView(eBook);	
 				}
 			});
 		}
@@ -78,7 +78,6 @@ public class RetrievePersistanceService  extends Task<Void>{
 		em.getTransaction().begin(); 
 		Query q = em.createQuery("select e from EBook e");
 		List<EBook> EBookList=(List<EBook>)q.getResultList();
-		System.out.println("ebook list de Retrieve "+EBookList.size());
 		if (EBookList.size()>0) {
 			for (EBook eBook : EBookList) {
 				ModelInterface.addBookToObservable(eBook);
@@ -93,15 +92,12 @@ public class RetrievePersistanceService  extends Task<Void>{
 		em.getTransaction().begin(); 
 		Query q = em.createQuery("SELECT h FROM Highlight h JOIN h.eBook e WHERE e.ebookId = :ebookId");
 		Query qb = em.createQuery("SELECT e FROM EBook e WHERE e.ebookId = :ebookId");
-		System.out.println("inicio");
 		q.setParameter("ebookId",ebookId );
 		qb.setParameter("ebookId",ebookId );
 		List<Highlight> highlightList=(List<Highlight>)q.getResultList();
-		System.out.println("numero de highlights encontrado "+highlightList.size());
-		System.out.println("texto  deun highlight "+highlightList.get(0).getHighligghtText());
 		highlightObservableList =FXCollections.observableList(highlightList);
+		ModelInterface.setHighlightsFound(highlightObservableList);
 		eBook=(EBook)qb.getSingleResult();
-		System.out.println("autor de retrieve"+eBook.getAuthor());
 		em.close();
 		emf.close();
 	}

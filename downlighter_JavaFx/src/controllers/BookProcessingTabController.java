@@ -3,7 +3,6 @@ package controllers;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -103,10 +102,10 @@ public class BookProcessingTabController {
 		if (highlightFile!=null&ebookFile!=null) {
 			pressed=true;
 			BookProcess processedBook=new BookProcess();
-			processedBook.messagesProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
+			ModelInterface.messagesProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
 				messagesWindow.appendText(newValue);
 			});
-			processedBook.coverPathProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
+			ModelInterface.coverPathProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
 				Image image = null;
 				try {
 					image = new Image(new FileInputStream(newValue));
@@ -144,20 +143,12 @@ public class BookProcessingTabController {
 							publisher.setText(newValue);
 						}
 						);
-
 			});
 			processedBook.start();
-
-
-
 		}
 
 	}
 
-	@FXML
-	void updateMessages () {
-
-	}
 
 	@FXML
 	void initialize() {

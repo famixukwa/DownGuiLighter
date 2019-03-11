@@ -1,12 +1,8 @@
 package model;
 
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -18,12 +14,8 @@ import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import nl.siegmann.epublib.domain.Author;
 
 
 /**
@@ -56,7 +48,6 @@ public class EBook {
 
 	@OneToMany(mappedBy = "eBook")
 	private final List<Highlight>highlightsFound= new ArrayList<Highlight>();
-	private ArrayList<InformedFile> htmlTextfiles=new ArrayList<InformedFile>();
 	private String containerFolder;
 	//paths
 
@@ -76,15 +67,6 @@ public class EBook {
 	public void setNumberHighlightsFound(int numberHighlightsFound) {
 		this.numberHighlightsFound = numberHighlightsFound;
 	}
-
-	public ArrayList<InformedFile> getHtmlTextfiles() {
-		return htmlTextfiles;
-	}
-
-	public void setHtmlTextfiles(ArrayList<InformedFile> htmlTextfiles) {
-		this.htmlTextfiles = htmlTextfiles;
-	}
-
 
 	public String getContainerFolder() {
 		return containerFolder;

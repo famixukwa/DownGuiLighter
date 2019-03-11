@@ -7,17 +7,17 @@ public class SentenceHighlight extends Highlight {
 
 	public SentenceHighlight(String highligghtText) {
 		super();
-		
+
 		this.highligghtText = highligghtText;
 		hashCode= Math.abs(highligghtText.hashCode());
-//		cleanHilightText=cleanEspecialCharacters(highligghtText);
+		//		cleanHilightText=cleanEspecialCharacters(highligghtText);
 		sentenceSplitter(highligghtText);
 		setFirstSentence();
 		SPECIAL_REGEX_CHARS = Pattern.compile("[\\{\\}\\(\\)\\[\\]\\?\\+\\*\\^$\\|\\\\\\-]");
 		searchable= createSearchable(highligghtText);
 		highlightedText=constructHIghlightedText(highligghtText);
 	}
-	
+
 	@Override
 	public void constructHighlightLink() {
 		String HighlightLinkBeginning=beginLinkTag+containerFile.getAbsolutePath()+"#"+hashCode+beginLinkTag2;
@@ -25,13 +25,30 @@ public class SentenceHighlight extends Highlight {
 		constructUrl();
 		this.highlightLink= HighlightLink;
 	}
-	
-	protected void setFirstSentence() {
-		this.firstSentence=sentences.get(1);
-		
+	@Override
+	protected void sentenceSplitter(String s)
+	{
+		String[] parts = s.split("(?<=\\.)");
+		if (parts.length>1) {
+			for (int i = 0; i < parts.length; i++) {
+				if (i==0) {
+					Sentence sentence=new Sentence(s,hashCode);
+					sentences.add(sentence);
+				}
+				else {
+					Sentence sentence=new Sentence(s);
+					sentences.add(sentence);
+				}
+			}
+		}
 	}
 
-	private Sentence getFirstSentence() {
+	protected void setFirstSentence() {
+		this.firstSentence=sentences.get(1);
+
+	}
+
+	public Sentence getFirstSentence() {
 		return firstSentence;
 	}
 }

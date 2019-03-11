@@ -19,6 +19,7 @@ public class OutputHandler {
 	private Path pathTorenderFolder;
 	private EBook eBook;
 	private File file;
+	
 	public OutputHandler(EBook eBook, File file) {
 		this.pathTorenderFolder = Paths.get(eBook.getContainerFolder());
 		this.file=file;

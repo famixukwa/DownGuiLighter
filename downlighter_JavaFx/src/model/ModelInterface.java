@@ -7,12 +7,9 @@ import java.io.IOException;
 import application.Main;
 import controllers.PopupWindowController;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.property.StringPropertyBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -31,6 +28,10 @@ public  class  ModelInterface {
 	private static StringProperty author= new SimpleStringProperty();
 	private static StringProperty description= new SimpleStringProperty();
 	private static StringProperty publisher= new SimpleStringProperty();
+	private static ObservableList<Highlight> highlightsFound=FXCollections.observableArrayList();
+	private static StringProperty messages=new SimpleStringProperty("Begin");
+	
+	static int numberHighlightsFound;
 	
 	//progress Bar
 	private static DoubleProperty progress= new SimpleDoubleProperty();
@@ -48,7 +49,7 @@ public  class  ModelInterface {
 	 * it creates a popupview on the gui
 	 * @param highlightsFound
 	 */
-	public static void popupWindowView(ObservableList<Highlight>highlightsFound, EBook eBook) {
+	public static void popupWindowView(EBook eBook) {
 		Stage primaryStage = new Stage();
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(Main.class.getResource("/views/PopupWindow.fxml"));
@@ -85,7 +86,10 @@ public  class  ModelInterface {
 	}
 
 	
-
+	
+	
+	
+//setters and getters
 	public static StringProperty bookTitlePProperty() {
 		return bookTitleP;
 	}
@@ -178,6 +182,37 @@ public  class  ModelInterface {
 	public static  void setProgress(final double progress) {
 		ModelInterface.progressProperty().set(progress);
 	}
+
+	public static ObservableList<Highlight> getHighlightsFound() {
+		return highlightsFound;
+	}
+
+	public static void setHighlightsFound(ObservableList<Highlight> highlightsFound) {
+		ModelInterface.highlightsFound = highlightsFound;
+	}
+
+	public static StringProperty messagesProperty() {
+		return ModelInterface.messages;
+	}
+	
+
+	public static String getMessages() {
+		return ModelInterface.messagesProperty().get();
+	}
+	
+
+	public static void setMessages(final String messages) {
+		ModelInterface.messagesProperty().set(messages);
+	}
+
+	public static int getNumberHighlightsFound() {
+		return numberHighlightsFound;
+	}
+
+	public static void setNumberHighlightsFound(int numberHighlightsFound) {
+		ModelInterface.numberHighlightsFound = numberHighlightsFound;
+	}
+	
 	
 	
 	
