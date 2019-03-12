@@ -37,7 +37,7 @@ public class Highlight {
 	@Column(length=2000)
 	public String cleanHilightText;
 	@Transient
-	private String highlightDomSelector1="p:matchesOwn(.*";
+	private String highlightDomSelector1="p:matches(.*";
 	@Transient
 	private String highlightDomSelector2=".*)";
 	@Transient
@@ -79,9 +79,8 @@ public class Highlight {
 	}
 
 	public Highlight(String highligghtText) {
-		this.highligghtText = cleanHiphenGlitch(highligghtText);
+		this.highligghtText = cleanAmazonGlitches(highligghtText);
 		hashCode= Math.abs(highligghtText.hashCode());
-		//		cleanHilightText=cleanEspecialCharacters(highligghtText);
 		SPECIAL_REGEX_CHARS = Pattern.compile("[\\{\\}\\(\\)\\[\\]\\?\\+\\*\\^$\\|\\\\\\-]");
 		searchable= createSearchable(this.highligghtText);
 		highlightedText=constructHIghlightedText(this.highligghtText);
@@ -90,24 +89,12 @@ public class Highlight {
 	/**
 	 * Method that cleans text from an amazon glitch with the hyphen character
 	 */
-	private String cleanHiphenGlitch(String highligghtText) {
+	protected String cleanAmazonGlitches(String highligghtText) {
 		String s=highligghtText.replaceAll("(–)([a-zA-Z]{1,1})", "$1 $2");
 		s=s.replaceAll("([a-zA-Z]{1,1})(–)", "$1 $2");
+		
 		return s;
 	}
-	/**
-	 * Method that cleans text from special characters
-	 * @param highligghtText highlight text to be cleaned
-	 * characters to be cleaned:[]{}()*+-=!?^$|\
-	 * slashback \ should be scaped like this \\\\
-	 */
-
-	//	protected String cleanEspecialCharacters(String str) {
-	//	String s=highligghtText.replaceAll("(–)([a-zA-Z]{1,1})", "$1 $2");
-	//	s=s.replaceAll("([a-zA-Z]{1,1})(–)", "$1 $2");
-	//	
-	//return s
-	//	}
 	/**
 	 * splits the highlights in sentences
 	 */

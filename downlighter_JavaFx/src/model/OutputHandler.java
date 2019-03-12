@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 import org.jsoup.nodes.Document;
 
@@ -20,6 +21,7 @@ public class OutputHandler {
 	private EBook eBook;
 	private File file;
 	
+	
 	public OutputHandler(EBook eBook, File file) {
 		this.pathTorenderFolder = Paths.get(eBook.getContainerFolder());
 		this.file=file;
@@ -32,7 +34,7 @@ public class OutputHandler {
 		if (!directory.exists()) {
 			try {	
 				directory.mkdir();
-				out = new PrintWriter(eBook.getContainerFolder()+file.getName());
+				out = new PrintWriter(file.getAbsolutePath());
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -41,7 +43,7 @@ public class OutputHandler {
 		}
 		else {
 			try {	
-				out = new PrintWriter(eBook.getContainerFolder()+"/"+file.getName());
+				out = new PrintWriter(file.getAbsolutePath());
 				out.print(htmlDokument);
 				out.close();
 			} catch (FileNotFoundException e) {

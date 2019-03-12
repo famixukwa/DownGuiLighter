@@ -7,10 +7,8 @@ public class SentenceHighlight extends Highlight {
 
 	public SentenceHighlight(String highligghtText) {
 		super();
-
 		this.highligghtText = highligghtText;
 		hashCode= Math.abs(highligghtText.hashCode());
-		//		cleanHilightText=cleanEspecialCharacters(highligghtText);
 		sentenceSplitter(highligghtText);
 		setFirstSentence();
 		SPECIAL_REGEX_CHARS = Pattern.compile("[\\{\\}\\(\\)\\[\\]\\?\\+\\*\\^$\\|\\\\\\-]");
@@ -25,19 +23,23 @@ public class SentenceHighlight extends Highlight {
 		constructUrl();
 		this.highlightLink= HighlightLink;
 	}
-	@Override
+	
 	protected void sentenceSplitter(String s)
 	{
 		String[] parts = s.split("(?<=\\.)");
 		if (parts.length>1) {
 			for (int i = 0; i < parts.length; i++) {
 				if (i==0) {
-					Sentence sentence=new Sentence(s,hashCode);
+					System.out.println("hashcode: "+hashCode);
+					Sentence sentence=new Sentence(parts[i],hashCode);
 					sentences.add(sentence);
+					System.out.println("first sentence:  "+sentence.getSearchable());
 				}
 				else {
+					s=parts[i].replaceAll("^ ", "");
 					Sentence sentence=new Sentence(s);
 					sentences.add(sentence);
+					System.out.println("other sentences:  "+sentence.getSearchable());
 				}
 			}
 		}
