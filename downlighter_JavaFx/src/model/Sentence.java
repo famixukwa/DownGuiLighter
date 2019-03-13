@@ -3,7 +3,7 @@ package model;
 import java.io.File;
 import java.util.regex.Pattern;
 
-public class Sentence extends Highlight{
+public class Sentence extends Highlight {
 	private int hashCode;
 	public Sentence(String highligghtText) {
 		super(highligghtText);

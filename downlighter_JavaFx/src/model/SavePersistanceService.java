@@ -25,6 +25,7 @@ public class SavePersistanceService extends Task<Object>{
 		this.eBook= eBook;
 	}
 	public void  saveEbookWithHighlightsFound (EBook eBook) throws Exception{
+		
 		emf=Persistence.createEntityManagerFactory("downlighter_JavaFx");  
 		em=emf.createEntityManager(); 
 		em.getTransaction().begin(); 
@@ -32,6 +33,7 @@ public class SavePersistanceService extends Task<Object>{
 		for (Highlight highlight : eBook.getHighlightsFound()) {
 			em.persist(highlight);
 		}
+		
 		em.getTransaction().commit();
 		em.close();
 		emf.close();

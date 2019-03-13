@@ -17,9 +17,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public  class  ModelInterface {
+public  class  ModelConnector {
 	private static Highlight pastHighlight;
 	private static ObservableList<EBook> ebookObservableList= FXCollections.observableArrayList();
+	
 	/**
 	 * metadata properties
 	 */
@@ -29,7 +30,9 @@ public  class  ModelInterface {
 	private static StringProperty description= new SimpleStringProperty();
 	private static StringProperty publisher= new SimpleStringProperty();
 	private static ObservableList<Highlight> highlightsFound=FXCollections.observableArrayList();
+	private static ObservableList<Highlight> highlightsFoundArchive=FXCollections.observableArrayList();
 	private static StringProperty messages=new SimpleStringProperty("Begin");
+	
 	
 	static int numberHighlightsFound;
 	
@@ -78,7 +81,7 @@ public  class  ModelInterface {
 
 	//temporal bookprocess variable for the search algorithm
 	public static void setPastHighlight(Highlight pastHighlight) {
-		ModelInterface.pastHighlight = pastHighlight;
+		ModelConnector.pastHighlight = pastHighlight;
 	}
 	
 	public static void addBookToObservable(EBook eBook) {
@@ -101,24 +104,24 @@ public  class  ModelInterface {
 	
 
 	public static void setBookTitleP(final String bookTitleP) {
-		ModelInterface.bookTitlePProperty().set(bookTitleP);
+		ModelConnector.bookTitlePProperty().set(bookTitleP);
 	}
 	
 	
 	
 
 	public static StringProperty authorProperty() {
-		return ModelInterface.author;
+		return ModelConnector.author;
 	}
 	
 
 	public static String getAuthor() {
-		return ModelInterface.authorProperty().get();
+		return ModelConnector.authorProperty().get();
 	}
 	
 
 	public static void setAuthor(final String author) {
-		ModelInterface.authorProperty().set(author);
+		ModelConnector.authorProperty().set(author);
 		System.out.println("text : "+author);
 	}
 	
@@ -127,60 +130,60 @@ public  class  ModelInterface {
 	
 
 	public static StringProperty descriptionProperty() {
-		return ModelInterface.description;
+		return ModelConnector.description;
 	}
 	
 
 	public static String getDescription() {
-		return ModelInterface.descriptionProperty().get();
+		return ModelConnector.descriptionProperty().get();
 	}
 	
 
 	public static void setDescription(final String description) {
-		ModelInterface.descriptionProperty().set(description);
+		ModelConnector.descriptionProperty().set(description);
 	}
 	
 
 	public static StringProperty publisherProperty() {
-		return ModelInterface.publisher;
+		return ModelConnector.publisher;
 	}
 	
 
 	public static String getPublisher() {
-		return ModelInterface.publisherProperty().get();
+		return ModelConnector.publisherProperty().get();
 	}
 	
 
 	public static void setPublisher(final String publisher) {
-		ModelInterface.publisherProperty().set(publisher);
+		ModelConnector.publisherProperty().set(publisher);
 	}
 
 	public static StringProperty coverPathProperty() {
-		return ModelInterface.coverPath;
+		return ModelConnector.coverPath;
 	}
 	
 
 	public static String getCoverPath() {
-		return ModelInterface.coverPathProperty().get();
+		return ModelConnector.coverPathProperty().get();
 	}
 	
 
 	public static void setCoverPath(final String coverPath) {
-		ModelInterface.coverPathProperty().set(coverPath);
+		ModelConnector.coverPathProperty().set(coverPath);
 	}
 
 	public static DoubleProperty progressProperty() {
-		return ModelInterface.progress;
+		return ModelConnector.progress;
 	}
 	
 
 	public static double getProgress() {
-		return ModelInterface.progressProperty().get();
+		return ModelConnector.progressProperty().get();
 	}
 	
 
 	public static  void setProgress(final double progress) {
-		ModelInterface.progressProperty().set(progress);
+		ModelConnector.progressProperty().set(progress);
 	}
 
 	public static ObservableList<Highlight> getHighlightsFound() {
@@ -188,21 +191,21 @@ public  class  ModelInterface {
 	}
 
 	public static void setHighlightsFound(ObservableList<Highlight> highlightsFound) {
-		ModelInterface.highlightsFound = highlightsFound;
+		ModelConnector.highlightsFound = highlightsFound;
 	}
 
 	public static StringProperty messagesProperty() {
-		return ModelInterface.messages;
+		return ModelConnector.messages;
 	}
 	
 
 	public static String getMessages() {
-		return ModelInterface.messagesProperty().get();
+		return ModelConnector.messagesProperty().get();
 	}
 	
 
 	public static void setMessages(final String messages) {
-		ModelInterface.messagesProperty().set(messages);
+		ModelConnector.messagesProperty().set(messages);
 	}
 
 	public static int getNumberHighlightsFound() {
@@ -210,7 +213,7 @@ public  class  ModelInterface {
 	}
 
 	public static void setNumberHighlightsFound(int numberHighlightsFound) {
-		ModelInterface.numberHighlightsFound = numberHighlightsFound;
+		ModelConnector.numberHighlightsFound = numberHighlightsFound;
 	}
 	
 	

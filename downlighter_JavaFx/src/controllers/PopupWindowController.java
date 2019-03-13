@@ -24,7 +24,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import model.EBook;
 import model.Highlight;
-import model.ModelInterface;
+import model.ModelConnector;
 
 public class PopupWindowController {
 	@FXML

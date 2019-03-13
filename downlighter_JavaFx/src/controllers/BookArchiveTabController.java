@@ -9,7 +9,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import model.EBook;
-import model.ModelInterface;
+import model.ModelConnector;
 import model.RetrievePersistanceService;
 import model.RetrievePersistanceService.Mode;
 
@@ -44,7 +44,7 @@ public class BookArchiveTabController {
 		assert bookArchiveTable != null : "fx:id=\"bookArchiveTable\" was not injected: check your FXML file 'BookArchiveTab.fxml'.";
 		RetrievePersistanceService task = new RetrievePersistanceService(Mode.BEAN);
 		task.start();
-		ObservableList<EBook> observableList=ModelInterface.getEbookObservableList();
+		ObservableList<EBook> observableList=ModelConnector.getEbookObservableList();
 		ObservableList<EBook> data=observableList;
 		bookTitleColumn.setCellValueFactory(new PropertyValueFactory<EBook,String>("bookTitleP"));
 		highlightsColumn.setCellValueFactory(new PropertyValueFactory<EBook,String>("numberHighlightsFound"));

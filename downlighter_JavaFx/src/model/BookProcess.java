@@ -23,32 +23,25 @@ import nl.siegmann.epublib.epub.EpubReader;
 
 public class BookProcess extends Task<Void>{
 	//Collections
-	
-	
-	
+
+
+
 	ArrayList<InformedFile> htmlfiles;
-	
+
 	//links
 	private Highlight highlight;
-
-	//Path variables:
-	Path source=Paths.get(InputHandler.getEbookFile().toString()+"/");
-	String baseDirectory="test/files archive/";
-	String fileName=source.getFileName().toString();
-	String filenameWithNoExtension=fileName.replaceAll("\\.epub", "")+"/";
-	String bookSubfolder="text";
 
 	//instance creation
 	private EpubReader epubReader = new EpubReader();
 	private EBook eBook= new EBook();
-	private PathHandler pathHandler= new PathHandler(filenameWithNoExtension);
+	private PathHandler pathHandler= new PathHandler();
 
 	//flags
 	Boolean createdFolder;
 
 	//search replace modus
 	public BookProcess() {
-			
+
 	}
 
 	/**
@@ -58,22 +51,22 @@ public class BookProcess extends Task<Void>{
 	@Override
 	protected Void call() throws Exception {
 		extractBookTitle();
-		ModelInterface.setProgress(0.10F);
+		ModelConnector.setProgress(0.10F);
 		fileRendering();
-		ModelInterface.setProgress(0.20F);
+		ModelConnector.setProgress(0.20F);
 		extractMetaData();
 		extractCover();
 		SearchReplaceEngine searchReplaceEngine=new SearchReplaceEngine(eBook, pathHandler);
-		eBook.setNumberHighlightsFound(ModelInterface.getNumberHighlightsFound());
-		addMessagesToDisplay("Number of highlights found: "+ModelInterface.getNumberHighlightsFound()+"\n");
-//		System.out.println(htmlListCreator());
+		eBook.setNumberHighlightsFound(ModelConnector.getNumberHighlightsFound());
+		addMessagesToDisplay("Number of highlights found: "+ModelConnector.getNumberHighlightsFound()+"\n");
+		//		System.out.println(htmlListCreator());
 		SavePersistanceService task = new SavePersistanceService(eBook);
-		ModelInterface.setProgress(0.95F);
+		ModelConnector.setProgress(0.95F);
 		saveBookInStatusObservable(eBook);
 		Thread th = new Thread(task);
 		th.setDaemon(true);
 		th.start();
-		ModelInterface.setProgress(1F);
+		ModelConnector.setProgress(1F);
 		return null;
 
 	}
@@ -85,7 +78,7 @@ public class BookProcess extends Task<Void>{
 		th.setDaemon(false);
 		th.start();
 		this.setOnSucceeded( e -> {
-			ModelInterface.popupWindowView(eBook);
+			ModelConnector.popupWindowView(eBook);
 		});
 	}
 
@@ -114,16 +107,16 @@ public class BookProcess extends Task<Void>{
 		for (String string : descriptionList) {
 		}
 		eBook.setAuthor(umwrapList(authorList));
-		ModelInterface.setAuthor(umwrapList(authorList));
+		ModelConnector.setAuthor(umwrapList(authorList));
 
 		eBook.setBookTitleP(bookTitle);
-		ModelInterface.setBookTitleP(bookTitle);
+		ModelConnector.setBookTitleP(bookTitle);
 
 		eBook.setPublisher(umwrapList(publisherList));
-		ModelInterface.setPublisher(umwrapList(publisherList));
+		ModelConnector.setPublisher(umwrapList(publisherList));
 
 		eBook.setDescription(umwrapList(descriptionList));
-		ModelInterface.setDescription(umwrapList(descriptionList));
+		ModelConnector.setDescription(umwrapList(descriptionList));
 	}
 	private String umwrapList(List list) {
 		StringBuilder s = new StringBuilder();
@@ -154,7 +147,7 @@ public class BookProcess extends Task<Void>{
 		Path relativePathToCover=xmlExtractor.getAttributePath("manifest", "id","cover");
 		Path pathToCover=Paths.get(pathHandler.getBookPath().toString(),relativePathToCover.toString());
 		eBook.setCoverPath(pathToCover.toString());
-		ModelInterface.setCoverPath(pathToCover.toString());
+		ModelConnector.setCoverPath(pathToCover.toString());
 	}
 	/**
 	 * renders the file system extracts the book 
@@ -170,7 +163,7 @@ public class BookProcess extends Task<Void>{
 	 *
 	 */
 	private void folderCreation () {
-		File theDir = new File(baseDirectory);
+		File theDir = new File(pathHandler.getArchivePath().toString());
 
 		//creates directory
 		// if the directory does not exist, create it
@@ -188,12 +181,12 @@ public class BookProcess extends Task<Void>{
 				System.out.println("DIR created"); 
 				createdFolder=true;
 				//saves the files container folder in the book
-				eBook.setContainerFolder(baseDirectory+filenameWithNoExtension+bookSubfolder);
+				eBook.setContainerFolder(pathHandler.getBookPath().toString());
 			}
 		}
 		else {
 			createdFolder=true;
-			eBook.setContainerFolder(baseDirectory+filenameWithNoExtension+bookSubfolder);
+			eBook.setContainerFolder(pathHandler.getBookPath().toString());
 		}
 
 	}
@@ -204,16 +197,16 @@ public class BookProcess extends Task<Void>{
 	private void extractEpub() {
 		if (createdFolder) {
 			try {
-				ZipFile zipFile = new ZipFile(source.toFile());
-				zipFile.extractAll(baseDirectory+filenameWithNoExtension);
+				ZipFile zipFile = new ZipFile(pathHandler.getPathToEpub().toFile());
+				zipFile.extractAll(pathHandler.getBookPath().toString());
 				pathHandler.setOpfPath();
 			} catch (ZipException e) {
 				e.printStackTrace();
 			}
 		}
-
+		pathHandler.setOpfPath();
 	}
-	
+
 	/**
 	 * method that creates an html link list to be used in the book as a way to see where the highlight was 
 	 */
@@ -227,8 +220,8 @@ public class BookProcess extends Task<Void>{
 		.title().text("asd").end().end(1)
 		.body()
 		.ul().style("text-decoration:none;list-style:square;font-weight:bold");
-		for (int i = 0; i < ModelInterface.getHighlightsFound().size(); i++) {
-			html.li().raw(ModelInterface.getHighlightsFound().get(i).getHighlightLink()).end();
+		for (int i = 0; i < ModelConnector.getHighlightsFound().size(); i++) {
+			html.li().raw(ModelConnector.getHighlightsFound().get(i).getHighlightLink()).end();
 		}
 		html
 		.endAll();
@@ -239,13 +232,13 @@ public class BookProcess extends Task<Void>{
 	 * add book in Observable list of model connector
 	 */
 	public void saveBookInStatusObservable (EBook eBook) {
-		ModelInterface.addBookToObservable(eBook);
+		ModelConnector.addBookToObservable(eBook);
 	}
 	/**
 	 * add messages to display in the gui
 	 */
 	void addMessagesToDisplay(String s) {
-		ModelInterface.setMessages(s);
+		ModelConnector.setMessages(s);
 	}
 
 

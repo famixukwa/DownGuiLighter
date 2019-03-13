@@ -88,7 +88,7 @@ public class SearchReplaceEngine {
 		for (int i = 0; i < highlightList.size(); i++) {
 			//set progress
 			Double d =0.7/highlightList.size();
-			ModelInterface.setProgress(i*d+0.2);
+			ModelConnector.setProgress(i*d+0.2);
 			//Document htmlDoc=extractDocumentFromFile(htmlFile);
 			boolean isHighlightFound=searchReplaceInHtml(eBook,highlightList.get(i),copyOfHtmlFiles,isBeingSentenceSearch);
 			if (isHighlightFound) {
@@ -119,13 +119,12 @@ public class SearchReplaceEngine {
 			if (founds.size()!=0) {
 				isHighlightFound=true;
 				Element found= founds.first();
-				//informs what is found 
-				informer (found,file, highlight,copyOfHtmlFiles);
 				//counts the highlights
 				numberHighlightsFound++;
-				ModelInterface.setNumberHighlightsFound(numberHighlightsFound);
+				//informs what is found 
+				informer (found,file, highlight,copyOfHtmlFiles);
 				//saved the highlight as past highlight for optimization purposes
-				ModelInterface.setPastHighlight(highlight);
+				ModelConnector.setPastHighlight(highlight);
 				//replaces the text in the book with the bookmarked and highlighted text
 				textReplacer(found, highlight);
 				//saves the modified file
@@ -170,14 +169,18 @@ public class SearchReplaceEngine {
 			for (int i = 0; i < sentenceHighlight.getSentences().size(); i++) {
 				System.out.println("number of sentences:  "+sentenceHighlight.getSentences().size());
 				Sentence sentence=sentenceHighlight.getSentences().get(i);
-				boolean isSentenceFound=sentenceSearchReplaceInHtml(eBook,sentenceHighlight,sentence);
-				if (isSentenceFound) {
-					foundedSentences++;
-					System.out.println("found sentences:  "+foundedSentences);
-					if (foundedSentences==sentenceHighlight.getSentences().size()) {
-						isHighlightFound=true;
-					}
+				boolean isHighlightFoundInsentenceSearchReplaceInHtml=sentenceSearchReplaceInHtml(eBook,sentenceHighlight,sentence);
+				if (isHighlightFoundInsentenceSearchReplaceInHtml) {
+					isHighlightFound=true;
 				}
+				System.out.println("encontrado highlight en sentenceSearchReplaceInHtml: "+isHighlightFound);
+//				if (isSentenceFound) {
+//					foundedSentences++;
+//					System.out.println("found sentences:  "+foundedSentences);
+//					if (foundedSentences==sentenceHighlight.getSentences().size()) {
+//						isHighlightFound=true;
+//					}
+//				}
 			}
 		}
 		else {
@@ -201,19 +204,22 @@ public class SearchReplaceEngine {
 			//search the highlights text in the book
 			Elements founds = htmlDoc.select(searcheable);
 			if (founds.size()!=0) {
-				isSentenceFound=true;
 				Element found= founds.first();
 				if (sentence.getHighligghtText().equals(sentenceHighlight.getFirstSentence().getHighligghtText())) {
-					//informs what is found 
-					informer (found,file, sentenceHighlight,copyOfHtmlFiles);
+					isSentenceFound=true;
+					//creates normal highlight from sentenceHighlight
+					Highlight persistenceHighlight=new Highlight(sentenceHighlight.getHighligghtText());
 					//counts the highlights
 					numberHighlightsFound++;
-					optimizer(sentenceHighlight, file);
+					//informs what is found 
+					informer (found,file, persistenceHighlight,copyOfHtmlFiles);
 				}
 				//replaces the text in the book with the bookmarked and highlighted text
 				textReplacer(found, sentence);
 				//saves the modified file
 				saveTheHtmlOfBook(htmlDoc,file,eBook);
+				optimizer(sentenceHighlight, file);
+				break;
 			}
 		}
 
@@ -234,19 +240,19 @@ public class SearchReplaceEngine {
 		found.html(modifiedText);
 	}
 
-	/**
-	 * 
-	 *Optimizes the search algorithm deleting the files on the list that have been already explored in the case of sentence search
-	 */
-	private void sentenceOptimizer(Highlight highlight,ArrayList<InformedFile> htmlfiles) {
-		int value=highlight.getHighlightFileIndex();
-		if (value>1) {
-			int readFiles=highlight.getHighlightFileIndex()-1;
-			for (int j = 0; j < readFiles; j++) {
-				htmlfiles.remove(j);
-			}
-		}
-	}
+//	/**
+//	 * 
+//	 *Optimizes the search algorithm deleting the files on the list that have been already explored in the case of sentence search
+//	 */
+//	private void sentenceOptimizer(Highlight highlight,ArrayList<InformedFile> htmlfiles) {
+//		int value=highlight.getHighlightFileIndex();
+//		if (value>1) {
+//			int readFiles=highlight.getHighlightFileIndex()-1;
+//			for (int j = 0; j < readFiles; j++) {
+//				htmlfiles.remove(j);
+//			}
+//		}
+//	}
 	/**
 	 * 
 	 *informs ebook and highlight of the information found on the search
@@ -257,14 +263,15 @@ public class SearchReplaceEngine {
 		//produces the links
 		highlight.constructHighlightLink();
 		//adds highlight to observable for the gui:
-		ModelInterface.getHighlightsFound().add(highlight);
+		ModelConnector.getHighlightsFound().add(highlight);
 		//saves the paragraph where the highlight was found
 		highlight.setHighlightLocationInHtml(found.elementSiblingIndex());
 		//saves the index file where it was found
 		highlight.setHighlightFileIndex(file.getOrderIndex());
 		//saves the highlights in book
 		saveHighlightInEBook(highlight);
-
+		System.out.println("numberHighlightsFound: "+numberHighlightsFound);
+		ModelConnector.setNumberHighlightsFound(numberHighlightsFound);
 	}
 	/**
 	 * saves the highlights in the book
@@ -278,7 +285,7 @@ public class SearchReplaceEngine {
 	 * add messages to display in the gui
 	 */
 	void addMessagesToDisplay(String s) {
-		ModelInterface.setMessages(s);
+		ModelConnector.setMessages(s);
 	}
 	/**
 	 * Saves the book calling the OutputHandler

@@ -58,7 +58,7 @@ public class RetrievePersistanceService  extends Task<Void>{
 			this.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
 				@Override
 				public void handle(WorkerStateEvent t) {
-					ModelInterface.popupWindowView(eBook);	
+					ModelConnector.popupWindowView(eBook);	
 				}
 			});
 		}
@@ -80,7 +80,7 @@ public class RetrievePersistanceService  extends Task<Void>{
 		List<EBook> EBookList=(List<EBook>)q.getResultList();
 		if (EBookList.size()>0) {
 			for (EBook eBook : EBookList) {
-				ModelInterface.addBookToObservable(eBook);
+				ModelConnector.addBookToObservable(eBook);
 			}
 		}
 		em.close();
@@ -96,7 +96,9 @@ public class RetrievePersistanceService  extends Task<Void>{
 		qb.setParameter("ebookId",ebookId );
 		List<Highlight> highlightList=(List<Highlight>)q.getResultList();
 		highlightObservableList =FXCollections.observableList(highlightList);
-		ModelInterface.setHighlightsFound(highlightObservableList);
+		System.out.println("exiting retrieve persistence");
+		System.out.println("highlights retrieved: "+highlightList.size());
+		ModelConnector.setHighlightsFound(highlightObservableList);
 		eBook=(EBook)qb.getSingleResult();
 		em.close();
 		emf.close();

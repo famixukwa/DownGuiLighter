@@ -21,7 +21,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import model.BookProcess;
 import model.InputHandler;
-import model.ModelInterface;
+import model.ModelConnector;
 
 public class BookProcessingTabController {
 	Window controllerStage;
@@ -102,10 +102,10 @@ public class BookProcessingTabController {
 		if (highlightFile!=null&ebookFile!=null) {
 			pressed=true;
 			BookProcess processedBook=new BookProcess();
-			ModelInterface.messagesProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
+			ModelConnector.messagesProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
 				messagesWindow.appendText(newValue);
 			});
-			ModelInterface.coverPathProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
+			ModelConnector.coverPathProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
 				Image image = null;
 				try {
 					image = new Image(new FileInputStream(newValue));
@@ -118,7 +118,7 @@ public class BookProcessingTabController {
 				cover.setPreserveRatio(true);
 				cover.setSmooth(true);
 			});
-			ModelInterface.authorProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
+			ModelConnector.authorProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
 				Platform.runLater(
 						() -> {
 							authorLegend.setText("Author:");
@@ -127,7 +127,7 @@ public class BookProcessingTabController {
 						);
 
 			});
-			ModelInterface.bookTitlePProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
+			ModelConnector.bookTitlePProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
 				Platform.runLater(
 						() -> {
 							titleLegend.setText("Book Title:");
@@ -136,7 +136,7 @@ public class BookProcessingTabController {
 						);
 
 			});
-			ModelInterface.publisherProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
+			ModelConnector.publisherProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
 				Platform.runLater(
 						() -> {
 							publisherLegend.setText("Publisher:");
@@ -159,10 +159,10 @@ public class BookProcessingTabController {
 		assert highlightsSelected != null : "fx:id=\"highlightsSelected\" was not injected: check your FXML file 'First_tab.fxml'.";
 		assert Choose_highlight_HTML != null : "fx:id=\"Choose_highlight_HTML\" was not injected: check your FXML file 'First_tab.fxml'.";
 		assert messagesWindow != null : "fx:id=\"messagesWindow\" was not injected: check your FXML file 'First_tab.fxml'.";
-		ModelInterface.progressProperty().addListener((ObservableValue<? extends Number> observable, Number oldvalue, Number newValue )-> {
+		ModelConnector.progressProperty().addListener((ObservableValue<? extends Number> observable, Number oldvalue, Number newValue )-> {
 			Platform.runLater(
 					() -> {
-						progresBar.setProgress(ModelInterface.getProgress());
+						progresBar.setProgress(ModelConnector.getProgress());
 					}
 					);
 
