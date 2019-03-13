@@ -5,9 +5,10 @@ import java.util.regex.Pattern;
 public class SentenceHighlight extends Highlight {
 	private Sentence firstSentence;
 
-	public SentenceHighlight(String highligghtText) {
+	public SentenceHighlight(String highligghtText,int highlightFileIndex) {
 		super();
 		this.highligghtText = highligghtText;
+		this.highlightFileIndex=highlightFileIndex;
 		hashCode= Math.abs(highligghtText.hashCode());
 		sentenceSplitter(highligghtText);
 		setFirstSentence();
@@ -31,13 +32,13 @@ public class SentenceHighlight extends Highlight {
 			for (int i = 0; i < parts.length; i++) {
 				if (i==0) {
 					System.out.println("hashcode: "+hashCode);
-					Sentence sentence=new Sentence(parts[i],hashCode);
+					Sentence sentence=new Sentence(parts[i],hashCode,highlightFileIndex);
 					sentences.add(sentence);
 					System.out.println("first sentence:  "+sentence.getSearchable());
 				}
 				else {
 					s=parts[i].replaceAll("^ ", "");
-					Sentence sentence=new Sentence(s);
+					Sentence sentence=new Sentence(s,highlightFileIndex);
 					sentences.add(sentence);
 					System.out.println("other sentences:  "+sentence.getSearchable());
 				}

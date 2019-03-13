@@ -6,6 +6,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -96,6 +98,7 @@ public class SearchReplaceEngine {
 			}
 			if(!isBeingSentenceSearch&!isHighlightFound) {
 				addMessagesToDisplay("highlight "+i+" not found!! :("+"\n");
+				System.out.println("regex de highlight no encontrado: "+highlightList.get(i).getSearchable());
 			}
 		}
 
@@ -109,12 +112,13 @@ public class SearchReplaceEngine {
 	private boolean searchReplaceInHtml(EBook eBook,Highlight highlight,ArrayList<InformedFile> copyOfHtmlFiles, boolean isBeingSentenceSearch) {
 		//gets the list of files
 		boolean isHighlightFound=false;
-		
+
 		for (int i = 0; i < copyOfHtmlFiles.size(); i++) {
 			InformedFile file=copyOfHtmlFiles.get(i);
 			Document htmlDoc=extractDocumentFromFile(file);
 			String searcheable=highlight.getSearchable();
 			//search the highlights text in the book
+			//System.out.println("looking on file: "+file.getOrderIndex());
 			Elements founds = htmlDoc.select(searcheable);
 			if (founds.size()!=0) {
 				isHighlightFound=true;
@@ -135,13 +139,13 @@ public class SearchReplaceEngine {
 			}
 
 		}
-				if (!isHighlightFound&highlight.getSentences().size()>0) {
-					isBeingSentenceSearch=true;
-					System.out.println("test sentence begin");
-					SentenceHighlight sentenceHighlight= new SentenceHighlight(highlight.getHighligghtText());
-					isHighlightFound=sentenceSearchReplacer(eBook,sentenceHighlight);
-				}
-		
+		if (!isHighlightFound&highlight.getSentences().size()>0) {
+			isBeingSentenceSearch=true;
+			System.out.println("test sentence begin");
+			SentenceHighlight sentenceHighlight= new SentenceHighlight(highlight.getHighligghtText(),highlight.getHighlightFileIndex());
+			isHighlightFound=sentenceSearchReplacer(eBook,sentenceHighlight);
+		}
+
 		return isHighlightFound;
 	}
 	/**
@@ -155,7 +159,7 @@ public class SearchReplaceEngine {
 				copyOfHtmlFiles.remove(0);
 			}
 		}
-			
+
 	}
 	/**
 	 * Helper method for searchReplaceInHtml that searches in sentence mode for the case the highlight contains sentences from two different paragraphs
@@ -174,13 +178,13 @@ public class SearchReplaceEngine {
 					isHighlightFound=true;
 				}
 				System.out.println("encontrado highlight en sentenceSearchReplaceInHtml: "+isHighlightFound);
-//				if (isSentenceFound) {
-//					foundedSentences++;
-//					System.out.println("found sentences:  "+foundedSentences);
-//					if (foundedSentences==sentenceHighlight.getSentences().size()) {
-//						isHighlightFound=true;
-//					}
-//				}
+				//				if (isSentenceFound) {
+				//					foundedSentences++;
+				//					System.out.println("found sentences:  "+foundedSentences);
+				//					if (foundedSentences==sentenceHighlight.getSentences().size()) {
+				//						isHighlightFound=true;
+				//					}
+				//				}
 			}
 		}
 		else {
@@ -198,9 +202,10 @@ public class SearchReplaceEngine {
 		boolean isSentenceFound=false;
 		for (int j = 0; j < copyOfHtmlFiles.size(); j++) {
 			InformedFile file=copyOfHtmlFiles.get(j);
+			//System.out.println("looking on file: "+file.getOrderIndex());
 			Document htmlDoc=extractDocumentFromFile(file);
 			String searcheable=sentence.getSearchable();
-			System.out.println("file:   "+file.getOrderIndex());
+			//System.out.println("file:   "+file.getOrderIndex());
 			//search the highlights text in the book
 			Elements founds = htmlDoc.select(searcheable);
 			if (founds.size()!=0) {
@@ -236,23 +241,65 @@ public class SearchReplaceEngine {
 	private void textReplacer(Element found,Highlight highlight) {
 		String textHighlighted=highlight.getHighlightedText();
 		String textToModify=found.html();
-		String modifiedText=textToModify.replace(highlight.getHighligghtText(), textHighlighted);
-		found.html(modifiedText);
+		String textOfTheHighlight=highlight.getHighligghtText();
+		Pattern SPECIAL_REGEX_CHARS = Pattern.compile("[\\{\\}\\(\\)\\[\\]\\?\\+\\*\\^$\\|\\\\\\-]");
+		boolean isContains = textToModify.contains(textOfTheHighlight);
+		if (!isContains) {
+			
+			String[] wordsInText = textOfTheHighlight.split(" ");
+			int lengthOfWords=wordsInText.length;
+			if (lengthOfWords>3) {
+				System.out.println("lengthOfWords: "+lengthOfWords);
+				String beginOfRegex=wordsInText[0]+" "+wordsInText[1];
+				String beginOfRegexCleaned=SPECIAL_REGEX_CHARS.matcher(beginOfRegex).replaceAll("\\\\$0");
+				String endOfRegex=wordsInText[lengthOfWords-2]+" "+wordsInText[lengthOfWords-1];
+				String endOfRegexCleaned=SPECIAL_REGEX_CHARS.matcher(endOfRegex).replaceAll("\\\\$0");
+				String regex=beginOfRegexCleaned+".*?"+endOfRegexCleaned;
+				System.out.println(regex);
+				String modifiedText=textToModify.replaceAll(regex, textHighlighted);
+				isContains = !textToModify.equals(modifiedText);
+				if (modifiedText!=null) {
+					found.html(modifiedText);
+				}
+			}
+			if (!isContains) {
+				if (lengthOfWords>1) {
+					System.out.println("lengthOfWords: "+lengthOfWords);
+					String beginOfRegex=wordsInText[0];
+					beginOfRegex=beginOfRegex.replaceAll("[,;:\\)\\(]", "");
+					String beginOfRegexCleaned=SPECIAL_REGEX_CHARS.matcher(beginOfRegex).replaceAll("\\\\$0");
+					String endOfRegex=wordsInText[lengthOfWords-1];
+					endOfRegex=endOfRegex.replaceAll("[,;:\\)\\(]", "");
+					String endOfRegexCleaned=SPECIAL_REGEX_CHARS.matcher(endOfRegex).replaceAll("\\\\$0");
+					String regex=beginOfRegexCleaned+".*?"+endOfRegexCleaned;
+					System.out.println(regex);
+					String modifiedText=textToModify.replaceAll(regex, textHighlighted);
+					if (modifiedText!=null) {
+						found.html(modifiedText);
+					}
+				}
+			}
+		}
+		else {
+			String modifiedText=textToModify.replace(highlight.getHighligghtText(), textHighlighted);
+			found.html(modifiedText);
+		}
 	}
+	
 
-//	/**
-//	 * 
-//	 *Optimizes the search algorithm deleting the files on the list that have been already explored in the case of sentence search
-//	 */
-//	private void sentenceOptimizer(Highlight highlight,ArrayList<InformedFile> htmlfiles) {
-//		int value=highlight.getHighlightFileIndex();
-//		if (value>1) {
-//			int readFiles=highlight.getHighlightFileIndex()-1;
-//			for (int j = 0; j < readFiles; j++) {
-//				htmlfiles.remove(j);
-//			}
-//		}
-//	}
+	//	/**
+	//	 * 
+	//	 *Optimizes the search algorithm deleting the files on the list that have been already explored in the case of sentence search
+	//	 */
+	//	private void sentenceOptimizer(Highlight highlight,ArrayList<InformedFile> htmlfiles) {
+	//		int value=highlight.getHighlightFileIndex();
+	//		if (value>1) {
+	//			int readFiles=highlight.getHighlightFileIndex()-1;
+	//			for (int j = 0; j < readFiles; j++) {
+	//				htmlfiles.remove(j);
+	//			}
+	//		}
+	//	}
 	/**
 	 * 
 	 *informs ebook and highlight of the information found on the search
@@ -270,7 +317,6 @@ public class SearchReplaceEngine {
 		highlight.setHighlightFileIndex(file.getOrderIndex());
 		//saves the highlights in book
 		saveHighlightInEBook(highlight);
-		System.out.println("numberHighlightsFound: "+numberHighlightsFound);
 		ModelConnector.setNumberHighlightsFound(numberHighlightsFound);
 	}
 	/**

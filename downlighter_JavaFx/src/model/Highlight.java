@@ -36,10 +36,10 @@ public class Highlight {
 	@Lob 
 	@Column(length=2000)
 	public String cleanHilightText;
-	@Transient
-	private String highlightDomSelector1="p:matches(.*";
-	@Transient
-	private String highlightDomSelector2=".*)";
+	private final String highlightDomSelector1="p:matches(.*";
+	private final String highlightDomSelector2=".*)";
+	private final String highlightDomSelector3="ul:matches(.*";
+	private final String highlightDomSelector4=".*)";
 	@Transient
 	public String beginTagHighlight1="<span id=\"";
 	@Transient
@@ -65,7 +65,7 @@ public class Highlight {
 	@Column(length=2000)
 	private String highlightUrl;
 	private int highlightLocationInHtml;
-	private int highlightFileIndex;
+	protected int highlightFileIndex;
 	//sentences of the highlights
 	@Transient
 	public ArrayList<Sentence> sentences=new ArrayList<>();
@@ -114,7 +114,7 @@ public class Highlight {
 	 */
 	protected String createSearchable(String highligghtText) {
 		String s=SPECIAL_REGEX_CHARS.matcher(highligghtText).replaceAll("\\\\$0");
-		String searchable=highlightDomSelector1+s+highlightDomSelector2;
+		String searchable=highlightDomSelector1+s+highlightDomSelector2+","+highlightDomSelector3+s+highlightDomSelector4;
 		return searchable;
 	}
 	/**

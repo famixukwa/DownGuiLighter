@@ -8,10 +8,19 @@ public class Sentence extends Highlight {
 	public Sentence(String highligghtText) {
 		super(highligghtText);
 	}
-	public Sentence(String highligghtText,int hashCode) {
+	public Sentence(String highligghtText,int hashCode,int fileIndex) {
 		super();
 		this.highligghtText = cleanAmazonGlitches(highligghtText);
 		this.hashCode=hashCode;
+		SPECIAL_REGEX_CHARS = Pattern.compile("[\\{\\}\\(\\)\\[\\]\\?\\+\\*\\^$\\|\\\\\\-]");
+		searchable= createSearchable(this.highligghtText);
+		highlightedText=constructHIghlightedText(this.highligghtText);
+		System.out.println(highlightedText);
+	}
+	public Sentence(String highligghtText,int fileIndex) {
+		super();
+		this.highligghtText = cleanAmazonGlitches(highligghtText);
+		hashCode= Math.abs(highligghtText.hashCode());
 		SPECIAL_REGEX_CHARS = Pattern.compile("[\\{\\}\\(\\)\\[\\]\\?\\+\\*\\^$\\|\\\\\\-]");
 		searchable= createSearchable(this.highligghtText);
 		highlightedText=constructHIghlightedText(this.highligghtText);
