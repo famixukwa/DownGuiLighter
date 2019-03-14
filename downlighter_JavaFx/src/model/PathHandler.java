@@ -2,28 +2,36 @@ package model;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 public class PathHandler {
-	private Path archivePath=Paths.get("files archive/");
-	private Path basedirectory= Paths.get("test/files archive/");
+	
+	
 	private Path containerPath;
-	private Path bookPath;
 	private Path opfPath;
 	private Path pathToEpub=Paths.get(InputHandler.getEbookFile().toString()+"/");
 	private String fileName=pathToEpub.getFileName().toString();
 	private String filenameWithNoExtension=fileName.replaceAll("\\.epub", "")+"/";
-	private Path folderOfTheBook=Paths.get(archivePath.toString(),filenameWithNoExtension.toString());
+	private Path archivePath=Paths.get("files archive/");
+	private Path bookPath=Paths.get(archivePath.toString(),filenameWithNoExtension);
+	private Path epubFiles=Paths.get(bookPath.toString(),"epub files");
+	private Path extractedBook=Paths.get(bookPath.toString(),"extracted files");
+	private ArrayList<Path>folderArray=new ArrayList<Path>();
+	
 	public PathHandler() {
 		super();
-		this.containerPath=Paths.get(archivePath.toString(),filenameWithNoExtension,"META-INF/container.xml");
-		this.bookPath=Paths.get(archivePath.toString(),filenameWithNoExtension);
+		this.containerPath=Paths.get(extractedBook.toString(),"META-INF/container.xml");
+		setFolderArray();
+	}
+	private void setFolderArray() {
+		folderArray.add(archivePath);
+		folderArray.add(bookPath);
+		folderArray.add(epubFiles);
+		folderArray.add(extractedBook);
 	}
 	
 	public Path getPathToEpub() {
 		return pathToEpub;
-	}
-	public Path getBasedirectory() {
-		return basedirectory;
 	}
 	
 	public Path getContainerPath() {
@@ -37,7 +45,7 @@ public class PathHandler {
 	}
 	public void setOpfPath() {
 		XmlExtractor xmlExtractor= new XmlExtractor(containerPath.toString());
-		opfPath=Paths.get(bookPath.toString(),xmlExtractor.getRootFile("rootfile", "full-path").toString());
+		opfPath=Paths.get(extractedBook.toString(),xmlExtractor.getRootFile("rootfile", "full-path").toString());
 	}
 
 	public Path getArchivePath() {
@@ -48,5 +56,16 @@ public class PathHandler {
 	}
 	public Path getOpfPath() {
 		return opfPath;
+	}
+
+	public Path getEpubFiles() {
+		return epubFiles;
+	}
+
+	public Path getExtractedBook() {
+		return extractedBook;
+	}
+	public ArrayList<Path> getFolderArray() {
+		return folderArray;
 	}
 }

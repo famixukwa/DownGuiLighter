@@ -27,31 +27,25 @@ import org.jsoup.nodes.TextNode;
 public class Highlight {
 	@Id  
 	@GeneratedValue(strategy = GenerationType.TABLE)
-	private int highlightId;
+	protected int highlightId;
 	@ManyToOne
-	public EBook eBook;
+	protected EBook eBook;
 	@Lob 
 	@Column(name="CONTENT", length=2000)
 	protected  String highligghtText;
 	@Lob 
 	@Column(length=2000)
-	public String cleanHilightText;
-	private final String highlightDomSelector1="p:matches(.*";
-	private final String highlightDomSelector2=".*)";
-	private final String highlightDomSelector3="ul:matches(.*";
-	private final String highlightDomSelector4=".*)";
-	@Transient
-	public String beginTagHighlight1="<span id=\"";
-	@Transient
-	public String beginTagHighlight2= "\" style=\"background-color: #FFFF00\">";
-	@Transient
-	public String endTagHighlight="</span>";
-	@Transient
-	protected String beginLinkTag="<a href=\"";
-	@Transient
-	protected String beginLinkTag2="\">";
-	@Transient
-	protected String endLinkTag="</a>";
+	protected String cleanHilightText;
+	protected final static String highlightDomSelector1="p:matches(.*";
+	protected final static String highlightDomSelector2=".*)";
+	protected final static String highlightDomSelector3="ul:matches(.*";
+	protected final static String highlightDomSelector4=".*)";
+	protected final static String beginTagHighlight1="<span id=\"";
+	protected final static String beginTagHighlight2= "\" style=\"background-color: #FFFF00\">";
+	protected final static String endTagHighlight="</span>";
+	protected final static String beginLinkTag="<a href=\"";
+	protected final static String beginLinkTag2="\">";
+	protected final static String endLinkTag="</a>";
 	@Lob 
 	@Column(length=2000)
 	protected String searchable;
@@ -63,12 +57,12 @@ public class Highlight {
 	protected String highlightLink;
 	@Lob 
 	@Column(length=2000)
-	private String highlightUrl;
-	private int highlightLocationInHtml;
+	protected String highlightUrl;
+	protected int highlightLocationInHtml;
 	protected int highlightFileIndex;
 	//sentences of the highlights
 	@Transient
-	public ArrayList<Sentence> sentences=new ArrayList<>();
+	protected ArrayList<Sentence> sentences=new ArrayList<>();
 	int hashCode;
 	@Lob
 	File containerFile;

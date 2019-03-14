@@ -145,7 +145,7 @@ public class BookProcess extends Task<Void>{
 	private void extractCover() {
 		XmlExtractor xmlExtractor=new XmlExtractor(pathHandler.getOpfPath().toString());
 		Path relativePathToCover=xmlExtractor.getAttributePath("manifest", "id","cover");
-		Path pathToCover=Paths.get(pathHandler.getBookPath().toString(),relativePathToCover.toString());
+		Path pathToCover=Paths.get(pathHandler.getExtractedBook().toString(),relativePathToCover.toString());
 		eBook.setCoverPath(pathToCover.toString());
 		ModelConnector.setCoverPath(pathToCover.toString());
 	}
@@ -163,32 +163,34 @@ public class BookProcess extends Task<Void>{
 	 *
 	 */
 	private void folderCreation () {
-		File theDir = new File(pathHandler.getArchivePath().toString());
-
-		//creates directory
-		// if the directory does not exist, create it
-		if (!theDir.exists()) {
-			boolean result = false;
-			try{
-				theDir.mkdir();
-				result = true;
-			} 
-			catch(SecurityException se){
-				System.out.println("there was a problem creating the folder");
-
-			}        
-			if(result) {    
-				System.out.println("DIR created"); 
+		ArrayList<Path>folderArray=pathHandler.getFolderArray();
+		for (Path path : folderArray) {
+			System.out.println(path.toString());
+			File directory = new File(path.toString());
+			//creates directory
+			// if the directory does not exist, create it
+			if (!directory.exists()) {
+				System.out.println("creating directory: " + path.toString());
+				boolean result = false;
+				try{
+					directory.mkdir();
+					result = true;
+				} 
+				catch(SecurityException se){
+					System.out.println("there was a problem creating the file");
+				}        
+				if(result) {    
+					System.out.println("DIR created"); 
+					createdFolder=true;
+					//saves the files container folder in the book
+					eBook.setContainerFolder(pathHandler.getBookPath().toString());
+				}
+			}
+			else {
 				createdFolder=true;
-				//saves the files container folder in the book
 				eBook.setContainerFolder(pathHandler.getBookPath().toString());
 			}
 		}
-		else {
-			createdFolder=true;
-			eBook.setContainerFolder(pathHandler.getBookPath().toString());
-		}
-
 	}
 	/**
 	 * extracts the epub file and sets the path of content.opf that informs pathHandler where is the root directory
@@ -198,7 +200,7 @@ public class BookProcess extends Task<Void>{
 		if (createdFolder) {
 			try {
 				ZipFile zipFile = new ZipFile(pathHandler.getPathToEpub().toFile());
-				zipFile.extractAll(pathHandler.getBookPath().toString());
+				zipFile.extractAll(pathHandler.getExtractedBook().toString());
 				pathHandler.setOpfPath();
 			} catch (ZipException e) {
 				e.printStackTrace();

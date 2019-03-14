@@ -28,6 +28,7 @@ public class BookProcessingTabController {
 	boolean pressed=false;
 	private File highlightFile;
 	private File ebookFile;
+	private File epubFile;
 
 	public void setStage(Stage primaryStage) {
 		Stage controllerStage=primaryStage;
@@ -75,6 +76,7 @@ public class BookProcessingTabController {
 		FileChooser fileChooser = new FileChooser();
 		FileChooser.ExtensionFilter epubExtFilter = new FileChooser.ExtensionFilter("EPUB files (*.epub)", "*.epub");
 		fileChooser.getExtensionFilters().add(epubExtFilter);
+		fileChooser.setInitialFileName("asd.epub");
 		ebookFile = fileChooser.showOpenDialog(controllerStage);
 		InputHandler.setEbookFile(ebookFile);
 		if (ebookFile!=null) {
@@ -90,6 +92,18 @@ public class BookProcessingTabController {
 		FileChooser.ExtensionFilter htmlExtFilter = new FileChooser.ExtensionFilter("HTML files (*.html)", "*.html");
 		fileChooser.getExtensionFilters().add(htmlExtFilter);
 		highlightFile = fileChooser.showOpenDialog(controllerStage);
+		InputHandler.setHighlights(highlightFile);
+		if (ebookFile!=null) {
+			String value=highlightFile.getAbsolutePath();
+			highlightsSelected.setText(value);
+		}
+	}
+	@FXML
+	void saveFile(ActionEvent event) {
+		FileChooser fileChooser = new FileChooser();
+		FileChooser.ExtensionFilter epubFilter = new FileChooser.ExtensionFilter("Epub files (*.epub)", "*.epub");
+		fileChooser.getExtensionFilters().add(epubFilter);
+		epubFile = fileChooser.showOpenDialog(controllerStage);
 		InputHandler.setHighlights(highlightFile);
 		if (ebookFile!=null) {
 			String value=highlightFile.getAbsolutePath();

@@ -47,7 +47,7 @@ public class SearchReplaceEngine {
 		XmlExtractor xmlExtractor= new XmlExtractor(pathHandler.getOpfPath().toString());
 		ArrayList<Path> filesPath=xmlExtractor.getHmlFilesPath();
 		for (int i = 0; i < filesPath.size(); i++) {
-			Path fullPath=Paths.get(pathHandler.getBookPath().toString(), filesPath.get(i).toString());
+			Path fullPath=Paths.get(pathHandler.getExtractedBook().toString(), filesPath.get(i).toString());
 			InformedFile file= new InformedFile(fullPath.toString());
 			file.setOrderIndex(i);
 			htmlfiles.add(file);
