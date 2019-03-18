@@ -2,8 +2,10 @@ package model;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -12,9 +14,13 @@ import com.googlecode.jatl.Html;
 import javafx.concurrent.Task;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.model.ZipParameters;
+import net.lingala.zip4j.util.Zip4jConstants;
 import nl.siegmann.epublib.domain.Author;
 import nl.siegmann.epublib.domain.Book;
+import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.epub.EpubReader;
+import nl.siegmann.epublib.epub.EpubWriter;
 
 /**
  * Creates a processing unit where the book is processed, find the highlights, change the book etc..
@@ -59,8 +65,10 @@ public class BookProcess extends Task<Void>{
 		SearchReplaceEngine searchReplaceEngine=new SearchReplaceEngine(eBook, pathHandler);
 		eBook.setNumberHighlightsFound(ModelConnector.getNumberHighlightsFound());
 		addMessagesToDisplay("Number of highlights found: "+ModelConnector.getNumberHighlightsFound()+"\n");
-		//		System.out.println(htmlListCreator());
+		htmlListCreator();
 		SavePersistanceService task = new SavePersistanceService(eBook);
+		bookCompress();
+		addHighlightSection();
 		ModelConnector.setProgress(0.95F);
 		saveBookInStatusObservable(eBook);
 		Thread th = new Thread(task);
@@ -104,8 +112,6 @@ public class BookProcess extends Task<Void>{
 		String bookTitle = book.getMetadata().getFirstTitle();
 		List<String> publisherList = book.getMetadata().getPublishers();
 		List<String> descriptionList = book.getMetadata().getDescriptions();
-		for (String string : descriptionList) {
-		}
 		eBook.setAuthor(umwrapList(authorList));
 		ModelConnector.setAuthor(umwrapList(authorList));
 
@@ -207,28 +213,83 @@ public class BookProcess extends Task<Void>{
 			}
 		}
 		pathHandler.setOpfPath();
+		pathHandler.setPathOfhtmlfiles();
+		pathHandler.setHtmlWithHighlights();
 	}
 
 	/**
 	 * method that creates an html link list to be used in the book as a way to see where the highlight was 
 	 */
-	private String htmlListCreator() {
+	private void htmlListCreator() {
 		StringWriter sw = new StringWriter();
 		Html html = new Html(sw);
 		html
 		.html()
 		.head()
 		.meta().httpEquiv("content-type").content("application/xhtml+xml; charset=UTF-8")
-		.title().text("asd").end().end(1)
+		.title().text("Highlight index").end().end(1)
 		.body()
-		.ul().style("text-decoration:none;list-style:square;font-weight:bold");
+		.h1().text("Highllight Index").end()
+		.ul().style("text-decoration:none;list-style:square;font-weight:normal");
 		for (int i = 0; i < ModelConnector.getHighlightsFound().size(); i++) {
-			html.li().raw(ModelConnector.getHighlightsFound().get(i).getHighlightLink()).end();
+			html.li().style("text-decoration:none").raw(ModelConnector.getHighlightsFound().get(i).getBookHighlightLink()).end();
 		}
 		html
 		.endAll();
 		String htmlList = sw.getBuffer().toString();
-		return htmlList;
+		OutputHandler saveIndex= new OutputHandler(htmlList, pathHandler);
+		saveIndex.saveIndex();
+	}
+	/**
+	 * compresses the analyzed files on to a new book that could by used by any ebook reader accepting epub files.
+	 */
+	private void bookCompress( ) {
+		Path extractedBook=pathHandler.getExtractedBook();
+		Path compressedBook=Paths.get(pathHandler.getEpubFiles().toString(), pathHandler.getFilenameWithNoExtension()+".epub");
+		// Initiate ZipFile object with the path/name of the zip file.
+		ZipFile zipFile=null;
+		try {
+			zipFile = new ZipFile(compressedBook.toString());
+
+			// Folder to add
+
+			String folderToAdd = extractedBook.toString();
+			System.out.println("folder to compress: "+folderToAdd);
+			// Initiate Zip Parameters which define various properties such
+			// as compression method, etc.
+			ZipParameters parameters = new ZipParameters();
+			parameters.setIncludeRootFolder(false);
+			// set compression method to store compression
+			parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+			// Set the compression level
+			parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
+			// Add folder to the zip file
+			zipFile.addFolder(folderToAdd, parameters);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		pathHandler.setIsepubfileWHighlightsCreated(true);
+	}
+	/**
+	 * adds the section depicting all the highlihgts found for later use in any other book reader to the new epub file created.
+	 */
+	private void addHighlightSection() {
+		EpubReader epubReader = new EpubReader();
+		EpubWriter epubWriter = new EpubWriter();
+		Path copyOfBookPath=Paths.get(pathHandler.getEpubFiles().toString(), pathHandler.getFilenameWithNoExtension()+".epub");
+		Path copyOfBookPathWHigh=Paths.get(pathHandler.getEpubFiles().toString(), pathHandler.getFilenameWithNoExtension()+"highlighted"+".epub");
+		Path localPathtoList=Paths.get(pathHandler.getPathOfhtmlfiles().toString(), "highlight_index.html");
+		Path pathToHtmlList=Paths.get(pathHandler.getHtmlWithHighlights().toString());
+		try {
+			Book bookCopyForLaterUse = epubReader.readEpub(new FileInputStream(copyOfBookPath.toString()));
+			bookCopyForLaterUse.addSection("Highliht index", new Resource(new FileInputStream(pathToHtmlList.toString()),localPathtoList.toString()));
+			epubWriter.write(bookCopyForLaterUse, new FileOutputStream(copyOfBookPathWHigh.toString()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		pathHandler.setEpubfileWHighlights(copyOfBookPathWHigh);
 	}
 	/**
 	 * add book in Observable list of model connector
@@ -241,6 +302,10 @@ public class BookProcess extends Task<Void>{
 	 */
 	void addMessagesToDisplay(String s) {
 		ModelConnector.setMessages(s);
+	}
+
+	public PathHandler getPathHandler() {
+		return pathHandler;
 	}
 
 

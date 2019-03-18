@@ -44,8 +44,11 @@ public class Highlight {
 	protected final static String beginTagHighlight2= "\" style=\"background-color: #FFFF00\">";
 	protected final static String endTagHighlight="</span>";
 	protected final static String beginLinkTag="<a href=\"";
+	protected final static String internalBeginLinkTag="<a style=\"text-decoration: none\" href=\"";
 	protected final static String beginLinkTag2="\">";
 	protected final static String endLinkTag="</a>";
+	@Transient
+	protected String bookHighlightLink;
 	@Lob 
 	@Column(length=2000)
 	protected String searchable;
@@ -192,5 +195,10 @@ public class Highlight {
 		return sentences;
 	}
 
+	public String getBookHighlightLink() {
+		String HighlightLinkBeginning=internalBeginLinkTag+containerFile.getName()+"#"+hashCode+beginLinkTag2;
+		String bookHighlightLink=HighlightLinkBeginning+highligghtText+endLinkTag;
+		return bookHighlightLink;
+	}
 
 }

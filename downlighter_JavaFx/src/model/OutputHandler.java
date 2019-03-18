@@ -20,7 +20,14 @@ public class OutputHandler {
 	private Path pathTorenderFolder;
 	private EBook eBook;
 	private File file;
+	private PathHandler pathHandler;
+	private String highlightIndexText;
 	
+	public OutputHandler(String highlightIndexText, PathHandler pathHandler) {
+		this.pathTorenderFolder = pathHandler.getArchivePath();
+		this.highlightIndexText=highlightIndexText;
+		this.pathHandler=pathHandler;
+	}
 	
 	public OutputHandler(EBook eBook, File file) {
 		this.pathTorenderFolder = Paths.get(eBook.getContainerFolder());
@@ -53,5 +60,18 @@ public class OutputHandler {
 			
 		}
 		
+	}
+	public void saveIndex() {
+		PrintWriter out=null;
+		File highlightIndex=new File(pathHandler.getHtmlWithHighlights().toString());
+		System.out.println(highlightIndexText);
+		try {
+			out = new PrintWriter(highlightIndex);
+			out.print(highlightIndexText);
+			out.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

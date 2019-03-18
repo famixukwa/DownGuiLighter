@@ -3,6 +3,10 @@ package controllers;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -29,6 +33,7 @@ public class BookProcessingTabController {
 	private File highlightFile;
 	private File ebookFile;
 	private File epubFile;
+	private  BookProcess bookProcess;
 
 	public void setStage(Stage primaryStage) {
 		Stage controllerStage=primaryStage;
@@ -37,6 +42,8 @@ public class BookProcessingTabController {
 		String value=ebookSelected.toString();
 		ebookSelected.setText(value);
 	}
+	@FXML
+    private Button saveFile;
 	@FXML
 	private ProgressBar progresBar;
 	@FXML
@@ -99,16 +106,25 @@ public class BookProcessingTabController {
 		}
 	}
 	@FXML
-	void saveFile(ActionEvent event) {
-		FileChooser fileChooser = new FileChooser();
-		FileChooser.ExtensionFilter epubFilter = new FileChooser.ExtensionFilter("Epub files (*.epub)", "*.epub");
-		fileChooser.getExtensionFilters().add(epubFilter);
-		epubFile = fileChooser.showOpenDialog(controllerStage);
-		InputHandler.setHighlights(highlightFile);
-		if (ebookFile!=null) {
-			String value=highlightFile.getAbsolutePath();
-			highlightsSelected.setText(value);
+	void saveEpubFile(ActionEvent event) {
+		if (bookProcess!=null&&bookProcess.getPathHandler().isIsepubfileWHighlightsCreated()) {
+			FileChooser fileChooser = new FileChooser();
+			FileChooser.ExtensionFilter epubFilter = new FileChooser.ExtensionFilter("Epub files (*.epub)", "*.epub");
+			fileChooser.getExtensionFilters().add(epubFilter);
+			fileChooser.setInitialFileName(bookProcess.getPathHandler().getFileName());
+			epubFile = fileChooser.showSaveDialog(controllerStage);
+			if (epubFile!=null) {
+				String value=epubFile.getAbsolutePath();
+				try {
+					System.out.println(bookProcess.getPathHandler().getEpubfileWHighlights().toString());
+					Files.copy(bookProcess.getPathHandler().getEpubfileWHighlights(), epubFile.toPath());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
+		
 
 	}
 	@FXML
@@ -159,6 +175,7 @@ public class BookProcessingTabController {
 						);
 			});
 			processedBook.start();
+			this.bookProcess=processedBook;
 		}
 
 	}

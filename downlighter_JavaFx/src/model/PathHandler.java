@@ -11,12 +11,18 @@ public class PathHandler {
 	private Path opfPath;
 	private Path pathToEpub=Paths.get(InputHandler.getEbookFile().toString()+"/");
 	private String fileName=pathToEpub.getFileName().toString();
-	private String filenameWithNoExtension=fileName.replaceAll("\\.epub", "")+"/";
+	private String filenameWithNoExtension=fileName.replaceAll("\\.epub", "");
 	private Path archivePath=Paths.get("files archive/");
 	private Path bookPath=Paths.get(archivePath.toString(),filenameWithNoExtension);
 	private Path epubFiles=Paths.get(bookPath.toString(),"epub files");
 	private Path extractedBook=Paths.get(bookPath.toString(),"extracted files");
 	private ArrayList<Path>folderArray=new ArrayList<Path>();
+	private Path HtmlWithHighlights;
+	private Path pathOfhtmlfiles;
+	private Path epubfileWHighlights;
+	private boolean isepubfileWHighlightsCreated=false;
+	
+	
 	
 	public PathHandler() {
 		super();
@@ -68,4 +74,37 @@ public class PathHandler {
 	public ArrayList<Path> getFolderArray() {
 		return folderArray;
 	}
+	public void setPathToEpub(Path pathToEpub) {
+		this.pathToEpub = pathToEpub;
+	}
+	public void setPathOfhtmlfiles() {
+		XmlExtractor xmlExtractor=new XmlExtractor(opfPath.toString());
+		ArrayList<Path> pathsOfTheText=xmlExtractor.getHmlFilesPath();
+		Path pathOfFirstText=pathsOfTheText.get(1);
+		pathOfhtmlfiles=pathOfFirstText.getParent();
+	}
+	public Path getHtmlWithHighlights() {
+		return HtmlWithHighlights;
+	}
+	public void setHtmlWithHighlights() {
+		HtmlWithHighlights=Paths.get(extractedBook.toString(),pathOfhtmlfiles.toString(), "highlight_index.html");
+	}
+	public Path getPathOfhtmlfiles() {
+		return pathOfhtmlfiles;
+	}
+	public Path getEpubfileWHighlights() {
+		return epubfileWHighlights;
+	}
+	public void setEpubfileWHighlights(Path epubfileWHighlights) {
+		this.epubfileWHighlights = epubfileWHighlights;
+	}
+	public boolean isIsepubfileWHighlightsCreated() {
+		return isepubfileWHighlightsCreated;
+	}
+	public void setIsepubfileWHighlightsCreated(boolean isepubfileWHighlightsCreated) {
+		this.isepubfileWHighlightsCreated = isepubfileWHighlightsCreated;
+	}
+	
+	
+	
 }

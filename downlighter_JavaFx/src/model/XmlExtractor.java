@@ -105,7 +105,9 @@ public class XmlExtractor {
 		return resultPath;
 
 	}
-	
+	/*
+	 * gets the path of the cover file
+	 */
 	public  Path getAttributePath(String parentNode,String childAttribute, String idValue) {
 		DocumentBuilder dBuilder;
 		Document doc =null;
