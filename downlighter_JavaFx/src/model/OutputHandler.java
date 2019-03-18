@@ -3,6 +3,7 @@ package model;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -34,21 +35,13 @@ public class OutputHandler {
 		this.file=file;
 		this.eBook=eBook;
 	}
+	/**
+	 * it saves the document processed by the jsoup html parser in to the corresponding html file of the book
+	 * @param htmlDokument jsoup document resulting of the search and replace functions
+	 */
 	public void saveHtml(Document htmlDokument) {
 		Document doc = null;
 		PrintWriter out=null;
-		File directory=new File("epubs");
-		if (!directory.exists()) {
-			try {	
-				directory.mkdir();
-				out = new PrintWriter(file.getAbsolutePath());
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			out.print(htmlDokument);
-		}
-		else {
 			try {	
 				out = new PrintWriter(file.getAbsolutePath());
 				out.print(htmlDokument);
@@ -57,19 +50,19 @@ public class OutputHandler {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-		}
-		
 	}
+	/**
+	 * it saves an html list index with all the highlights found. This file will be later on included in the TOC of the copy of the book to be able to access the highlights from every epub compatible epub reader
+	 */
 	public void saveIndex() {
 		PrintWriter out=null;
 		File highlightIndex=new File(pathHandler.getHtmlWithHighlights().toString());
 		System.out.println(highlightIndexText);
 		try {
-			out = new PrintWriter(highlightIndex);
+			out = new PrintWriter(highlightIndex,"UTF-8");
 			out.print(highlightIndexText);
 			out.close();
-		} catch (FileNotFoundException e) {
+		} catch (FileNotFoundException | UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

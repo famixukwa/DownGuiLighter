@@ -1,14 +1,9 @@
 package model;
 
-
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javafx.concurrent.Task;
-
-
-
 /**
  * 
  * saves data in a database for persistence purposes it takes an ebook as a parameter
@@ -24,6 +19,11 @@ public class SavePersistanceService extends Task<Object>{
 	public SavePersistanceService(EBook eBook) {
 		this.eBook= eBook;
 	}
+	/**
+	 * Saves the ebook and the corresponding highlights in the database
+	 * @param ebook the book being processed
+	 * @throws Exception
+	 */
 	public void  saveEbookWithHighlightsFound (EBook eBook) throws Exception{
 		
 		emf=Persistence.createEntityManagerFactory("downlighter_JavaFx");  

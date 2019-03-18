@@ -35,6 +35,7 @@ public class InputHandler {
 	 *
 	 *This method gets the HTML with the highlights and extracts them
 	 *to a list of HTML Elements (Jsoup)
+	 *@return highlightsList returns a list with the texts found in the highlights file to create the Highlight instances
 	 */
 	public static List<Element> getHighlightFileSnippets() {
 		Document  highlightsFileContent=null;

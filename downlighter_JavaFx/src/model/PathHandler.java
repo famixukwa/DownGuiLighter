@@ -3,7 +3,10 @@ package model;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-
+/**
+ * this Paths calculates all the paths needed for the book processing and saving and makes them available to all the classes asking them
+ *
+ */
 public class PathHandler {
 	
 	
@@ -18,6 +21,7 @@ public class PathHandler {
 	private Path extractedBook=Paths.get(bookPath.toString(),"extracted files");
 	private ArrayList<Path>folderArray=new ArrayList<Path>();
 	private Path HtmlWithHighlights;
+	//base path where the html files are stored
 	private Path pathOfhtmlfiles;
 	private Path epubfileWHighlights;
 	private boolean isepubfileWHighlightsCreated=false;
@@ -81,13 +85,23 @@ public class PathHandler {
 		XmlExtractor xmlExtractor=new XmlExtractor(opfPath.toString());
 		ArrayList<Path> pathsOfTheText=xmlExtractor.getHmlFilesPath();
 		Path pathOfFirstText=pathsOfTheText.get(1);
-		pathOfhtmlfiles=pathOfFirstText.getParent();
+		Path path=pathOfFirstText.getParent();
+		if (path!=null) {
+			pathOfhtmlfiles=path;
+		}
+		
 	}
 	public Path getHtmlWithHighlights() {
 		return HtmlWithHighlights;
 	}
 	public void setHtmlWithHighlights() {
-		HtmlWithHighlights=Paths.get(extractedBook.toString(),pathOfhtmlfiles.toString(), "highlight_index.html");
+		if (pathOfhtmlfiles!=null) {
+			HtmlWithHighlights=Paths.get(extractedBook.toString(),pathOfhtmlfiles.toString(), "highlight_index.html");
+		}
+		else {
+			HtmlWithHighlights=Paths.get(extractedBook.toString(), "highlight_index.html");
+		}
+		
 	}
 	public Path getPathOfhtmlfiles() {
 		return pathOfhtmlfiles;

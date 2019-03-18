@@ -1,10 +1,18 @@
 package model;
 
 import java.util.regex.Pattern;
-
+/**
+ * sentence highlight is an special type of highlight for being used when sentence search replacement. It treats the first sentence differently by giving her the hash of the highlight. This allows that the highlight shown in the list of the popupwindow to be link only to the first sentence of the distributed highlight. It also groups all of the founded sentences for showing in the popup window onto a single piece of text although  different sentences has been found
+ * @author fieltro
+ *
+ */
 public class SentenceHighlight extends Highlight {
 	private Sentence firstSentence;
-
+	/**
+	 * 
+	 * @param highligghtText text obtained from the highlights file.
+	 * @param highlightFileIndex index representing the order where the file containing the highlight is in the book (book spline)
+	 */
 	public SentenceHighlight(String highligghtText,int highlightFileIndex) {
 		super();
 		this.highligghtText = highligghtText;

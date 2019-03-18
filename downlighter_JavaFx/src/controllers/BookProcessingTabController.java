@@ -26,7 +26,9 @@ import javafx.stage.Window;
 import model.BookProcess;
 import model.InputHandler;
 import model.ModelConnector;
-
+/*
+ * controller of the processing tab
+ */
 public class BookProcessingTabController {
 	Window controllerStage;
 	boolean pressed=false;
@@ -43,7 +45,7 @@ public class BookProcessingTabController {
 		ebookSelected.setText(value);
 	}
 	@FXML
-    private Button saveFile;
+	private Button saveFile;
 	@FXML
 	private ProgressBar progresBar;
 	@FXML
@@ -77,13 +79,14 @@ public class BookProcessingTabController {
 
 	@FXML
 	private TextArea messagesWindow;
-
+	/*
+	 * chooses the ebook file to be processed by the app
+	 */
 	@FXML
 	void chooseFileEbook(ActionEvent event) {
 		FileChooser fileChooser = new FileChooser();
 		FileChooser.ExtensionFilter epubExtFilter = new FileChooser.ExtensionFilter("EPUB files (*.epub)", "*.epub");
 		fileChooser.getExtensionFilters().add(epubExtFilter);
-		fileChooser.setInitialFileName("asd.epub");
 		ebookFile = fileChooser.showOpenDialog(controllerStage);
 		InputHandler.setEbookFile(ebookFile);
 		if (ebookFile!=null) {
@@ -92,7 +95,9 @@ public class BookProcessingTabController {
 		}
 
 	}
-
+	/*
+	 * method to choose the file with the highlights to be mapped
+	 */
 	@FXML
 	void chooseFileHighlights(ActionEvent event) {
 		FileChooser fileChooser = new FileChooser();
@@ -100,11 +105,14 @@ public class BookProcessingTabController {
 		fileChooser.getExtensionFilters().add(htmlExtFilter);
 		highlightFile = fileChooser.showOpenDialog(controllerStage);
 		InputHandler.setHighlights(highlightFile);
-		if (ebookFile!=null) {
+		if (highlightFile!=null) {
 			String value=highlightFile.getAbsolutePath();
 			highlightsSelected.setText(value);
 		}
 	}
+	/*
+	 * method that opens a dialog to choose a path to save the resulting ebook file with a list of links that points to the highlights found in the book
+	 */
 	@FXML
 	void saveEpubFile(ActionEvent event) {
 		if (bookProcess!=null&&bookProcess.getPathHandler().isIsepubfileWHighlightsCreated()) {
@@ -117,6 +125,9 @@ public class BookProcessingTabController {
 				String value=epubFile.getAbsolutePath();
 				try {
 					System.out.println(bookProcess.getPathHandler().getEpubfileWHighlights().toString());
+					if (epubFile.exists()) {
+						epubFile.delete();
+					}
 					Files.copy(bookProcess.getPathHandler().getEpubfileWHighlights(), epubFile.toPath());
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -124,8 +135,10 @@ public class BookProcessingTabController {
 				}
 			}
 		}
-		
 
+		/*
+		 * method that begins the process of matching the highlights in the book
+		 */
 	}
 	@FXML
 	void matchHighlights() {
@@ -135,6 +148,7 @@ public class BookProcessingTabController {
 			ModelConnector.messagesProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
 				messagesWindow.appendText(newValue);
 			});
+			
 			ModelConnector.coverPathProperty().addListener((ObservableValue<? extends String> observable, String oldvalue, String newValue )-> {
 				Image image = null;
 				try {
@@ -180,7 +194,9 @@ public class BookProcessingTabController {
 
 	}
 
-
+	/*
+	 * method that produces a listener that sets the progress of the progress bar
+	 */
 	@FXML
 	void initialize() {
 		assert borderpane != null : "fx:id=\"borderpane\" was not injected: check your FXML file 'First_tab.fxml'.";

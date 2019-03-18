@@ -12,7 +12,9 @@ import model.EBook;
 import model.ModelConnector;
 import model.RetrievePersistanceService;
 import model.RetrievePersistanceService.Mode;
-
+/*
+ * controller of the book archive tab
+ */
 public class BookArchiveTabController {
 
 	@FXML
@@ -38,7 +40,9 @@ public class BookArchiveTabController {
 		RetrievePersistanceService task = new RetrievePersistanceService(Mode.EBOOK, selectedBook);
 		task.start();
 	}
-
+/*
+ * sets the table  with the archive Books
+ */
 	@FXML
 	void initialize() {
 		assert bookArchiveTable != null : "fx:id=\"bookArchiveTable\" was not injected: check your FXML file 'BookArchiveTab.fxml'.";

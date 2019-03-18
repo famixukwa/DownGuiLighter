@@ -25,7 +25,9 @@ import javafx.scene.web.WebView;
 import model.EBook;
 import model.Highlight;
 import model.ModelConnector;
-
+/*
+ * class that controles the popup window trigger by bookArchiveTab and at the and of the matching process
+ */
 public class PopupWindowController {
 	@FXML
 	private ImageView cover;
@@ -55,8 +57,10 @@ public class PopupWindowController {
 
 	@FXML
 	private ListView<Highlight> listOfhighlights;
-
-	@FXML
+	/*
+	 * this method adds the metadata of the book to the gui
+	 * @Param eBook the ebook being processed
+	 */
 	public void addMetadata(EBook eBook) {
 		if (eBook.getCoverPath()!=null) {
 			Image image = null;
@@ -97,7 +101,7 @@ public class PopupWindowController {
 	/**
 	 * 
 	 * populates the highlight list and creates a listener to show the book on the left webviewer
-	 * @param eBook takes the processed ebook as parameter
+	 * @param highlightsFound takes the observable list of highlights found as parameter
 	 */
 	@FXML
 	public void addHighlightToList(ObservableList<Highlight>highlightsFound) {

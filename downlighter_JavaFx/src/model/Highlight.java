@@ -85,6 +85,7 @@ public class Highlight {
 	}
 	/**
 	 * Method that cleans text from an amazon glitch with the hyphen character
+	 * @param highligghtText text obtained from the highlights file.
 	 */
 	protected String cleanAmazonGlitches(String highligghtText) {
 		String s=highligghtText.replaceAll("(–)([a-zA-Z]{1,1})", "$1 $2");
@@ -94,6 +95,7 @@ public class Highlight {
 	}
 	/**
 	 * splits the highlights in sentences
+	 * @param s string of text obtained from the highlights file
 	 */
 	protected void sentenceSplitter(String s)
 	{
@@ -108,6 +110,7 @@ public class Highlight {
 	/**
 	 * Adds the select code from Jsoup and the regex to the highlight text
 	 * this makes possible to realize the search with jsoup.
+	 * @param highligghtText text obtained from the highlights file.
 	 */
 	protected String createSearchable(String highligghtText) {
 		String s=SPECIAL_REGEX_CHARS.matcher(highligghtText).replaceAll("\\\\$0");
@@ -116,6 +119,7 @@ public class Highlight {
 	}
 	/**
 	 * wraps the text with HTML tags to makes the replacement
+	 * @param highligghtText text obtained from the highlights file.
 	 */
 
 	protected String constructHIghlightedText(String highligghtText) {

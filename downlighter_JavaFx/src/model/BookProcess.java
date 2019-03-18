@@ -63,12 +63,14 @@ public class BookProcess extends Task<Void>{
 		extractMetaData();
 		extractCover();
 		SearchReplaceEngine searchReplaceEngine=new SearchReplaceEngine(eBook, pathHandler);
+		searchReplaceEngine.searchReplaceHighlights(eBook);
 		eBook.setNumberHighlightsFound(ModelConnector.getNumberHighlightsFound());
 		addMessagesToDisplay("Number of highlights found: "+ModelConnector.getNumberHighlightsFound()+"\n");
 		htmlListCreator();
 		SavePersistanceService task = new SavePersistanceService(eBook);
-		bookCompress();
-		addHighlightSection();
+		if (bookCompress()) {
+			addHighlightSection();
+		}
 		ModelConnector.setProgress(0.95F);
 		saveBookInStatusObservable(eBook);
 		Thread th = new Thread(task);
@@ -124,6 +126,10 @@ public class BookProcess extends Task<Void>{
 		eBook.setDescription(umwrapList(descriptionList));
 		ModelConnector.setDescription(umwrapList(descriptionList));
 	}
+	/*
+	 * unwraps the lists  to a single string to be shown in the gui
+	 * @list the list delibered from epublib from the metadata
+	 */
 	private String umwrapList(List list) {
 		StringBuilder s = new StringBuilder();
 		for (int i = 0; i < list.size(); i++) {
@@ -214,7 +220,9 @@ public class BookProcess extends Task<Void>{
 		}
 		pathHandler.setOpfPath();
 		pathHandler.setPathOfhtmlfiles();
+		System.out.println("path of html files: "+pathHandler.getPathOfhtmlfiles());
 		pathHandler.setHtmlWithHighlights();
+		System.out.println("HtmlWithHighlights: "+pathHandler.getHtmlWithHighlights());
 	}
 
 	/**
@@ -243,16 +251,25 @@ public class BookProcess extends Task<Void>{
 	/**
 	 * compresses the analyzed files on to a new book that could by used by any ebook reader accepting epub files.
 	 */
-	private void bookCompress( ) {
+	private boolean bookCompress( ) {
 		Path extractedBook=pathHandler.getExtractedBook();
 		Path compressedBook=Paths.get(pathHandler.getEpubFiles().toString(), pathHandler.getFilenameWithNoExtension()+".epub");
+		File compressedFile=new File(compressedBook.toString());
+		File pastExtractedBook=new File(extractedBook.toString());
+		boolean isCompressed=false;
+		if (compressedFile.exists()) {
+			compressedFile.delete();
+			System.out.println("past book deleted");
+		}
+		if (pastExtractedBook.exists()) {
+			pastExtractedBook.delete();
+			System.out.println("past book deleted");
+		}
 		// Initiate ZipFile object with the path/name of the zip file.
 		ZipFile zipFile=null;
 		try {
 			zipFile = new ZipFile(compressedBook.toString());
-
 			// Folder to add
-
 			String folderToAdd = extractedBook.toString();
 			System.out.println("folder to compress: "+folderToAdd);
 			// Initiate Zip Parameters which define various properties such
@@ -265,31 +282,42 @@ public class BookProcess extends Task<Void>{
 			parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
 			// Add folder to the zip file
 			zipFile.addFolder(folderToAdd, parameters);
+			isCompressed=true;
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		pathHandler.setIsepubfileWHighlightsCreated(true);
+		return isCompressed;
 	}
 	/**
 	 * adds the section depicting all the highlihgts found for later use in any other book reader to the new epub file created.
 	 */
 	private void addHighlightSection() {
+
 		EpubReader epubReader = new EpubReader();
 		EpubWriter epubWriter = new EpubWriter();
-		Path copyOfBookPath=Paths.get(pathHandler.getEpubFiles().toString(), pathHandler.getFilenameWithNoExtension()+".epub");
-		Path copyOfBookPathWHigh=Paths.get(pathHandler.getEpubFiles().toString(), pathHandler.getFilenameWithNoExtension()+"highlighted"+".epub");
-		Path localPathtoList=Paths.get(pathHandler.getPathOfhtmlfiles().toString(), "highlight_index.html");
+		Path localPathtoList = null;
+		Path epubBookPath=Paths.get(pathHandler.getEpubFiles().toString(), pathHandler.getFilenameWithNoExtension()+".epub");
+		Path ebookWithHighlightIndex=Paths.get(pathHandler.getEpubFiles().toString(), pathHandler.getFilenameWithNoExtension()+"_withIndex"+".epub");
+		if (pathHandler.getPathOfhtmlfiles()!=null) {
+			localPathtoList=Paths.get(pathHandler.getPathOfhtmlfiles().toString(), "highlight_index.html");
+		}
+		else {
+			localPathtoList=Paths.get("highlight_index.html");
+		}
+		System.out.println("test");
 		Path pathToHtmlList=Paths.get(pathHandler.getHtmlWithHighlights().toString());
 		try {
-			Book bookCopyForLaterUse = epubReader.readEpub(new FileInputStream(copyOfBookPath.toString()));
+			Book bookCopyForLaterUse = epubReader.readEpub(new FileInputStream(epubBookPath.toString()));
 			bookCopyForLaterUse.addSection("Highliht index", new Resource(new FileInputStream(pathToHtmlList.toString()),localPathtoList.toString()));
-			epubWriter.write(bookCopyForLaterUse, new FileOutputStream(copyOfBookPathWHigh.toString()));
+			epubWriter.write(bookCopyForLaterUse, new FileOutputStream(ebookWithHighlightIndex.toString()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		pathHandler.setEpubfileWHighlights(copyOfBookPathWHigh);
+		pathHandler.setEpubfileWHighlights(ebookWithHighlightIndex);
+		System.out.println("test");
 	}
 	/**
 	 * add book in Observable list of model connector

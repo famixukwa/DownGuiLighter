@@ -1,10 +1,11 @@
 package model;
 /**
- * this class acts as an interface making accessible in both directions the communication between model and gui
+ * 
  */
 
 import java.io.IOException;
 import application.Main;
+import application.PopupWindow;
 import controllers.PopupWindowController;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -16,7 +17,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
+/**
+ * this class acts as an interface making accessible in both directions the communication between model and gui
+ *
+ */
 public  class  ModelConnector {
 	private static Highlight pastHighlight;
 	private static ObservableList<EBook> ebookObservableList= FXCollections.observableArrayList();
@@ -49,25 +53,11 @@ public  class  ModelConnector {
 	
 
 	/**
-	 * it creates a popupview on the gui
-	 * @param highlightsFound
+	 * it creates a popupview where each book shows it highlights in the text. It is triggered by the process tab and the archive tab
+	 * @param ebook the book being processed
 	 */
 	public static void popupWindowView(EBook eBook) {
-		Stage primaryStage = new Stage();
-		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(Main.class.getResource("/views/PopupWindow.fxml"));
-		Parent root = null;
-		try {
-			root = loader.load();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		PopupWindowController controller = loader.getController();
-		controller.addHighlightToList(highlightsFound);
-		controller.addMetadata(eBook);
-		Scene scene = new Scene(root);
-		primaryStage.setScene(scene);
-		primaryStage.show();
+		PopupWindow popupWindow=new PopupWindow(eBook, highlightsFound);
 	}
 	
 	/**
@@ -78,20 +68,13 @@ public  class  ModelConnector {
 		return ebookObservableList;
 	}
 	
-
-	//temporal bookprocess variable for the search algorithm
-	public static void setPastHighlight(Highlight pastHighlight) {
-		ModelConnector.pastHighlight = pastHighlight;
-	}
-	
+	/**
+	 * adds the ebook to an observable list later used by the archive tab to show the ebooks previously analyzed
+	 * @param eBook
+	 */
 	public static void addBookToObservable(EBook eBook) {
 		ebookObservableList.add(eBook);
 	}
-
-	
-	
-	
-	
 //setters and getters
 	public static StringProperty bookTitlePProperty() {
 		return bookTitleP;

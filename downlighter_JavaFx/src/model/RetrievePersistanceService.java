@@ -30,7 +30,7 @@ public class RetrievePersistanceService  extends Task<Void>{
 		super();
 	}
 	/**
-	 * retrieves data fron the database
+	 * retrieves data from the database
 	 * @param selectedMode there are two modes EBOOK retrieves the highlights of the selected book and bean retrieves the list of archived books
 	 */
 	public RetrievePersistanceService(Mode selectedMode) {
@@ -63,15 +63,9 @@ public class RetrievePersistanceService  extends Task<Void>{
 			});
 		}
 	}
-	
-	
-	
-	public EBook geteBook() {
-		return eBook;
-	}
-	public void seteBook(EBook eBook) {
-		this.eBook = eBook;
-	}
+	/**
+	 * this method retrieve a list of the archived books from the database that later on are served to the archive tab
+	 */
 	private void getListOfBooks () {
 		emf=Persistence.createEntityManagerFactory("downlighter_JavaFx");
 		em=emf.createEntityManager(); 
@@ -86,6 +80,10 @@ public class RetrievePersistanceService  extends Task<Void>{
 		em.close();
 		emf.close();
 	}
+	/**
+	 * retrieves the highlights of the chosen book from the book archive tab to be shown in the popup window
+	 * @param ebookId id of the book clicked by the user in the table of the archive tab
+	 */
 	private void getChosenBookHiglights(int ebookId) {
 		emf=Persistence.createEntityManagerFactory("downlighter_JavaFx");
 		em=emf.createEntityManager(); 
@@ -120,6 +118,13 @@ public class RetrievePersistanceService  extends Task<Void>{
 		}
 		return null;
 
+	}
+	
+	public EBook geteBook() {
+		return eBook;
+	}
+	public void seteBook(EBook eBook) {
+		this.eBook = eBook;
 	}
 
 	public ObservableList<Highlight> getHighlightObservableList() {

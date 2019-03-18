@@ -36,7 +36,6 @@ public class SearchReplaceEngine {
 		listExtractedFiles();
 		createHighlights(highlightSnippets);
 		copyOfHtmlFiles=new ArrayList<InformedFile>(htmlfiles);
-		searchReplaceHighlights(eBook);
 	}
 
 
@@ -55,7 +54,7 @@ public class SearchReplaceEngine {
 	}
 	/**
 	 * creates a list of highlight objects from the texts extracted from the highlights file
-	 *
+	 *@param highlightSnippets fragments of texts extracted from the highlights file
 	 */
 	public void createHighlights(List<Element> highlightSnippets) {
 		addMessagesToDisplay("Begining process\n");
@@ -69,6 +68,7 @@ public class SearchReplaceEngine {
 	}
 	/**
 	 * extracts the html document of the file
+	 * @param file it takes the informed file that contains the information of his order in the book
 	 */
 	private Document extractDocumentFromFile(InformedFile file) {
 		InformedFile htmlFile = file;
@@ -83,6 +83,7 @@ public class SearchReplaceEngine {
 
 	/**
 	 * uses searchReplaceInHtml in all the book files
+	 * @param ebook the book being processed
 	 */
 	public void searchReplaceHighlights(EBook eBook) {
 		boolean isBeingSentenceSearch=false;
@@ -107,7 +108,10 @@ public class SearchReplaceEngine {
 	/**
 	 * Method that Search the searcheable text in the html text and replaces it with the same text surrounded with 
 	 * an underlined tag.
-	 *
+	 *@param ebook the book being processed
+	 *@param highlight the highlight instance with all his methods and information
+	 *@param copyOfHtmlFiles a list of the informed files in which to search the highlits
+	 *@param isBeingSentenceSearch boolean that indicates that the highlight is being serch in highlight mode to avoid false negative findings
 	 */
 	private boolean searchReplaceInHtml(EBook eBook,Highlight highlight,ArrayList<InformedFile> copyOfHtmlFiles, boolean isBeingSentenceSearch) {
 		//gets the list of files
@@ -126,15 +130,13 @@ public class SearchReplaceEngine {
 				//counts the highlights
 				numberHighlightsFound++;
 				//informs what is found 
-				informer (found,file, highlight,copyOfHtmlFiles);
-				//saved the highlight as past highlight for optimization purposes
-				ModelConnector.setPastHighlight(highlight);
+				informResults (found,file, highlight,copyOfHtmlFiles);
 				//replaces the text in the book with the bookmarked and highlighted text
-				textReplacer(found, highlight);
+				textReplace(found, highlight);
 				//saves the modified file
 				saveTheHtmlOfBook(htmlDoc,file,eBook);
 				//	optimizer(highlight,htmlfiles);
-				optimizer(highlight,file);
+				optimize(highlight,file);
 				break;
 			}
 
@@ -143,7 +145,7 @@ public class SearchReplaceEngine {
 			isBeingSentenceSearch=true;
 			System.out.println("test sentence begin");
 			SentenceHighlight sentenceHighlight= new SentenceHighlight(highlight.getHighligghtText(),highlight.getHighlightFileIndex());
-			isHighlightFound=sentenceSearchReplacer(eBook,sentenceHighlight);
+			isHighlightFound=sentenceSearchReplace(eBook,sentenceHighlight);
 		}
 
 		return isHighlightFound;
@@ -151,8 +153,10 @@ public class SearchReplaceEngine {
 	/**
 	 * 
 	 *Optimizes the search algorithm deleting the files on the list that have been already explored
+	 *@param highlight highlight being search
+	 *@param informed file with the index in order in the book
 	 */
-	private void optimizer(Highlight highlight,InformedFile file) {
+	private void optimize(Highlight highlight,InformedFile file) {
 		int value=highlight.getHighlightFileIndex()-copyOfHtmlFiles.get(0).getOrderIndex();
 		if (value>0) {
 			for (int i = 0; i < value; i++) {
@@ -163,9 +167,10 @@ public class SearchReplaceEngine {
 	}
 	/**
 	 * Helper method for searchReplaceInHtml that searches in sentence mode for the case the highlight contains sentences from two different paragraphs
-	 * 
+	 * @param ebook the book being processed
+	 * @param sentenceHighlight the special highlight used in sentence search
 	 */
-	private boolean sentenceSearchReplacer(EBook eBook,SentenceHighlight sentenceHighlight ) {
+	private boolean sentenceSearchReplace(EBook eBook,SentenceHighlight sentenceHighlight ) {
 		System.out.println("entering sentence mode");
 		Boolean isHighlightFound=false;
 		if (sentenceHighlight.getSentences().size()>1) {
@@ -195,7 +200,9 @@ public class SearchReplaceEngine {
 	}
 	/**
 	 * Helper method for sentenSearchReplacer that searches in sentence mode on the files for the case the highlight contains sentences from two different paragraphs
-	 * 
+	 * @param ebook the book being processed
+	 * @param sentenceHighlight the special highlight used in sentence search
+	 * @param sentence sentences created by splitting the highlight text with "." to be able to search for highlights that are distributed in different paragraphs
 	 */
 	private boolean sentenceSearchReplaceInHtml(EBook eBook,SentenceHighlight sentenceHighlight, Sentence sentence) {
 		//gets the list of files
@@ -217,13 +224,13 @@ public class SearchReplaceEngine {
 					//counts the highlights
 					numberHighlightsFound++;
 					//informs what is found 
-					informer (found,file, persistenceHighlight,copyOfHtmlFiles);
+					informResults (found,file, persistenceHighlight,copyOfHtmlFiles);
 				}
 				//replaces the text in the book with the bookmarked and highlighted text
-				textReplacer(found, sentence);
+				textReplace(found, sentence);
 				//saves the modified file
 				saveTheHtmlOfBook(htmlDoc,file,eBook);
-				optimizer(sentenceHighlight, file);
+				optimize(sentenceHighlight, file);
 				break;
 			}
 		}
@@ -235,10 +242,10 @@ public class SearchReplaceEngine {
 	 *replaces the text with the text modified with highlight tags.
 	 *@param found are the paragraphs that in the book HTML file includes
 	 *the searched text 
-	 *@param i is the counter for the searchReplaceInBook for loop.
+	 *@param highlight highlight being search
 	 */
 
-	private void textReplacer(Element found,Highlight highlight) {
+	private void textReplace(Element found,Highlight highlight) {
 		String textHighlighted=highlight.getHighlightedText();
 		String textToModify=found.html();
 		String textOfTheHighlight=highlight.getHighligghtText();
@@ -285,26 +292,15 @@ public class SearchReplaceEngine {
 			found.html(modifiedText);
 		}
 	}
-	
-
-	//	/**
-	//	 * 
-	//	 *Optimizes the search algorithm deleting the files on the list that have been already explored in the case of sentence search
-	//	 */
-	//	private void sentenceOptimizer(Highlight highlight,ArrayList<InformedFile> htmlfiles) {
-	//		int value=highlight.getHighlightFileIndex();
-	//		if (value>1) {
-	//			int readFiles=highlight.getHighlightFileIndex()-1;
-	//			for (int j = 0; j < readFiles; j++) {
-	//				htmlfiles.remove(j);
-	//			}
-	//		}
-	//	}
 	/**
 	 * 
 	 *informs ebook and highlight of the information found on the search
+	 *@param found are the paragraphs that in the book HTML file includes
+	 *@param file informed file with the index in order in the book
+	 *@param highlight highlight being search
+	 *@param htmlFiles a list of the informed files in which to search the highlits
 	 */
-	public void informer (Element found,InformedFile file, Highlight highlight,  ArrayList<InformedFile> htmlfiles) {
+	public void informResults (Element found,InformedFile file, Highlight highlight,  ArrayList<InformedFile> htmlfiles) {
 		//saves the file where the highlight was found
 		highlight.setContainerFile(file);
 		//produces the links
@@ -321,7 +317,7 @@ public class SearchReplaceEngine {
 	}
 	/**
 	 * saves the highlights in the book
-	 *
+	 *@param highlight highlight being search
 	 */
 	private void saveHighlightInEBook (Highlight highlight) {
 		eBook.setHighlightsFound(highlight);
@@ -329,12 +325,16 @@ public class SearchReplaceEngine {
 	}
 	/**
 	 * add messages to display in the gui
+	 * @param s string to be displayed
 	 */
 	void addMessagesToDisplay(String s) {
 		ModelConnector.setMessages(s);
 	}
 	/**
 	 * Saves the book calling the OutputHandler
+	 *@param htmlDokument jsoup dokument that contains the modified text to be saved in the html file of the book
+	 *@param file informed file with the index in order in the book
+	 *@param ebook the book being processed
 	 *
 	 */
 	public void saveTheHtmlOfBook(Document htmlDokument, File file,EBook eBook) {

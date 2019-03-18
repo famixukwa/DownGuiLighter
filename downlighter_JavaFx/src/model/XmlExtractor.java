@@ -20,7 +20,6 @@ import org.xml.sax.SAXException;
  * This class extracts the content of the xml files that have various information like file names or paths
  * @Param the path of the file where the xml is located
  */
-
 public class XmlExtractor {
 
 	DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -40,11 +39,10 @@ public class XmlExtractor {
 		this.fXmlFile= new File(pathToXml);
 	}
 
-	/*
-	 * method that gets the path files from content.opf
+	/**
+	 * method that gets the path of the files from content.opf
 	 *
 	 */
-
 	public  ArrayList<Path> getHmlFilesPath() {
 		DocumentBuilder dBuilder;
 		Document doc =null;
@@ -53,10 +51,8 @@ public class XmlExtractor {
 			dBuilder = dbFactory.newDocumentBuilder();
 			doc = dBuilder.parse(fXmlFile);
 		} catch (ParserConfigurationException | SAXException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		doc.getDocumentElement().normalize();
 		Node spine = doc.getElementsByTagName("spine").item(0);
 		NodeList childrenList = spine.getChildNodes();
@@ -82,9 +78,12 @@ public class XmlExtractor {
 			}
 		}
 		return filesPath;
-
 	}
-
+	/**
+	 * Gets the root file of the book from which all other content derive (local root file in the epub archive
+	 * @param parentNode search for a parent node where to search
+	 * @param childAttribute the attribute that the elements that we search has
+	 */
 	public  Path getRootFile(String parentNode,String childAttribute) {
 		DocumentBuilder dBuilder;
 		Document doc =null;
@@ -105,8 +104,11 @@ public class XmlExtractor {
 		return resultPath;
 
 	}
-	/*
+	/**
 	 * gets the path of the cover file
+	 * @param parentNode search for a parent node where to search
+	 * @param childAttribute the attribute that the elements that we search has
+	 * @param idValue the value of the elemnt that we search
 	 */
 	public  Path getAttributePath(String parentNode,String childAttribute, String idValue) {
 		DocumentBuilder dBuilder;
