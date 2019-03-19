@@ -73,7 +73,7 @@ public class RetrievePersistanceService  extends Task<Void>{
 		em=emf.createEntityManager(); 
 		em.getTransaction().begin(); 
 		TypedQuery<EBook> q = em.createQuery("select e from EBook e",EBook.class);
-		List<EBook> EBookList=(List<EBook>)q.getResultList();
+		List<EBook> EBookList=q.getResultList();
 		if (EBookList.size()>0) {
 			for (EBook eBook : EBookList) {
 				ModelConnector.addBookToObservable(eBook);
@@ -94,7 +94,7 @@ public class RetrievePersistanceService  extends Task<Void>{
 		TypedQuery<EBook> qb = em.createQuery("SELECT e FROM EBook e WHERE e.ebookId = :ebookId",EBook.class);
 		q.setParameter("ebookId",ebookId );
 		qb.setParameter("ebookId",ebookId );
-		List<Highlight> highlightList=(List<Highlight>)q.getResultList();
+		List<Highlight> highlightList=q.getResultList();
 		highlightObservableList =FXCollections.observableList(highlightList);
 		System.out.println("exiting retrieve persistence");
 		System.out.println("highlights retrieved: "+highlightList.size());
