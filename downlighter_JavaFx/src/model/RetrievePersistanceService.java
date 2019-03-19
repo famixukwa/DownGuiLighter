@@ -6,6 +6,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -70,7 +72,7 @@ public class RetrievePersistanceService  extends Task<Void>{
 		emf=Persistence.createEntityManagerFactory("downlighter_JavaFx");
 		em=emf.createEntityManager(); 
 		em.getTransaction().begin(); 
-		Query q = em.createQuery("select e from EBook e");
+		TypedQuery<EBook> q = em.createQuery("select e from EBook e",EBook.class);
 		List<EBook> EBookList=(List<EBook>)q.getResultList();
 		if (EBookList.size()>0) {
 			for (EBook eBook : EBookList) {
@@ -88,8 +90,8 @@ public class RetrievePersistanceService  extends Task<Void>{
 		emf=Persistence.createEntityManagerFactory("downlighter_JavaFx");
 		em=emf.createEntityManager(); 
 		em.getTransaction().begin(); 
-		Query q = em.createQuery("SELECT h FROM Highlight h JOIN h.eBook e WHERE e.ebookId = :ebookId");
-		Query qb = em.createQuery("SELECT e FROM EBook e WHERE e.ebookId = :ebookId");
+		TypedQuery<Highlight> q = em.createQuery("SELECT h FROM Highlight h JOIN h.eBook e WHERE e.ebookId = :ebookId",Highlight.class);
+		TypedQuery<EBook> qb = em.createQuery("SELECT e FROM EBook e WHERE e.ebookId = :ebookId",EBook.class);
 		q.setParameter("ebookId",ebookId );
 		qb.setParameter("ebookId",ebookId );
 		List<Highlight> highlightList=(List<Highlight>)q.getResultList();
