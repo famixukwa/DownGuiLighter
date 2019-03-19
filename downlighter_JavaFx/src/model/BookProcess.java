@@ -10,6 +10,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 import com.googlecode.jatl.Html;
 import javafx.concurrent.Task;
 import net.lingala.zip4j.core.ZipFile;
@@ -68,7 +71,7 @@ public class BookProcess extends Task<Void>{
 		addMessagesToDisplay("Number of highlights found: "+ModelConnector.getNumberHighlightsFound()+"\n");
 		htmlListCreator();
 		SavePersistanceService task = new SavePersistanceService(eBook);
-		if (bookCompress()) {
+		if (pack()) {
 			addHighlightSection();
 		}
 		ModelConnector.setProgress(0.95F);
@@ -251,7 +254,8 @@ public class BookProcess extends Task<Void>{
 	/**
 	 * compresses the analyzed files on to a new book that could by used by any ebook reader accepting epub files.
 	 */
-	private boolean bookCompress( ) {
+	
+	private boolean pack() throws IOException {
 		Path extractedBook=pathHandler.getExtractedBook();
 		Path compressedBook=Paths.get(pathHandler.getEpubFiles().toString(), pathHandler.getFilenameWithNoExtension()+".epub");
 		File compressedFile=new File(compressedBook.toString());
@@ -265,29 +269,23 @@ public class BookProcess extends Task<Void>{
 			pastExtractedBook.delete();
 			System.out.println("past book deleted");
 		}
-		// Initiate ZipFile object with the path/name of the zip file.
-		ZipFile zipFile=null;
-		try {
-			zipFile = new ZipFile(compressedBook.toString());
-			// Folder to add
-			String folderToAdd = extractedBook.toString();
-			System.out.println("folder to compress: "+folderToAdd);
-			// Initiate Zip Parameters which define various properties such
-			// as compression method, etc.
-			ZipParameters parameters = new ZipParameters();
-			parameters.setIncludeRootFolder(false);
-			// set compression method to store compression
-			parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
-			// Set the compression level
-			parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
-			// Add folder to the zip file
-			zipFile.addFolder(folderToAdd, parameters);
-			isCompressed=true;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		pathHandler.setIsepubfileWHighlightsCreated(true);
+	    Path p = Files.createFile(compressedBook);
+	    try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(p))) {
+	        Files.walk(extractedBook)
+	          .filter(path -> !Files.isDirectory(path))
+	          .forEach(path -> {
+	              ZipEntry zipEntry = new ZipEntry(extractedBook.relativize(path).toString());
+	              try {
+	                  zs.putNextEntry(zipEntry);
+	                  Files.copy(path, zs);
+	                  zs.closeEntry();
+	            } catch (IOException e) {
+	                System.err.println(e);
+	            }
+	          });
+	        isCompressed=true;
+	    }
+	    pathHandler.setIsepubfileWHighlightsCreated(true);
 		return isCompressed;
 	}
 	/**
@@ -300,18 +298,24 @@ public class BookProcess extends Task<Void>{
 		Path localPathtoList = null;
 		Path epubBookPath=Paths.get(pathHandler.getEpubFiles().toString(), pathHandler.getFilenameWithNoExtension()+".epub");
 		Path ebookWithHighlightIndex=Paths.get(pathHandler.getEpubFiles().toString(), pathHandler.getFilenameWithNoExtension()+"_withIndex"+".epub");
+		System.out.println("path of epub with index: "+ebookWithHighlightIndex.toString());
 		if (pathHandler.getPathOfhtmlfiles()!=null) {
 			localPathtoList=Paths.get(pathHandler.getPathOfhtmlfiles().toString(), "highlight_index.html");
 		}
 		else {
 			localPathtoList=Paths.get("highlight_index.html");
 		}
-		System.out.println("test");
+		
 		Path pathToHtmlList=Paths.get(pathHandler.getHtmlWithHighlights().toString());
 		try {
 			Book bookCopyForLaterUse = epubReader.readEpub(new FileInputStream(epubBookPath.toString()));
+			
 			bookCopyForLaterUse.addSection("Highliht index", new Resource(new FileInputStream(pathToHtmlList.toString()),localPathtoList.toString()));
+			System.out.println("test");
+			System.out.println("files archive index file: "+pathToHtmlList.toString());
+			System.out.println("loca index file: "+localPathtoList.toString());
 			epubWriter.write(bookCopyForLaterUse, new FileOutputStream(ebookWithHighlightIndex.toString()));
+		
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
