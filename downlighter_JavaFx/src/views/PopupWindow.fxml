@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.SplitPane?>
@@ -19,6 +20,9 @@
                <children>
                   <ImageView fx:id="cover" fitHeight="150.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
             </AnchorPane>
             <AnchorPane AnchorPane.leftAnchor="125.0" AnchorPane.rightAnchor="475.0" AnchorPane.topAnchor="35.0">
                <children>
@@ -40,8 +44,14 @@
                         <Label fx:id="author" text="Label" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Label fx:id="publisher" text="Label" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                      </children>
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
                   </GridPane>
                </children>
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
             </AnchorPane>
             <AnchorPane prefHeight="150.0" prefWidth="400.0" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="25.0">
                <children>
